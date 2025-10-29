@@ -1,0 +1,7 @@
+services:
+  frontend:
+    build: .
+    volumes:
+      - ./:/app
+    env_file:
+      - .env
