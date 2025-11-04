@@ -1,3 +1,5 @@
+import { Plus } from "lucide-react";
+
 interface GridHeaderProps {
   title: string;
   onAddNew?: () => void;
@@ -13,7 +15,7 @@ const GridHeader = ({ title, onAddNew, addButtonText }: GridHeaderProps) => (
           onClick={onAddNew}
           className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
         >
-          <span>+</span>
+          <span><Plus /></span>
           <span>{addButtonText}</span>
         </button>
       )}

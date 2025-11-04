@@ -1,5 +1,6 @@
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
 import type { ActionMenuProps } from "@/types/dataGrid";
+import { EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
 import { useState, useRef } from "react";
 
 const ActionMenu = ({
@@ -12,10 +13,21 @@ const ActionMenu = ({
   const menuRef = useRef<HTMLDivElement>(null);
 
   const actions = [
-    ...(onView ? [{ label: "View", action: onView, icon: "👁️" }] : []),
-    ...(onEdit ? [{ label: "Edit", action: onEdit, icon: "✏️" }] : []),
+    ...(onView
+      ? [{ label: "View", action: onView, icon: <Eye size={20} /> }]
+      : []),
+    ...(onEdit
+      ? [{ label: "Edit", action: onEdit, icon: <Pencil size={20} /> }]
+      : []),
     ...(onDelete
-      ? [{ label: "Delete", action: onDelete, icon: "🗑️", destructive: true }]
+      ? [
+          {
+            label: "Delete",
+            action: onDelete,
+            icon: <Trash size={20} />,
+            destructive: true,
+          },
+        ]
       : []),
   ];
 
@@ -31,13 +43,7 @@ const ActionMenu = ({
         className="rounded-lg p-2 transition-colors hover:bg-gray-100"
         aria-label="Actions"
       >
-        <svg
-          className="h-5 w-5 text-gray-600"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-        </svg>
+        <EllipsisVertical />
       </button>
 
       {isOpen && (

@@ -1,6 +1,8 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
+import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
 import { RoleFormModal } from "@/components/modals/RoleFormModal";
 import { useCreateRole } from "@/hooks/roles/useCreateRole";
+import { useDeleteRole } from "@/hooks/roles/useDeleteRole";
 import { useGetRoles } from "@/hooks/roles/useGetRoles";
 import { useUpdateRole } from "@/hooks/roles/useUpdateRole";
 import type { Column } from "@/types/dataGrid";
@@ -22,9 +24,11 @@ const RolesGridPage = () => {
     sortOrder: "asc" as "asc" | "desc",
   });
   const [searchTerm, setSearchTerm] = useState("");
-  
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<RoleDetails | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingRole, setDeletingRole] = useState<RoleDetails | null>(null);
 
   // Use the hook with parameters
   const {
@@ -42,6 +46,7 @@ const RolesGridPage = () => {
   });
   const createMutation = useCreateRole();
   const updateMutation = useUpdateRole();
+  const deleteMutation = useDeleteRole();
 
   // Event handlers
   const handlePageChange = (page: number) => {
@@ -76,12 +81,12 @@ const RolesGridPage = () => {
 
   const handleAddNew = () => {
     setEditingRole(null);
-    setIsModalOpen(true);
+    setIsFormModalOpen(true);
   };
 
   const handleEdit = (role: RoleDetails) => {
     setEditingRole(role);
-    setIsModalOpen(true);
+    setIsFormModalOpen(true);
   };
 
   // Handle form submission
@@ -100,9 +105,16 @@ const RolesGridPage = () => {
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   const handleDelete = (role: RoleDetails) => {
-    console.log("Delete role:", role);
-    if (confirm(`Are you sure you want to delete ${role.name}?`)) {
-      // Implement delete role functionality
+    setDeletingRole(role);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deletingRole) {
+      await deleteMutation.mutateAsync(deletingRole.id);
+      setIsDeleteModalOpen(false);
+      setDeletingRole(null);
+      refetch();
     }
   };
 
@@ -165,8 +177,8 @@ const RolesGridPage = () => {
       />
 
       <RoleFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
         onSubmit={handleFormSubmit}
         initialData={
           editingRole
@@ -179,6 +191,19 @@ const RolesGridPage = () => {
         }
         isSubmitting={isSubmitting}
         isEditing={!!editingRole}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setDeletingRole(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Role"
+        description="Are you sure you want to delete this role? This action cannot be undone."
+        itemName={deletingRole?.name}
+        isDeleting={deleteMutation.isPending}
       />
     </div>
   );
