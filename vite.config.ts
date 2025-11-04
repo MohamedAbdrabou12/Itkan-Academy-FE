@@ -18,11 +18,11 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: "@/",
+        find: "@",
         replacement: fileURLToPath(new URL("./src/", import.meta.url)),
       },
       {
-        find: "@schemas/",
+        find: "@schemas",
         replacement: fileURLToPath(new URL("../schemas/", import.meta.url)),
       },
     ],
