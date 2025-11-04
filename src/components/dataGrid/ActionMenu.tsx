@@ -1,5 +1,6 @@
+import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
 import type { ActionMenuProps } from "@/types/dataGrid";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 const ActionMenu = ({
   item,
@@ -18,21 +19,13 @@ const ActionMenu = ({
       : []),
   ];
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  /* Hook to detect click outside menu or escape key */
+  useClickOutsideModal(menuRef, () => setIsOpen(false));
 
   if (actions.length === 0) return null;
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="rounded-lg p-2 transition-colors hover:bg-gray-100"
@@ -48,7 +41,7 @@ const ActionMenu = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-10 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="absolute right-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
           <div className="py-1">
             {actions.map((action, index) => (
               <button

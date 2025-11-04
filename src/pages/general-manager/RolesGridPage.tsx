@@ -1,26 +1,30 @@
-import { useState } from "react";
 import DataGrid from "@/components/dataGrid/DataGrid";
+import { RoleFormModal } from "@/components/modals/RoleFormModal";
+import { useCreateRole } from "@/hooks/roles/useCreateRole";
 import { useGetRoles } from "@/hooks/roles/useGetRoles";
+import { useUpdateRole } from "@/hooks/roles/useUpdateRole";
+import type { Column } from "@/types/dataGrid";
 import type { RoleDetails } from "@/types/Roles";
 import { formatDate } from "@/utils/formatDate";
-import type { Column } from "@/types/dataGrid";
+import type { RoleFormData } from "@/validation/roleSchema";
+import { useState } from "react";
 
 const PAGE_SIZE = 5;
 const PAGE_SIZE_OPTIONS = [5, 10];
 
 const RolesGridPage = () => {
-  // State for pagination, sorting, and search
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: PAGE_SIZE,
   });
-
   const [sortInfo, setSortInfo] = useState({
     sortBy: "name" as string,
     sortOrder: "asc" as "asc" | "desc",
   });
-
   const [searchTerm, setSearchTerm] = useState("");
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRole, setEditingRole] = useState<RoleDetails | null>(null);
 
   // Use the hook with parameters
   const {
@@ -28,6 +32,7 @@ const RolesGridPage = () => {
     pagination: apiPagination,
     isPending,
     error,
+    refetch,
   } = useGetRoles({
     page: pagination.page,
     page_size: pagination.pageSize,
@@ -35,6 +40,8 @@ const RolesGridPage = () => {
     sort_by: sortInfo.sortBy,
     sort_order: sortInfo.sortOrder,
   });
+  const createMutation = useCreateRole();
+  const updateMutation = useUpdateRole();
 
   // Event handlers
   const handlePageChange = (page: number) => {
@@ -68,14 +75,29 @@ const RolesGridPage = () => {
   };
 
   const handleAddNew = () => {
-    console.log("Add new role clicked");
-    // Implement add new role functionality
+    setEditingRole(null);
+    setIsModalOpen(true);
   };
 
   const handleEdit = (role: RoleDetails) => {
-    console.log("Edit role:", role);
-    // Implement edit role functionality
+    setEditingRole(role);
+    setIsModalOpen(true);
   };
+
+  // Handle form submission
+  const handleFormSubmit = async (data: RoleFormData) => {
+    if (editingRole) {
+      await updateMutation.mutateAsync({
+        id: editingRole.id,
+        ...data,
+      });
+    } else {
+      await createMutation.mutateAsync(data);
+    }
+    refetch(); // Refresh the data
+  };
+
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   const handleDelete = (role: RoleDetails) => {
     console.log("Delete role:", role);
@@ -140,6 +162,23 @@ const RolesGridPage = () => {
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={false} // Set to true if you implement filters
+      />
+
+      <RoleFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleFormSubmit}
+        initialData={
+          editingRole
+            ? {
+                name: editingRole.name,
+                description: editingRole.description,
+                name_in_arabic: editingRole.name_in_arabic,
+              }
+            : undefined
+        }
+        isSubmitting={isSubmitting}
+        isEditing={!!editingRole}
       />
     </div>
   );

@@ -22,6 +22,7 @@ export const useGetRoles = (params: RoleQueryParams = {}) => {
     data: rolesData,
     isPending,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["roles", defaultParams],
     queryFn: async () => {
@@ -54,5 +55,6 @@ export const useGetRoles = (params: RoleQueryParams = {}) => {
     },
     isPending,
     error,
+    refetch,
   };
 };
