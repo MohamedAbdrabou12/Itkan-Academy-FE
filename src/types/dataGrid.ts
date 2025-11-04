@@ -1,0 +1,114 @@
+import type { ReactNode } from "react";
+
+export interface Column<T> {
+  key: keyof T | string;
+  title: string;
+  sortable?: boolean;
+  render?: (value: T[keyof T], row: T) => ReactNode;
+  width?: string;
+}
+
+export interface PaginationInfo {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface SortInfo {
+  sortBy: string;
+  sortOrder: "asc" | "desc";
+}
+
+export type FilterValue = string | number | boolean | Date | null | undefined;
+
+export interface FilterInfo {
+  search: string;
+  [key: string]: unknown;
+}
+
+export interface DataGridProps<T> {
+  data: T[];
+  columns: Column<T>[];
+  loading?: boolean;
+  error?: string | null;
+
+  // Pagination
+  pagination: PaginationInfo;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+
+  // Sorting
+  sortInfo: SortInfo;
+  onSort: (sortBy: string) => void;
+
+  // Search & Filter
+  onSearch: (searchTerm: string) => void;
+  onFilter: (filters: Omit<FilterInfo, "search">) => void;
+
+  // Actions
+  onAddNew?: () => void;
+  onEdit?: (item: T) => void;
+  onDelete?: (item: T) => void;
+  onView?: (item: T) => void;
+
+  // Configuration
+  title?: string;
+  addButtonText?: string;
+  entityName?: string;
+  pageSizeOptions?: number[];
+  enableSearch?: boolean;
+  enableFilters?: boolean;
+}
+
+// Generic response interface for API calls
+export interface ApiResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+// Props for individual components
+export interface GridTableProps<T> {
+  data: T[];
+  columns: Column<T>[];
+  sortInfo: SortInfo;
+  onSort: (sortBy: string) => void;
+  onEdit?: (item: T) => void;
+  onDelete?: (item: T) => void;
+  onView?: (item: T) => void;
+}
+
+export interface ActionMenuProps<T> {
+  item: T;
+  onEdit?: (item: T) => void;
+  onDelete?: (item: T) => void;
+  onView?: (item: T) => void;
+}
+
+export interface PaginationControlsProps {
+  pagination: PaginationInfo;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+  pageSizeOptions: number[];
+}
+
+export interface AdvancedFilterPanelProps<T> {
+  columns: Column<T>[];
+  onApplyFilters: (filters: Omit<FilterInfo, "search">) => void;
+  onClearFilters: () => void;
+  currentFilters: Omit<FilterInfo, "search">;
+}
+
+export interface EmptyStateProps {
+  hasFilters: boolean;
+  onClearFilters: () => void;
+  entityName: string;
+}
+
+export interface GridErrorProps {
+  message: string;
+  onRetry?: () => void;
+}
