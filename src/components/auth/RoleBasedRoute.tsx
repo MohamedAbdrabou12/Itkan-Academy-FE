@@ -1,5 +1,5 @@
 import { useGetMe } from "@/hooks/auth/useGetMe";
-import type { UserRole } from "@/types/User";
+import type { UserRole } from "@/types/Roles";
 import { Navigate, Outlet } from "react-router";
 import Spinner from "../shared/Spinner";
 

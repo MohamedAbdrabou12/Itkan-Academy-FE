@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  import.meta.env.VITE_APP_API_URL || "http://127.0.0.1:8000/api";
+  import.meta.env.VITE_APP_API_URL || "http://127.0.0.1:8000/api/v1";
 
 const apiReq = async (method: string, endpoint: string, body?: unknown) => {
   const options: RequestInit = {
