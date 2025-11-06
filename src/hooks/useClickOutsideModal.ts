@@ -12,7 +12,6 @@ export const useClickOutsideModal = (
     };
 
     const handleEscapeKey = (event: KeyboardEvent) => {
-      console.log("key detected");
       if (enabled && event.key === "Escape") callback();
     };
 

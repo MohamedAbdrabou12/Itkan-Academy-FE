@@ -7,6 +7,7 @@ import DashboardRouterPage from "@/pages/dashboards/DashboardRouter";
 import GeneralManagerDashboardPage from "@/pages/dashboards/GeneralManagerDashboard";
 import StudentDashboardPage from "@/pages/dashboards/StudentDashboard";
 import TeacherDashboardPage from "@/pages/dashboards/TeacherDashboard";
+import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AboutPage from "@/pages/student/AboutPage";
@@ -47,6 +48,7 @@ const App = () => {
           element={<RoleBasedRoute allowedRoles={[UserRole.GENERAL_MANAGER]} />}
         > */}
         <Route path="/roles-grid" element={<RolesGridPage />} />
+        <Route path="/branches-grid" element={<BranchesGridPage />} />
         {/* </Route> */}
 
         {/* DASHBOARD routes */}

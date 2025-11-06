@@ -67,14 +67,14 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
       {/* Left side - Page info and page size selector */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6">
         <div className="mb-2 text-sm text-gray-700 sm:mb-0">
-          Showing <span className="font-medium">{startItem}</span> to{" "}
-          <span className="font-medium">{endItem}</span> of{" "}
-          <span className="font-medium">{pagination.total}</span> results
+          عرض <span className="font-medium">{startItem}</span> إلى{" "}
+          <span className="font-medium">{endItem}</span> من{" "}
+          <span className="font-medium">{pagination.total}</span> نتيجة
         </div>
 
         <div className="flex items-center space-x-2">
           <label htmlFor="page-size" className="text-sm text-gray-700">
-            Show:
+            عرض:
           </label>
           <select
             id="page-size"
@@ -99,7 +99,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
           disabled={pagination.page === 1}
           className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Previous
+          السابق
         </button>
 
         {/* Page numbers */}
@@ -124,7 +124,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
 
         {/* Mobile page info */}
         <div className="text-sm text-gray-700 sm:hidden">
-          Page {pagination.page} of {pagination.totalPages}
+          صفحة {pagination.page} من {pagination.totalPages}
         </div>
 
         {/* Next button */}
@@ -133,7 +133,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
           disabled={pagination.page === pagination.totalPages}
           className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Next
+          التالي
         </button>
       </div>
     </div>

@@ -7,7 +7,7 @@ interface FormInputProps {
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
-  value?: string;
+  value?: string | null;
 }
 
 export const FormInput = ({
@@ -35,10 +35,10 @@ export const FormInput = ({
         {...register(name)}
         type={type}
         id={name}
-        value={value}
+        value={value || ""}
         placeholder={placeholder}
         disabled={disabled}
-        className={`block w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+        className={`block w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
           error
             ? "border-red-300 focus:border-red-500 focus:ring-red-500"
             : "border-gray-300 focus:border-blue-500"
