@@ -1,7 +1,4 @@
-import { useGetMe } from "@/hooks/auth/useGetMe";
-import { getHomePath } from "@/utils/getHomePath";
-import { Navigate, Outlet } from "react-router";
-import Spinner from "../shared/Spinner";
+import { Outlet } from "react-router";
 
 const GuestOnlyRoute = () => {
   // const { me, isPending } = useGetMe();
