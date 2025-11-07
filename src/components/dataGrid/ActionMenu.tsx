@@ -3,26 +3,26 @@ import type { ActionMenuProps } from "@/types/dataGrid";
 import { EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
 import { useState, useRef } from "react";
 
-const ActionMenu = ({
+const ActionMenu = <T extends Record<string, unknown>>({
   item,
   onEdit,
   onDelete,
   onView,
-}: ActionMenuProps<Record<string, unknown>>) => {
+}: ActionMenuProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const actions = [
     ...(onView
-      ? [{ label: "View", action: onView, icon: <Eye size={20} /> }]
+      ? [{ label: "رؤية", action: onView, icon: <Eye size={20} /> }]
       : []),
     ...(onEdit
-      ? [{ label: "Edit", action: onEdit, icon: <Pencil size={20} /> }]
+      ? [{ label: "تعديل", action: onEdit, icon: <Pencil size={20} /> }]
       : []),
     ...(onDelete
       ? [
           {
-            label: "Delete",
+            label: "الغاء",
             action: onDelete,
             icon: <Trash size={20} />,
             destructive: true,
@@ -47,7 +47,7 @@ const ActionMenu = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="absolute left-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
           <div className="py-1">
             {actions.map((action, index) => (
               <button

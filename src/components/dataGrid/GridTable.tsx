@@ -58,13 +58,13 @@ const GridTable = <T extends Record<string, unknown>>({
               return (
                 <th
                   key={String(column.key)}
-                  className="bg-gray-100 px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase"
+                  className="bg-gray-100 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700"
                   style={{ width: column.width }}
                 >
                   {isSortable ? (
                     <button
                       onClick={() => onSort(String(column.key))}
-                      className="group flex w-full items-center space-x-2 text-left hover:text-gray-900"
+                      className="group flex w-full items-center justify-center space-x-2 text-center hover:text-gray-900"
                     >
                       <span className="font-semibold">{column.title}</span>
                       <div className="flex items-center">
@@ -81,7 +81,7 @@ const GridTable = <T extends Record<string, unknown>>({
                     </button>
                   ) : (
                     // Non-sortable column - just display the title
-                    <span className="font-semibold text-gray-600">
+                    <span className="block w-full text-center font-semibold text-gray-600">
                       {column.title}
                     </span>
                   )}
@@ -89,8 +89,8 @@ const GridTable = <T extends Record<string, unknown>>({
               );
             })}
             {hasActions && (
-              <th className="bg-gray-100 px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-700 uppercase">
-                <span className="font-semibold text-gray-600">Actions</span>
+              <th className="bg-gray-100 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700">
+                <span className="font-semibold text-gray-600">الاجراءات</span>
               </th>
             )}
           </tr>
@@ -105,13 +105,13 @@ const GridTable = <T extends Record<string, unknown>>({
                     maxWidth: column.width || "200px",
                     width: column.width,
                   }}
-                  className="truncate px-6 py-4 text-sm whitespace-nowrap text-gray-900"
+                  className="truncate whitespace-nowrap px-6 py-4 text-center text-sm text-gray-900"
                 >
                   {renderCell(column, row)}
                 </td>
               ))}
               {hasActions && (
-                <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
+                <td className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
                   <ActionMenu
                     item={row}
                     onEdit={onEdit}

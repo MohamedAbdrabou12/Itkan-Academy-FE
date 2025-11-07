@@ -1,31 +1,39 @@
 import { FormInput } from "@/components/forms/FormInput";
+import { FormSelect } from "@/components/forms/FormSelect";
 import { FormTextArea } from "@/components/forms/FormTextArea";
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
-import { roleSchema, type RoleFormData } from "@/validation/roleSchema";
+import { branchSchema, type BranchFormData } from "@/validation/branchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-interface RoleFormModalProps {
+interface BranchFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: RoleFormData) => Promise<void>;
-  initialData?: RoleFormData;
+  onSubmit: (data: BranchFormData) => Promise<void>;
+  initialData?: BranchFormData;
   isSubmitting?: boolean;
+  isEditing?: boolean;
   closeOnBackdropClick?: boolean;
 }
 
-export const RoleFormModal = ({
+const statusOptions = [
+  { value: "active", label: "نشط" },
+  { value: "deactive", label: "غير نشط" },
+];
+
+export const BranchFormModal = ({
   isOpen,
   onClose,
   onSubmit,
   initialData,
   isSubmitting = false,
+  isEditing = false,
   closeOnBackdropClick = true,
-}: RoleFormModalProps) => {
+}: BranchFormModalProps) => {
   const ModalRef = useRef<HTMLDivElement>(null);
-  const methods = useForm<RoleFormData>({
-    resolver: zodResolver(roleSchema),
+  const methods = useForm<BranchFormData>({
+    resolver: zodResolver(branchSchema),
     defaultValues: initialData,
   });
 
@@ -45,7 +53,7 @@ export const RoleFormModal = ({
   /* Hook for click outside modal and escape button */
   useClickOutsideModal(ModalRef, handleClose, enabled);
 
-  const onFormSubmit = async (data: RoleFormData) => {
+  const onFormSubmit = async (data: BranchFormData) => {
     await onSubmit(data);
     reset();
     onClose();
@@ -56,8 +64,10 @@ export const RoleFormModal = ({
       reset(
         initialData || {
           name: "",
-          description: "",
-          name_in_arabic: "",
+          email: "",
+          phone: "",
+          address: "",
+          status: "active",
         },
       );
     }
@@ -80,13 +90,13 @@ export const RoleFormModal = ({
             <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
               {/* Header */}
               <div>
-                <h3 className="text-lg font-semibold leading-6 text-gray-900">
-                  {initialData ? "تعديل الوظيفة" : "إضافة وظيفة جديدة"}
+                <h3 className="text-right text-lg font-semibold leading-6 text-gray-900">
+                  {isEditing ? "تعديل الفرع" : "إضافة فرع جديد"}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  {initialData
-                    ? "قم بتحديث بيانات الوظيفة أدناه."
-                    : "املأ البيانات لإنشاء وظيفة جديدة."}
+                <p className="mt-1 text-right text-sm text-gray-500">
+                  {isEditing
+                    ? "قم بتحديث بيانات الفرع أدناه."
+                    : "املأ البيانات لإنشاء فرع جديد."}
                 </p>
               </div>
 
@@ -94,24 +104,33 @@ export const RoleFormModal = ({
               <div className="space-y-4">
                 <FormInput
                   name="name"
-                  label="الاسم بالإنجليزية"
+                  label="اسم الفرع"
                   required
-                  placeholder="أدخل الاسم بالإنجليزية"
-                />
-
-                <FormTextArea
-                  name="description"
-                  label="الوصف"
-                  required
-                  placeholder="ادخل وصف الوظيفة هنا..."
-                  rows={3}
+                  placeholder="أدخل اسم الفرع"
                 />
 
                 <FormInput
-                  name="name_in_arabic"
-                  label="الاسم بالعربية"
+                  name="email"
+                  label="البريد الإلكتروني"
+                  type="email"
                   required
-                  placeholder="أدخل الاسم بالعربية"
+                  placeholder="أدخل البريد الإلكتروني للفرع"
+                />
+
+                <FormInput name="phone" label="الهاتف" dir="ltr" />
+
+                <FormTextArea
+                  name="address"
+                  label="العنوان"
+                  placeholder="أدخل عنوان الفرع..."
+                  rows={3}
+                />
+
+                <FormSelect
+                  name="status"
+                  label="الحالة"
+                  options={statusOptions}
+                  required
                 />
               </div>
 
@@ -153,10 +172,10 @@ export const RoleFormModal = ({
                       </svg>
                       جاري الحفظ...
                     </span>
-                  ) : initialData ? (
-                    "تحديث الوظيفة"
+                  ) : isEditing ? (
+                    "تحديث الفرع"
                   ) : (
-                    "إنشاء الوظيفة"
+                    "إنشاء الفرع"
                   )}
                 </button>
               </div>

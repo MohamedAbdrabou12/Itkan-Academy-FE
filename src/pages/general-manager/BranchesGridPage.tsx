@@ -1,20 +1,20 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
 import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
-import { RoleFormModal } from "@/components/modals/RoleFormModal";
-import { useCreateRole } from "@/hooks/roles/useCreateRole";
-import { useDeleteRole } from "@/hooks/roles/useDeleteRole";
-import { useGetRoles } from "@/hooks/roles/useGetRoles";
-import { useUpdateRole } from "@/hooks/roles/useUpdateRole";
+import { BranchFormModal } from "@/components/modals/BranchFormModal";
+import { useCreateBranch } from "@/hooks/branches/useCreateBranch";
+import { useDeleteBranch } from "@/hooks/branches/useDeleteBranch";
+import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
+import { useUpdateBranch } from "@/hooks/branches/useUpdateBranch";
 import type { Column } from "@/types/dataGrid";
-import type { RoleDetails } from "@/types/Roles";
+import type { BranchDetails } from "@/types/Branches";
 import { formatDate } from "@/utils/formatDate";
-import type { RoleFormData } from "@/validation/roleSchema";
+import type { BranchFormData } from "@/validation/branchSchema";
 import { useState } from "react";
 
 const PAGE_SIZE = 5;
 const PAGE_SIZE_OPTIONS = [5, 10];
 
-const RolesGridPage = () => {
+const BranchesGridPage = () => {
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: PAGE_SIZE,
@@ -26,27 +26,32 @@ const RolesGridPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [editingRole, setEditingRole] = useState<RoleDetails | null>(null);
+  const [editingBranch, setEditingBranch] = useState<BranchDetails | null>(
+    null,
+  );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deletingRole, setDeletingRole] = useState<RoleDetails | null>(null);
+  const [deletingBranch, setDeletingBranch] = useState<BranchDetails | null>(
+    null,
+  );
 
-  // Use the hook with parameters
+  // Use the hook with parameters (you might need to update your hook to accept params)
   const {
-    roles,
+    branches,
     pagination: apiPagination,
     isPending,
     error,
     refetch,
-  } = useGetRoles({
+  } = useGetAllBranches({
     page: pagination.page,
     page_size: pagination.pageSize,
     search: searchTerm,
     sort_by: sortInfo.sortBy,
     sort_order: sortInfo.sortOrder,
   });
-  const createMutation = useCreateRole();
-  const updateMutation = useUpdateRole();
-  const deleteMutation = useDeleteRole();
+
+  const createMutation = useCreateBranch();
+  const updateMutation = useUpdateBranch();
+  const deleteMutation = useDeleteBranch();
 
   // Event handlers
   const handlePageChange = (page: number) => {
@@ -80,20 +85,20 @@ const RolesGridPage = () => {
   };
 
   const handleAddNew = () => {
-    setEditingRole(null);
+    setEditingBranch(null);
     setIsFormModalOpen(true);
   };
 
-  const handleEdit = (role: RoleDetails) => {
-    setEditingRole(role);
+  const handleEdit = (branch: BranchDetails) => {
+    setEditingBranch(branch);
     setIsFormModalOpen(true);
   };
 
   // Handle form submission
-  const handleFormSubmit = async (data: RoleFormData) => {
-    if (editingRole) {
+  const handleFormSubmit = async (data: BranchFormData) => {
+    if (editingBranch) {
       await updateMutation.mutateAsync({
-        id: editingRole.id,
+        id: editingBranch.id,
         ...data,
       });
     } else {
@@ -104,38 +109,57 @@ const RolesGridPage = () => {
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
-  const handleDelete = (role: RoleDetails) => {
-    setDeletingRole(role);
-    setIsDeleteModalOpen(true);
-  };
-
   const handleConfirmDelete = async () => {
-    if (deletingRole) {
-      await deleteMutation.mutateAsync(deletingRole.id);
+    if (deletingBranch) {
+      await deleteMutation.mutateAsync(deletingBranch.id);
       setIsDeleteModalOpen(false);
-      setDeletingRole(null);
+      setDeletingBranch(null);
       refetch();
     }
   };
 
-  const handleView = (role: RoleDetails) => {
-    console.log("View role:", role);
-    // Implement view role functionality
+  const handleView = (branch: BranchDetails) => {
+    console.log("View branch:", branch);
+    // Implement view branch functionality
   };
 
-  // Define columns for the DataGrid
-  const columns: Column<RoleDetails>[] = [
+  const columns: Column<BranchDetails>[] = [
     { key: "id", title: "#", sortable: true },
     {
       key: "name",
-      title: "الاسم بالانجليزية",
+      title: "الاسم",
       sortable: true,
     },
-    { key: "name_in_arabic", title: "الاسم بالعربية", sortable: true },
     {
-      key: "description",
-      title: "الوصف",
+      key: "email",
+      title: "البريد الالكتروني",
       sortable: true,
+    },
+    {
+      key: "phone",
+      title: "رقم الهاتف",
+      sortable: true,
+      render: (value: unknown) => (
+        <span dir="ltr" className="text-left">
+          {String(value)}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      title: "الحالة",
+      sortable: true,
+      render: (value: unknown) => (
+        <span
+          className={`rounded-full px-2 py-1 text-xs font-medium ${
+            value === "active"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {value === "active" ? "نشط" : "غير نشط"}
+        </span>
+      ),
     },
     {
       key: "created_at",
@@ -147,17 +171,17 @@ const RolesGridPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <DataGrid<RoleDetails>
-        title="ادارة الوظائف"
+      <DataGrid<BranchDetails>
+        title="ادارة الفروع"
         columns={columns}
-        data={roles}
+        data={branches}
         loading={isPending}
         error={error?.message || null}
         pagination={{
-          page: apiPagination.page,
-          pageSize: apiPagination.pageSize,
-          total: apiPagination.total,
-          totalPages: apiPagination.totalPages,
+          page: apiPagination?.page || 1,
+          pageSize: apiPagination?.pageSize || PAGE_SIZE,
+          total: apiPagination?.total || 0,
+          totalPages: apiPagination?.totalPages || 0,
         }}
         onPageChange={handlePageChange}
         onPageSizeChange={handlePageSizeChange}
@@ -167,45 +191,47 @@ const RolesGridPage = () => {
         onFilter={handleFilter}
         onAddNew={handleAddNew}
         onEdit={handleEdit}
-        onDelete={handleDelete}
         onView={handleView}
-        addButtonText="اضافة وظيفة"
-        entityName="وظيفة"
+        addButtonText="اضافة فرع"
+        entityName="فرع"
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={false} // Set to true if you implement filters
       />
 
-      <RoleFormModal
+      <BranchFormModal
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
         onSubmit={handleFormSubmit}
         initialData={
-          editingRole
+          editingBranch
             ? {
-                name: editingRole.name,
-                description: editingRole.description,
-                name_in_arabic: editingRole.name_in_arabic,
+                name: editingBranch.name,
+                email: editingBranch.email,
+                phone: editingBranch.phone,
+                address: editingBranch.address,
+                status: editingBranch.status,
               }
             : undefined
         }
         isSubmitting={isSubmitting}
+        isEditing={!!editingBranch}
       />
 
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
           setIsDeleteModalOpen(false);
-          setDeletingRole(null);
+          setDeletingBranch(null);
         }}
         onConfirm={handleConfirmDelete}
-        title="Delete Role"
-        description="Are you sure you want to delete this role? This action cannot be undone."
-        itemName={deletingRole?.name}
+        title="Delete Branch"
+        description="Are you sure you want to delete this branch? This action cannot be undone."
+        itemName={deletingBranch?.name}
         isDeleting={deleteMutation.isPending}
       />
     </div>
   );
 };
 
-export default RolesGridPage;
+export default BranchesGridPage;
