@@ -1,3 +1,5 @@
+import { useAuthStore } from "@/stores/auth";
+
 const API_BASE_URL =
   import.meta.env.VITE_APP_API_URL || "http://127.0.0.1:8000/api/v1";
 
@@ -5,10 +7,17 @@ const apiReq = async (method: string, endpoint: string, body?: unknown) => {
   const options: RequestInit = {
     method,
   };
-
+  const accessToken = useAuthStore.getState().access_token;
+  if (accessToken) {
+    options.headers = {
+      ...options.headers,
+      Authorization: `Bearer ${accessToken}`,
+    };
+  }
   if (body) {
     if (body instanceof FormData) {
       // The browser will automatically set Content-Type to 'multipart/form-data'
+
       options.body = body;
     } else {
       options.headers = {

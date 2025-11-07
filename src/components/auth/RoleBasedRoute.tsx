@@ -1,22 +1,17 @@
-import { useGetMe } from "@/hooks/auth/useGetMe";
+import { useAuthStore } from "@/stores/auth";
 import type { UserRole } from "@/types/Roles";
 import { Navigate, Outlet } from "react-router";
-import Spinner from "../shared/Spinner";
 
 interface RoleBasedRouteProps {
   allowedRoles: UserRole[];
 }
 
 export default function RoleBasedRoute({ allowedRoles }: RoleBasedRouteProps) {
-  // const { me, isPending } = useGetMe();
+  const user = useAuthStore((state) => state.user);
 
-  // if (isPending) return <Spinner />;
-
-  // if (!me) return <Navigate to="/login" replace />;
-
-  // if (!allowedRoles.includes(me.role)) {
-  //   return <Navigate to="/unauthorized" replace />;
-  // }
+  if (!user || !allowedRoles.includes(user.role_name)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
 
   return <Outlet />;
 }

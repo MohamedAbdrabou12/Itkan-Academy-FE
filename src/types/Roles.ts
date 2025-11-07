@@ -1,4 +1,3 @@
-
 export enum UserRole {
   STUDENT = "Student",
   TEACHER = "Teacher",
@@ -11,6 +10,7 @@ export enum UserRole {
   STAFF_AFFAIRS_MANAGER = "Staff Affairs Manager",
   STUDENT_AFFAIRS_MANAGER = "Student Affairs Manager",
   FINANCIAL_AFFAIRS_MANAGER = "Financial Affairs Manager",
+  ADMIN = "Admin",
 }
 
 export interface RoleDetails {
