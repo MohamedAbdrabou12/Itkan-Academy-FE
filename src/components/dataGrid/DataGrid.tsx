@@ -26,8 +26,8 @@ const DataGrid = <T extends Record<string, unknown>>({
   onEdit,
   onDelete,
   onView,
-  addButtonText = "Add New",
-  entityName = "items",
+  addButtonText = "اضافة عنصر",
+  entityName = "عنصر",
   pageSizeOptions = [10, 25, 50, 100],
   enableSearch = true,
   enableFilters = true,
@@ -71,7 +71,7 @@ const DataGrid = <T extends Record<string, unknown>>({
           onSearch={handleSearch}
           showFilters={showFilters}
           setShowFilters={setShowFilters}
-          searchPlaceholder={`Search ${entityName}...`}
+          searchPlaceholder={`ابحث عن ${entityName}...`}
           searchTerm={searchTerm}
           hasActiveFilters={hasActiveFilters}
           onClearFilters={handleClearFilters}

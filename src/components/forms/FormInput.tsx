@@ -7,7 +7,7 @@ interface FormInputProps {
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
-  value?: string;
+  dir?: "ltr" | "rtl";
 }
 
 export const FormInput = ({
@@ -15,9 +15,9 @@ export const FormInput = ({
   label,
   type = "text",
   required = false,
-  placeholder,
+  placeholder = "",
   disabled = false,
-  value,
+  dir = "rtl",
 }: FormInputProps) => {
   const {
     register,
@@ -28,17 +28,20 @@ export const FormInput = ({
 
   return (
     <div className="space-y-2">
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium text-gray-700"
+      >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <input
         {...register(name)}
         type={type}
         id={name}
-        value={value}
         placeholder={placeholder}
         disabled={disabled}
-        className={`block w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+        dir={dir}
+        className={`block w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
           error
             ? "border-red-300 focus:border-red-500 focus:ring-red-500"
             : "border-gray-300 focus:border-blue-500"
