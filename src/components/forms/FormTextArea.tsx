@@ -7,7 +7,6 @@ interface FormTextAreaProps {
   placeholder?: string;
   rows?: number;
   disabled?: boolean;
-  value?: string | null;
 }
 
 export const FormTextArea = ({
@@ -17,7 +16,6 @@ export const FormTextArea = ({
   placeholder,
   rows = 3,
   disabled = false,
-  value,
 }: FormTextAreaProps) => {
   const {
     register,
@@ -28,13 +26,15 @@ export const FormTextArea = ({
 
   return (
     <div className="space-y-2">
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium text-gray-700"
+      >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <textarea
         {...register(name)}
         id={name}
-        value={value || ""}
         rows={rows}
         placeholder={placeholder}
         disabled={disabled}

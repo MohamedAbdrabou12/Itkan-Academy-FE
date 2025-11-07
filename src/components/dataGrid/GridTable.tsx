@@ -90,7 +90,7 @@ const GridTable = <T extends Record<string, unknown>>({
             })}
             {hasActions && (
               <th className="bg-gray-100 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700">
-                <span className="font-semibold text-gray-600">Actions</span>
+                <span className="font-semibold text-gray-600">الاجراءات</span>
               </th>
             )}
           </tr>

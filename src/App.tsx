@@ -44,12 +44,12 @@ const App = () => {
         </Route>
 
         {/* General-Manager-only routes */}
-        {/* <Route
+        <Route
           element={<RoleBasedRoute allowedRoles={[UserRole.GENERAL_MANAGER]} />}
-        > */}
-        <Route path="/roles-grid" element={<RolesGridPage />} />
-        <Route path="/branches-grid" element={<BranchesGridPage />} />
-        {/* </Route> */}
+        >
+          <Route path="/roles-grid" element={<RolesGridPage />} />
+          <Route path="/branches-grid" element={<BranchesGridPage />} />
+        </Route>
 
         {/* DASHBOARD routes */}
         <Route path="/dashboard" element={<DashboardRouterPage />} />

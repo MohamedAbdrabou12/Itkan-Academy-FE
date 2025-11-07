@@ -11,7 +11,7 @@ export const useCreateBranch = () => {
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
+      queryClient.invalidateQueries({ queryKey: ["branches"] });
     },
   });
 };

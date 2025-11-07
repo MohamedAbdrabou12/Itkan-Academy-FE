@@ -11,8 +11,6 @@ interface FormSelectProps {
   options: SelectOption[];
   required?: boolean;
   disabled?: boolean;
-  placeholder?: string;
-  value?: string;
 }
 
 export const FormSelect = ({
@@ -21,8 +19,6 @@ export const FormSelect = ({
   options,
   required = false,
   disabled = false,
-  placeholder = "Select an option",
-  value,
 }: FormSelectProps) => {
   const {
     register,
@@ -33,21 +29,22 @@ export const FormSelect = ({
 
   return (
     <div className="space-y-2">
-      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium text-gray-700"
+      >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <select
         {...register(name)}
         id={name}
         disabled={disabled}
-        value={value}
-        className={`block w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+        className={`block w-full rounded-lg border px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
           error
             ? "border-red-300 focus:border-red-500 focus:ring-red-500"
             : "border-gray-300 focus:border-blue-500"
         } ${disabled ? "cursor-not-allowed bg-gray-100" : ""}`}
       >
-        <option value="">{placeholder}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

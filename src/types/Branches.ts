@@ -6,7 +6,7 @@ export enum BranchStatus {
 export interface BranchDetails {
   id: number;
   name: string;
-  email: string | null;
+  email: string;
   phone: string | null;
   address: string | null;
   status: BranchStatus;

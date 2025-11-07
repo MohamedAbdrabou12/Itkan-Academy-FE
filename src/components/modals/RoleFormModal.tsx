@@ -5,7 +5,7 @@ import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
 import { UserRole } from "@/types/Roles";
 import { roleSchema, type RoleFormData } from "@/validation/roleSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 interface RoleFormModalProps {
@@ -60,6 +60,18 @@ export const RoleFormModal = ({
     onClose();
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      reset(
+        initialData || {
+          name: "",
+          description: "",
+          name_in_arabic: "",
+        },
+      );
+    }
+  }, [isOpen, initialData, reset]);
+
   if (!isOpen) return null;
 
   return (
@@ -71,19 +83,19 @@ export const RoleFormModal = ({
         {/* Modal */}
         <div
           ref={ModalRef}
-          className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+          className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
         >
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
               {/* Header */}
               <div>
-                <h3 className="text-lg leading-6 font-semibold text-gray-900">
-                  {initialData ? "Edit Role" : "Add New Role"}
+                <h3 className="text-lg font-semibold leading-6 text-gray-900">
+                  {initialData ? "تعديل الوظيفة" : "إضافة وظيفة جديدة"}
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
                   {initialData
-                    ? "Update the role details below."
-                    : "Fill in the details to create a new role."}
+                    ? "قم بتحديث بيانات الوظيفة أدناه."
+                    : "املأ البيانات لإنشاء وظيفة جديدة."}
                 </p>
               </div>
 
@@ -91,29 +103,25 @@ export const RoleFormModal = ({
               <div className="space-y-4">
                 <FormSelect
                   name="name"
-                  label="Role Name"
+                  label="اسم الوظيفة بالإنجليزية"
                   options={roleOptions}
                   required
-                  placeholder="Select a role"
                   disabled={isEditing}
-                  value={initialData?.name}
                 />
 
                 <FormTextArea
                   name="description"
-                  label="Description"
+                  label="الوصف"
                   required
-                  placeholder="Enter role description..."
+                  placeholder="ادخل وصف الوظيفة هنا..."
                   rows={3}
-                  value={initialData?.description}
                 />
 
                 <FormInput
                   name="name_in_arabic"
-                  label="Name in Arabic"
+                  label="الاسم بالعربية"
                   required
                   placeholder="أدخل الاسم بالعربية"
-                  value={initialData?.name_in_arabic}
                 />
               </div>
 
@@ -123,17 +131,17 @@ export const RoleFormModal = ({
                   type="button"
                   onClick={handleClose}
                   disabled={isSubmitting}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
                 >
-                  Cancel
+                  إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting || !isDirty}
-                  className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSubmitting ? (
-                    <span className="flex items-center">
+                    <span className="gap-2 flex items-center">
                       <svg
                         className="mr-2 h-4 w-4 animate-spin"
                         viewBox="0 0 24 24"
@@ -153,12 +161,12 @@ export const RoleFormModal = ({
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         />
                       </svg>
-                      Saving...
+                      جاري الحفظ...
                     </span>
                   ) : initialData ? (
-                    "Update Role"
+                    "تحديث الوظيفة"
                   ) : (
-                    "Create Role"
+                    "إنشاء الوظيفة"
                   )}
                 </button>
               </div>

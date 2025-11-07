@@ -4,7 +4,7 @@ import { FormTextArea } from "@/components/forms/FormTextArea";
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
 import { branchSchema, type BranchFormData } from "@/validation/branchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 interface BranchFormModalProps {
@@ -18,8 +18,8 @@ interface BranchFormModalProps {
 }
 
 const statusOptions = [
-  { value: "active", label: "Active" },
-  { value: "deactive", label: "Deactive" },
+  { value: "active", label: "نشط" },
+  { value: "deactive", label: "غير نشط" },
 ];
 
 export const BranchFormModal = ({
@@ -59,6 +59,20 @@ export const BranchFormModal = ({
     onClose();
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      reset(
+        initialData || {
+          name: "",
+          email: "",
+          phone: "",
+          address: "",
+          status: "active",
+        },
+      );
+    }
+  }, [isOpen, initialData, reset]);
+
   if (!isOpen) return null;
 
   return (
@@ -76,13 +90,13 @@ export const BranchFormModal = ({
             <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
               {/* Header */}
               <div>
-                <h3 className="text-lg font-semibold leading-6 text-gray-900">
-                  {isEditing ? "Edit Branch" : "Add New Branch"}
+                <h3 className="text-right text-lg font-semibold leading-6 text-gray-900">
+                  {isEditing ? "تعديل الفرع" : "إضافة فرع جديد"}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-right text-sm text-gray-500">
                   {isEditing
-                    ? "Update the branch details below."
-                    : "Fill in the details to create a new branch."}
+                    ? "قم بتحديث بيانات الفرع أدناه."
+                    : "املأ البيانات لإنشاء فرع جديد."}
                 </p>
               </div>
 
@@ -90,42 +104,33 @@ export const BranchFormModal = ({
               <div className="space-y-4">
                 <FormInput
                   name="name"
-                  label="Branch Name"
+                  label="اسم الفرع"
                   required
-                  placeholder="Enter branch name"
-                  value={initialData?.name}
+                  placeholder="أدخل اسم الفرع"
                 />
 
                 <FormInput
                   name="email"
-                  label="Email"
+                  label="البريد الإلكتروني"
                   type="email"
-                  placeholder="Enter branch email"
-                  value={initialData?.email}
+                  required
+                  placeholder="أدخل البريد الإلكتروني للفرع"
                 />
 
-                <FormInput
-                  name="phone"
-                  label="Phone"
-                  placeholder="Enter branch phone number"
-                  value={initialData?.phone}
-                />
+                <FormInput name="phone" label="الهاتف" dir="ltr" />
 
                 <FormTextArea
                   name="address"
-                  label="Address"
-                  placeholder="Enter branch address..."
+                  label="العنوان"
+                  placeholder="أدخل عنوان الفرع..."
                   rows={3}
-                  value={initialData?.address}
                 />
 
                 <FormSelect
                   name="status"
-                  label="Status"
+                  label="الحالة"
                   options={statusOptions}
                   required
-                  placeholder="Select status"
-                  value={initialData?.status}
                 />
               </div>
 
@@ -137,7 +142,7 @@ export const BranchFormModal = ({
                   disabled={isSubmitting}
                   className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
                 >
-                  Cancel
+                  إلغاء
                 </button>
                 <button
                   type="submit"
@@ -145,7 +150,7 @@ export const BranchFormModal = ({
                   className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSubmitting ? (
-                    <span className="flex items-center">
+                    <span className="flex items-center gap-2">
                       <svg
                         className="mr-2 h-4 w-4 animate-spin"
                         viewBox="0 0 24 24"
@@ -165,12 +170,12 @@ export const BranchFormModal = ({
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         />
                       </svg>
-                      Saving...
+                      جاري الحفظ...
                     </span>
                   ) : isEditing ? (
-                    "Update Branch"
+                    "تحديث الفرع"
                   ) : (
-                    "Create Branch"
+                    "إنشاء الفرع"
                   )}
                 </button>
               </div>

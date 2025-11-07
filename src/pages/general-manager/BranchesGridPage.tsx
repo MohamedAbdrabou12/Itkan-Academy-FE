@@ -128,22 +128,21 @@ const BranchesGridPage = () => {
     // Implement view branch functionality
   };
 
-  // Define columns for the DataGrid
   const columns: Column<BranchDetails>[] = [
-    { key: "id", title: "ID", sortable: true },
+    { key: "id", title: "#", sortable: true },
     {
       key: "name",
-      title: "Name",
+      title: "الاسم",
       sortable: true,
     },
     {
       key: "email",
-      title: "Email",
+      title: "البريد الالكتروني",
       sortable: true,
     },
     {
       key: "phone",
-      title: "Phone",
+      title: "رقم الهاتف",
       sortable: true,
       render: (value: unknown) => (
         <span dir="ltr" className="text-left">
@@ -153,7 +152,7 @@ const BranchesGridPage = () => {
     },
     {
       key: "status",
-      title: "Status",
+      title: "الحالة",
       sortable: true,
       render: (value: unknown) => (
         <span
@@ -163,13 +162,13 @@ const BranchesGridPage = () => {
               : "bg-red-100 text-red-800"
           }`}
         >
-          {String(value).charAt(0).toUpperCase() + String(value).slice(1)}
+          {value === "active" ? "نشط" : "غير نشط"}
         </span>
       ),
     },
     {
       key: "created_at",
-      title: "Created At",
+      title: "تم انشاؤه",
       sortable: true,
       render: (value: unknown) => formatDate(value),
     },
