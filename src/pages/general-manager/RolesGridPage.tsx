@@ -190,7 +190,6 @@ const RolesGridPage = () => {
             : undefined
         }
         isSubmitting={isSubmitting}
-        isEditing={!!editingRole}
       />
 
       <DeleteConfirmationModal

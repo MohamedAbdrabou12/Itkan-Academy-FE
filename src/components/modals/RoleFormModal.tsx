@@ -1,8 +1,6 @@
 import { FormInput } from "@/components/forms/FormInput";
-import { FormSelect } from "@/components/forms/FormSelect";
 import { FormTextArea } from "@/components/forms/FormTextArea";
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
-import { UserRole } from "@/types/Roles";
 import { roleSchema, type RoleFormData } from "@/validation/roleSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef } from "react";
@@ -14,14 +12,8 @@ interface RoleFormModalProps {
   onSubmit: (data: RoleFormData) => Promise<void>;
   initialData?: RoleFormData;
   isSubmitting?: boolean;
-  isEditing?: boolean;
   closeOnBackdropClick?: boolean;
 }
-
-const roleOptions = Object.values(UserRole).map((role) => ({
-  value: role,
-  label: role,
-}));
 
 export const RoleFormModal = ({
   isOpen,
@@ -29,7 +21,6 @@ export const RoleFormModal = ({
   onSubmit,
   initialData,
   isSubmitting = false,
-  isEditing = false,
   closeOnBackdropClick = true,
 }: RoleFormModalProps) => {
   const ModalRef = useRef<HTMLDivElement>(null);
@@ -101,12 +92,11 @@ export const RoleFormModal = ({
 
               {/* Form Fields */}
               <div className="space-y-4">
-                <FormSelect
+                <FormInput
                   name="name"
-                  label="اسم الوظيفة بالإنجليزية"
-                  options={roleOptions}
+                  label="الاسم بالإنجليزية"
                   required
-                  disabled={isEditing}
+                  placeholder="أدخل الاسم بالإنجليزية"
                 />
 
                 <FormTextArea
@@ -141,7 +131,7 @@ export const RoleFormModal = ({
                   className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isSubmitting ? (
-                    <span className="gap-2 flex items-center">
+                    <span className="flex items-center gap-2">
                       <svg
                         className="mr-2 h-4 w-4 animate-spin"
                         viewBox="0 0 24 24"
