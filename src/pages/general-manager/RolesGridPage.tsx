@@ -125,21 +125,21 @@ const RolesGridPage = () => {
 
   // Define columns for the DataGrid
   const columns: Column<RoleDetails>[] = [
-    { key: "id", title: "ID", sortable: true },
+    { key: "id", title: "#", sortable: true },
     {
       key: "name",
-      title: "Name",
+      title: "الاسم بالانجليزية",
       sortable: true,
     },
-    { key: "name_in_arabic", title: "Name in Arabic", sortable: true },
+    { key: "name_in_arabic", title: "الاسم بالعربية", sortable: true },
     {
       key: "description",
-      title: "Description",
+      title: "الوصف",
       sortable: true,
     },
     {
       key: "created_at",
-      title: "Created At",
+      title: "تاريخ الانشاء",
       sortable: true,
       render: (value: unknown) => formatDate(value),
     },
@@ -148,7 +148,7 @@ const RolesGridPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <DataGrid<RoleDetails>
-        title="Manage Roles"
+        title="ادارة الوظائف"
         columns={columns}
         data={roles}
         loading={isPending}
@@ -169,8 +169,8 @@ const RolesGridPage = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onView={handleView}
-        addButtonText="Add Role"
-        entityName="roles"
+        addButtonText="اضافة وظيفة"
+        entityName="وظيفة"
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={false} // Set to true if you implement filters

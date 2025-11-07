@@ -109,11 +109,6 @@ const BranchesGridPage = () => {
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
-  const handleDelete = (branch: BranchDetails) => {
-    setDeletingBranch(branch);
-    setIsDeleteModalOpen(true);
-  };
-
   const handleConfirmDelete = async () => {
     if (deletingBranch) {
       await deleteMutation.mutateAsync(deletingBranch.id);
@@ -168,7 +163,7 @@ const BranchesGridPage = () => {
     },
     {
       key: "created_at",
-      title: "تم انشاؤه",
+      title: "تاريخ الانشاء",
       sortable: true,
       render: (value: unknown) => formatDate(value),
     },
@@ -196,7 +191,6 @@ const BranchesGridPage = () => {
         onFilter={handleFilter}
         onAddNew={handleAddNew}
         onEdit={handleEdit}
-        onDelete={handleDelete}
         onView={handleView}
         addButtonText="اضافة فرع"
         entityName="فرع"
