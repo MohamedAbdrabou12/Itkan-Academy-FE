@@ -39,7 +39,7 @@ const RolesGridPage = () => {
     refetch,
   } = useGetRoles({
     page: pagination.page,
-    page_size: pagination.pageSize,
+    size: pagination.pageSize,
     search: searchTerm,
     sort_by: sortInfo.sortBy,
     sort_order: sortInfo.sortOrder,
@@ -118,10 +118,10 @@ const RolesGridPage = () => {
     }
   };
 
-  const handleView = (role: RoleDetails) => {
-    console.log("View role:", role);
-    // Implement view role functionality
-  };
+  // const handleView = (role: RoleDetails) => {
+  //   console.log("View role:", role);
+  //   // Implement view role functionality
+  // };
 
   // Define columns for the DataGrid
   const columns: Column<RoleDetails>[] = [
@@ -168,7 +168,7 @@ const RolesGridPage = () => {
         onAddNew={handleAddNew}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        onView={handleView}
+        // onView={handleView}
         addButtonText="اضافة وظيفة"
         entityName="وظيفة"
         pageSizeOptions={PAGE_SIZE_OPTIONS}
@@ -199,9 +199,9 @@ const RolesGridPage = () => {
           setDeletingRole(null);
         }}
         onConfirm={handleConfirmDelete}
-        title="Delete Role"
-        description="Are you sure you want to delete this role? This action cannot be undone."
-        itemName={deletingRole?.name}
+        title="حذف الوظيفة"
+        description="هل أنت متأكد من أنك تريد حذف هذا الوظيفة؟ لا يمكن التراجع عن هذا الإجراء."
+        itemName={deletingRole?.name_in_arabic}
         isDeleting={deleteMutation.isPending}
       />
     </div>

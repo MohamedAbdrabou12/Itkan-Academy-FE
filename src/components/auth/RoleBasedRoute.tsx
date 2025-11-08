@@ -7,11 +7,11 @@ interface RoleBasedRouteProps {
 }
 
 export default function RoleBasedRoute({ allowedRoles }: RoleBasedRouteProps) {
-  const user = useAuthStore((state) => state.user);
+  // const user = useAuthStore((state) => state.user);
 
-  if (!user || !allowedRoles.includes(user.role_name)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
+  // if (!user || !allowedRoles.includes(user.role_name)) {
+  //   return <Navigate to="/unauthorized" replace />;
+  // }
 
   return <Outlet />;
 }

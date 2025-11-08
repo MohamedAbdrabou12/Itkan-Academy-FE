@@ -1,9 +1,10 @@
 import apiReq from "@/services/apiReq";
+import type { RolesResponse } from "@/types/Roles";
 import { useQuery } from "@tanstack/react-query";
 
 interface RoleQueryParams {
   page?: number;
-  page_size?: number;
+  size?: number;
   search?: string;
   sort_by?: string;
   sort_order?: "asc" | "desc";
@@ -12,25 +13,20 @@ interface RoleQueryParams {
 export const useGetRoles = (params: RoleQueryParams = {}) => {
   const defaultParams = {
     page: 1,
-    page_size: 10,
+    size: 10,
     sort_by: "name",
     sort_order: "asc" as const,
     ...params,
   };
 
-  const {
-    data: rolesData,
-    isPending,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isPending, error, refetch } = useQuery<RolesResponse>({
     queryKey: ["roles", defaultParams],
     queryFn: async () => {
       const queryParams = new URLSearchParams();
 
       // Always include pagination and sorting with defaults
       queryParams.append("page", defaultParams.page.toString());
-      queryParams.append("page_size", defaultParams.page_size.toString());
+      queryParams.append("size", defaultParams.size.toString());
       queryParams.append("sort_by", defaultParams.sort_by);
       queryParams.append("sort_order", defaultParams.sort_order);
 
@@ -46,12 +42,12 @@ export const useGetRoles = (params: RoleQueryParams = {}) => {
   });
 
   return {
-    roles: rolesData?.data || [],
+    roles: data?.items || [],
     pagination: {
-      total: rolesData?.total || 0,
-      page: rolesData?.page || defaultParams.page,
-      pageSize: rolesData?.page_size || defaultParams.page_size,
-      totalPages: rolesData?.total_pages || 1,
+      total: data?.total || 0,
+      page: data?.page || defaultParams.page,
+      pageSize: data?.size || defaultParams.size,
+      totalPages: data?.pages || 1,
     },
     isPending,
     error,

@@ -15,11 +15,9 @@ export interface BranchDetails {
 }
 
 export interface BranchesResponse {
-  branches: BranchDetails[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-  };
+  items: BranchDetails[];
+  total: number;
+  page: number;
+  size: number;
+  pages: number;
 }

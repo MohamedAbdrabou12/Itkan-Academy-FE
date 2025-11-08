@@ -43,7 +43,7 @@ const BranchesGridPage = () => {
     refetch,
   } = useGetAllBranches({
     page: pagination.page,
-    page_size: pagination.pageSize,
+    size: pagination.pageSize,
     search: searchTerm,
     sort_by: sortInfo.sortBy,
     sort_order: sortInfo.sortOrder,
@@ -118,10 +118,10 @@ const BranchesGridPage = () => {
     }
   };
 
-  const handleView = (branch: BranchDetails) => {
-    console.log("View branch:", branch);
-    // Implement view branch functionality
-  };
+  // const handleView = (branch: BranchDetails) => {
+  //   console.log("View branch:", branch);
+  //   // Implement view branch functionality
+  // };
 
   const columns: Column<BranchDetails>[] = [
     { key: "id", title: "#", sortable: true },
@@ -191,7 +191,7 @@ const BranchesGridPage = () => {
         onFilter={handleFilter}
         onAddNew={handleAddNew}
         onEdit={handleEdit}
-        onView={handleView}
+        // onView={handleView}
         addButtonText="اضافة فرع"
         entityName="فرع"
         pageSizeOptions={PAGE_SIZE_OPTIONS}

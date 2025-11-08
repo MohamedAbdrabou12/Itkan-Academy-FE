@@ -1,30 +1,25 @@
 import apiReq from "@/services/apiReq";
+import type { BranchesResponse } from "@/types/Branches";
 import { useQuery } from "@tanstack/react-query";
 
-// Update the hook signature to accept these parameters
 interface UseGetAllBranchesParams {
   page?: number;
-  page_size?: number;
+  size?: number;
   search?: string;
   sort_by?: string;
   sort_order?: "asc" | "desc";
 }
 
 export const useGetAllBranches = (params?: UseGetAllBranchesParams) => {
-  const {
-    data: response,
-    isPending,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isPending, error, refetch } = useQuery<BranchesResponse>({
     queryKey: ["branches", params],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
 
       // Add params to URL if they exist
       if (params?.page) searchParams.append("page", params.page.toString());
-      if (params?.page_size)
-        searchParams.append("page_size", params.page_size.toString());
+      if (params?.size)
+        searchParams.append("size", params.size.toString());
       if (params?.search) searchParams.append("search", params.search);
       if (params?.sort_by) searchParams.append("sort_by", params.sort_by);
       if (params?.sort_order)
@@ -38,12 +33,12 @@ export const useGetAllBranches = (params?: UseGetAllBranchesParams) => {
   });
 
   return {
-    branches: response?.branches || [],
-    pagination: response?.pagination || {
-      page: 1,
-      pageSize: params?.page_size || 10,
-      total: 0,
-      totalPages: 0,
+    branches: data?.items || [],
+    pagination: {
+      page: data?.page || 1,
+      pageSize: data?.size || 10,
+      total: data?.total || 0,
+      totalPages: data?.pages || 0,
     },
     isPending,
     error,

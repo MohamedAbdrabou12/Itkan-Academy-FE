@@ -23,9 +23,9 @@ export interface RoleDetails {
 }
 
 export interface RolesResponse {
-  data: RoleDetails[];
+  items: RoleDetails[];
   total: number;
   page: number;
-  page_size: number;
-  total_pages: number;
+  size: number;
+  pages: number;
 }
