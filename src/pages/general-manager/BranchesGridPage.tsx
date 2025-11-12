@@ -7,7 +7,6 @@ import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useUpdateBranch } from "@/hooks/branches/useUpdateBranch";
 import type { Column } from "@/types/dataGrid";
 import type { BranchDetails } from "@/types/Branches";
-import { formatDate } from "@/utils/formatDate";
 import type { BranchFormData } from "@/validation/branchSchema";
 import { useState } from "react";
 
@@ -155,12 +154,6 @@ const BranchesGridPage = () => {
           {value === "active" ? "نشط" : "غير نشط"}
         </span>
       ),
-    },
-    {
-      key: "created_at",
-      title: "تاريخ الانشاء",
-      sortable: true,
-      render: (value: unknown) => formatDate(value),
     },
   ];
 

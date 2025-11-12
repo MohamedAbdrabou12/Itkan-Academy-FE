@@ -18,6 +18,7 @@ export interface RoleDetails {
   name: UserRole;
   description: string;
   name_ar: string;
+  permissions_count: number;
   created_at: string;
   [key: string]: unknown; // index signature
 }

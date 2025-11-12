@@ -1,13 +1,13 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
 import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
 import { RoleFormModal } from "@/components/modals/RoleFormModal";
+import RolePermissionsModal from "@/components/modals/RolePermissionsModal";
 import { useCreateRole } from "@/hooks/roles/useCreateRole";
 import { useDeleteRole } from "@/hooks/roles/useDeleteRole";
 import { useGetRoles } from "@/hooks/roles/useGetRoles";
 import { useUpdateRole } from "@/hooks/roles/useUpdateRole";
 import type { Column } from "@/types/dataGrid";
 import type { RoleDetails } from "@/types/Roles";
-import { formatDate } from "@/utils/formatDate";
 import type { RoleFormData } from "@/validation/roleSchema";
 import { useState } from "react";
 
@@ -26,6 +26,8 @@ const RolesGridPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<RoleDetails | null>(null);
   const [editingRole, setEditingRole] = useState<RoleDetails | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deletingRole, setDeletingRole] = useState<RoleDetails | null>(null);
@@ -84,6 +86,11 @@ const RolesGridPage = () => {
     setIsFormModalOpen(true);
   };
 
+  const handleManagePermissions = (role: RoleDetails) => {
+    setSelectedRole(role);
+    setIsPermissionsModalOpen(true);
+  };
+
   // Handle form submission
   const handleFormSubmit = async (data: RoleFormData) => {
     if (editingRole) {
@@ -113,11 +120,6 @@ const RolesGridPage = () => {
     }
   };
 
-  // const handleView = (role: RoleDetails) => {
-  //   console.log("View role:", role);
-  //   // Implement view role functionality
-  // };
-
   // Define columns for the DataGrid
   const columns: Column<RoleDetails>[] = [
     { key: "id", title: "#", sortable: true },
@@ -128,15 +130,25 @@ const RolesGridPage = () => {
     },
     { key: "name_ar", title: "الاسم بالعربية", sortable: true },
     {
-      key: "description",
-      title: "الوصف",
+      key: "description_ar",
+      title: "الوصف بالعربية",
       sortable: true,
     },
     {
-      key: "created_at",
-      title: "تاريخ الانشاء",
-      sortable: true,
-      render: (value: unknown) => formatDate(value),
+      key: "permissions_count",
+      title: "الصلاحيات",
+      sortable: false,
+      render: (value: unknown, row: RoleDetails) => (
+        <div className="text-cneter flex justify-center gap-2">
+          <span>{(value as number) || 0} صلاحيات</span>
+          <button
+            onClick={() => handleManagePermissions(row)}
+            className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800"
+          >
+            إدارة
+          </button>
+        </div>
+      ),
     },
   ];
 
@@ -162,14 +174,14 @@ const RolesGridPage = () => {
         onAddNew={handleAddNew}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        // onView={handleView}
         addButtonText="اضافة وظيفة"
         entityName="وظيفة"
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
-        enableFilters={false} // Set to true if you implement filters
+        enableFilters={false}
       />
 
+      {/* Role Form Modal */}
       {isFormModalOpen && (
         <RoleFormModal
           isOpen={isFormModalOpen}
@@ -185,9 +197,24 @@ const RolesGridPage = () => {
               : undefined
           }
           isSubmitting={isSubmitting}
+          isEditing={!!editingRole}
         />
       )}
 
+      {/* Permissions Modal */}
+      {isPermissionsModalOpen && selectedRole && (
+        <RolePermissionsModal
+          isOpen={isPermissionsModalOpen}
+          onClose={() => {
+            setIsPermissionsModalOpen(false);
+            setEditingRole(null);
+          }}
+          role={selectedRole}
+          onPermissionsUpdated={refetch}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
         <DeleteConfirmationModal
           isOpen={isDeleteModalOpen}
