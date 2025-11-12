@@ -74,11 +74,6 @@ const RolesGridPage = () => {
     setPagination((prev) => ({ ...prev, page: 1 })); // Reset to first page when searching
   };
 
-  const handleFilter = (filters: Record<string, unknown>) => {
-    // If you want to implement filters later, add them here
-    console.log("Filters applied:", filters);
-  };
-
   const handleAddNew = () => {
     setEditingRole(null);
     setIsFormModalOpen(true);
@@ -131,7 +126,7 @@ const RolesGridPage = () => {
       title: "الاسم بالانجليزية",
       sortable: true,
     },
-    { key: "name_in_arabic", title: "الاسم بالعربية", sortable: true },
+    { key: "name_ar", title: "الاسم بالعربية", sortable: true },
     {
       key: "description",
       title: "الوصف",
@@ -164,7 +159,6 @@ const RolesGridPage = () => {
         sortInfo={sortInfo}
         onSort={handleSort}
         onSearch={handleSearch}
-        onFilter={handleFilter}
         onAddNew={handleAddNew}
         onEdit={handleEdit}
         onDelete={handleDelete}
@@ -176,34 +170,38 @@ const RolesGridPage = () => {
         enableFilters={false} // Set to true if you implement filters
       />
 
-      <RoleFormModal
-        isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
-        onSubmit={handleFormSubmit}
-        initialData={
-          editingRole
-            ? {
-                name: editingRole.name,
-                description: editingRole.description,
-                name_in_arabic: editingRole.name_in_arabic,
-              }
-            : undefined
-        }
-        isSubmitting={isSubmitting}
-      />
+      {isFormModalOpen && (
+        <RoleFormModal
+          isOpen={isFormModalOpen}
+          onClose={() => setIsFormModalOpen(false)}
+          onSubmit={handleFormSubmit}
+          initialData={
+            editingRole
+              ? {
+                  name: editingRole.name,
+                  description: editingRole.description,
+                  name_ar: editingRole.name_ar,
+                }
+              : undefined
+          }
+          isSubmitting={isSubmitting}
+        />
+      )}
 
-      <DeleteConfirmationModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setDeletingRole(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        title="حذف الوظيفة"
-        description="هل أنت متأكد من أنك تريد حذف هذا الوظيفة؟ لا يمكن التراجع عن هذا الإجراء."
-        itemName={deletingRole?.name_in_arabic}
-        isDeleting={deleteMutation.isPending}
-      />
+      {isDeleteModalOpen && (
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setDeletingRole(null);
+          }}
+          onConfirm={handleConfirmDelete}
+          title="حذف الوظيفة"
+          description="هل أنت متأكد من أنك تريد حذف هذا الوظيفة؟ لا يمكن التراجع عن هذا الإجراء."
+          itemName={deletingRole?.name_ar}
+          isDeleting={deleteMutation.isPending}
+        />
+      )}
     </div>
   );
 };

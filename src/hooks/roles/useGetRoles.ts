@@ -1,6 +1,7 @@
 import apiReq from "@/services/apiReq";
 import type { RolesResponse } from "@/types/Roles";
 import { useQuery } from "@tanstack/react-query";
+import { useDebounce } from "../useDebounce";
 
 interface RoleQueryParams {
   page?: number;
@@ -11,6 +12,8 @@ interface RoleQueryParams {
 }
 
 export const useGetRoles = (params: RoleQueryParams = {}) => {
+  const debouncedSearch = useDebounce(params?.search, 300);
+
   const defaultParams = {
     page: 1,
     size: 10,
@@ -20,7 +23,7 @@ export const useGetRoles = (params: RoleQueryParams = {}) => {
   };
 
   const { data, isPending, error, refetch } = useQuery<RolesResponse>({
-    queryKey: ["roles", defaultParams],
+    queryKey: ["roles", { ...params, search: debouncedSearch }],
     queryFn: async () => {
       const queryParams = new URLSearchParams();
 
@@ -29,11 +32,7 @@ export const useGetRoles = (params: RoleQueryParams = {}) => {
       queryParams.append("size", defaultParams.size.toString());
       queryParams.append("sort_by", defaultParams.sort_by);
       queryParams.append("sort_order", defaultParams.sort_order);
-
-      // Add search if provided
-      if (defaultParams.search) {
-        queryParams.append("search", defaultParams.search);
-      }
+      if (debouncedSearch) queryParams.append("search", debouncedSearch);
 
       const url = `/roles?${queryParams.toString()}`;
       const response = await apiReq("GET", url);

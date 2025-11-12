@@ -1,7 +1,6 @@
-import type { DataGridProps } from "@/types/dataGrid";
+import type { DataGridProps, FilterValue } from "@/types/dataGrid";
 import { useState } from "react";
 import Spinner from "../shared/Spinner";
-import AdvancedFilterPanel from "./AdvancedFilterPannel";
 import EmptyState from "./EmptyState";
 import GridError from "./GridError";
 import GridHeader from "./GridHeader";
@@ -21,7 +20,6 @@ const DataGrid = <T extends Record<string, unknown>>({
   sortInfo,
   onSort,
   onSearch,
-  onFilter,
   onAddNew,
   onEdit,
   onDelete,
@@ -33,24 +31,18 @@ const DataGrid = <T extends Record<string, unknown>>({
   enableFilters = true,
 }: DataGridProps<T>) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-  const [localFilters, setLocalFilters] = useState<Record<string, unknown>>({});
+  const [localFilters, setLocalFilters] = useState<Record<string, FilterValue>>(
+    {},
+  );
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
     onSearch(term);
   };
 
-  const handleApplyFilters = (filters: Record<string, unknown>) => {
-    setLocalFilters(filters);
-    onFilter(filters);
-    setShowFilters(false);
-  };
-
   const handleClearFilters = () => {
     setLocalFilters({});
     setSearchTerm("");
-    onFilter({});
     onSearch("");
   };
 
@@ -69,22 +61,8 @@ const DataGrid = <T extends Record<string, unknown>>({
       {(enableSearch || enableFilters) && (
         <SearchFilterBar
           onSearch={handleSearch}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
           searchPlaceholder={`ابحث عن ${entityName}...`}
           searchTerm={searchTerm}
-          hasActiveFilters={hasActiveFilters}
-          onClearFilters={handleClearFilters}
-        />
-      )}
-
-      {/* Advanced Filter Panel */}
-      {showFilters && enableFilters && (
-        <AdvancedFilterPanel
-          columns={columns}
-          onApplyFilters={handleApplyFilters}
-          onClearFilters={handleClearFilters}
-          currentFilters={localFilters}
         />
       )}
 

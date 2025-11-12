@@ -7,8 +7,8 @@ export interface BranchDetails {
   id: number;
   name: string;
   email: string;
-  phone: string | null;
-  address: string | null;
+  phone?: string;
+  address?: string;
   status: BranchStatus;
   created_at: string;
   [key: string]: unknown; // index signature

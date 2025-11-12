@@ -17,7 +17,7 @@ export interface RoleDetails {
   id: number;
   name: UserRole;
   description: string;
-  name_in_arabic: string;
+  name_ar: string;
   created_at: string;
   [key: string]: unknown; // index signature
 }

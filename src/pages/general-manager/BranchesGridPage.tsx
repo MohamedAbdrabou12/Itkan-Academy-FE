@@ -79,11 +79,6 @@ const BranchesGridPage = () => {
     setPagination((prev) => ({ ...prev, page: 1 })); // Reset to first page when searching
   };
 
-  const handleFilter = (filters: Record<string, unknown>) => {
-    // If you want to implement filters later, add them here
-    console.log("Filters applied:", filters);
-  };
-
   const handleAddNew = () => {
     setEditingBranch(null);
     setIsFormModalOpen(true);
@@ -188,7 +183,6 @@ const BranchesGridPage = () => {
         sortInfo={sortInfo}
         onSort={handleSort}
         onSearch={handleSearch}
-        onFilter={handleFilter}
         onAddNew={handleAddNew}
         onEdit={handleEdit}
         // onView={handleView}
@@ -196,40 +190,50 @@ const BranchesGridPage = () => {
         entityName="فرع"
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
-        enableFilters={false} // Set to true if you implement filters
+        enableFilters={true}
       />
 
-      <BranchFormModal
-        isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
-        onSubmit={handleFormSubmit}
-        initialData={
-          editingBranch
-            ? {
-                name: editingBranch.name,
-                email: editingBranch.email,
-                phone: editingBranch.phone,
-                address: editingBranch.address,
-                status: editingBranch.status,
-              }
-            : undefined
-        }
-        isSubmitting={isSubmitting}
-        isEditing={!!editingBranch}
-      />
+      {isFormModalOpen && (
+        <BranchFormModal
+          isOpen={isFormModalOpen}
+          onClose={() => setIsFormModalOpen(false)}
+          onSubmit={handleFormSubmit}
+          initialData={
+            editingBranch
+              ? {
+                  name: editingBranch.name,
+                  email: editingBranch.email,
+                  phone: editingBranch.phone,
+                  address: editingBranch.address,
+                  status: editingBranch.status,
+                }
+              : {
+                  name: "",
+                  email: "",
+                  phone: "",
+                  address: "",
+                  status: "active",
+                }
+          }
+          isSubmitting={isSubmitting}
+          isEditing={!!editingBranch}
+        />
+      )}
 
-      <DeleteConfirmationModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setDeletingBranch(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        title="Delete Branch"
-        description="Are you sure you want to delete this branch? This action cannot be undone."
-        itemName={deletingBranch?.name}
-        isDeleting={deleteMutation.isPending}
-      />
+      {isDeleteModalOpen && (
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setDeletingBranch(null);
+          }}
+          onConfirm={handleConfirmDelete}
+          title="Delete Branch"
+          description="Are you sure you want to delete this branch? This action cannot be undone."
+          itemName={deletingBranch?.name}
+          isDeleting={deleteMutation.isPending}
+        />
+      )}
     </div>
   );
 };

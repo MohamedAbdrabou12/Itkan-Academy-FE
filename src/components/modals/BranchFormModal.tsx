@@ -1,6 +1,6 @@
 import type { FormComponents, FormField } from "@/types/Forms";
 import { branchSchema, type BranchFormData } from "@/validation/branchSchema";
-import { FormInput } from "lucide-react";
+import { FormInput } from "../forms/FormInput";
 import { FormSelect } from "../forms/FormSelect";
 import { FormTextArea } from "../forms/FormTextArea";
 import { GenericFormModal } from "./GenericFormModal";
@@ -15,22 +15,37 @@ interface BranchFormModalProps {
   closeOnBackdropClick?: boolean;
 }
 
-export const BranchFormModal = (props: BranchFormModalProps) => (
-  <GenericFormModal
-    {...props}
-    schema={branchSchema}
-    fields={branchFields}
-    title={props.isEditing ? "تعديل الفرع" : "إضافة فرع جديد"}
-    description={
-      props.isEditing
-        ? "قم بتحديث بيانات الفرع أدناه."
-        : "املأ البيانات لإنشاء فرع جديد."
-    }
-    submitButtonText="إنشاء الفرع"
-    editingSubmitButtonText="تحديث الفرع"
-    formComponents={formComponents}
-  />
-);
+export const BranchFormModal = (props: BranchFormModalProps) => {
+  const getInitialData = () => {
+    if (props.initialData) return props.initialData;
+
+    // Default values for new branch
+    return {
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      status: "active" as const,
+    };
+  };
+  return (
+    <GenericFormModal
+      {...props}
+      schema={branchSchema}
+      fields={branchFields}
+      title={props.isEditing ? "تعديل الفرع" : "إضافة فرع جديد"}
+      description={
+        props.isEditing
+          ? "قم بتحديث بيانات الفرع أدناه."
+          : "املأ البيانات لإنشاء فرع جديد."
+      }
+      submitButtonText="إنشاء الفرع"
+      editingSubmitButtonText="تحديث الفرع"
+      formComponents={formComponents}
+      initialData={getInitialData()}
+    />
+  );
+};
 
 const branchFields: FormField[] = [
   {

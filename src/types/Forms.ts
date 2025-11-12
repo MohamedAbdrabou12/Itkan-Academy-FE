@@ -16,6 +16,10 @@ export interface FormComponents {
     type?: string;
     required?: boolean;
     placeholder?: string;
+    value: string;
+    onChange: (value: string) => void;
+    onBlur: () => void;
+    error?: string;
     dir?: "ltr" | "rtl";
   }>;
   TextArea: React.ComponentType<{
@@ -23,12 +27,20 @@ export interface FormComponents {
     label: string;
     required?: boolean;
     placeholder?: string;
+    value: string;
+    onChange: (value: string) => void;
+    onBlur: () => void;
+    error?: string;
     rows?: number;
   }>;
   Select: React.ComponentType<{
     name: string;
     label: string;
     required?: boolean;
-    options: { value: string; label: string }[];
+    value: string;
+    onChange: (value: string) => void;
+    onBlur: () => void;
+    error?: string;
+    options: Array<{ value: string; label: string }>;
   }>;
 }

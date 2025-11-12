@@ -42,9 +42,8 @@ export interface DataGridProps<T> {
   sortInfo: SortInfo;
   onSort: (sortBy: string) => void;
 
-  // Search & Filter
+  // Search
   onSearch: (searchTerm: string) => void;
-  onFilter: (filters: Omit<FilterInfo, "search">) => void;
 
   // Actions
   onAddNew?: () => void;
@@ -93,13 +92,6 @@ export interface PaginationControlsProps {
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
   pageSizeOptions: number[];
-}
-
-export interface AdvancedFilterPanelProps<T> {
-  columns: Column<T>[];
-  onApplyFilters: (filters: Omit<FilterInfo, "search">) => void;
-  onClearFilters: () => void;
-  currentFilters: Omit<FilterInfo, "search">;
 }
 
 export interface EmptyStateProps {
