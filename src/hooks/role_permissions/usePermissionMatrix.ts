@@ -1,26 +1,32 @@
 import type { Permission } from "@/types/permissions";
+import { useEffect, useState } from "react";
+import { useGetAllAvailablePermissions } from "../permissions/useGetAllAvailablePermissions";
 import { useGetRolePermissions } from "./useGetRolePermissions";
 import { useUpdateRolePermissions } from "./useUpdateRolePermissions";
-import { useState, useEffect } from "react";
 
 export const usePermissionMatrix = (roleId: number) => {
-  const { data, isLoading } = useGetRolePermissions(roleId);
+  const { data: rolePermissions, isLoading: isRolePermissionsLoading } =
+    useGetRolePermissions(roleId);
+  const {
+    permissions: availablePermissions,
+    isLoading: isAvailablePermissionsLoading,
+  } = useGetAllAvailablePermissions();
   const updatePermissionsMutation = useUpdateRolePermissions();
 
   // Local state for managing changes before saving
   const [localAssignedIds, setLocalAssignedIds] = useState<number[]>([]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+  const isLoading = isRolePermissionsLoading || isAvailablePermissionsLoading;
+
   // Initialize local state when data loads
   useEffect(() => {
-    if (data?.role_permissions) {
-      const initialIds = data.role_permissions.map((rp) => rp.permission_id);
+    if (rolePermissions) {
+      const initialIds = rolePermissions.map((rp) => rp.permission_id);
       setLocalAssignedIds(initialIds);
       setHasUnsavedChanges(false);
     }
-  }, [data?.role_permissions]);
-
-  const availablePermissions = data?.available_permissions || [];
+  }, [rolePermissions]);
 
   // Group permissions by category, module, and action for matrix display
   const getPermissionMatrix = () => {
@@ -33,7 +39,7 @@ export const usePermissionMatrix = (roleId: number) => {
     const modules: Record<string, Set<string>> = {}; // category -> modules
     const actions: Record<string, Set<string>> = {}; // category.module -> actions
 
-    availablePermissions.forEach((permission) => {
+    availablePermissions?.forEach((permission) => {
       // Extract category, module and action from code (e.g., "academic.curriculum.view")
       const parts = permission.code.split(".");
       if (parts.length >= 2) {
@@ -56,9 +62,15 @@ export const usePermissionMatrix = (roleId: number) => {
           matrix[moduleKey] = {};
         }
 
+        // Convert permission.id to number for comparison
+        const permissionId =
+          typeof permission.id === "string"
+            ? parseInt(permission.id, 10)
+            : permission.id;
+
         matrix[moduleKey][action] = {
           permission,
-          granted: localAssignedIds.includes(permission.id),
+          granted: localAssignedIds.includes(permissionId),
         };
       }
     });
@@ -81,6 +93,13 @@ export const usePermissionMatrix = (roleId: number) => {
     };
   };
 
+  // Helper function to convert permission ID to number
+  const getPermissionIdAsNumber = (permissionId: string | number): number => {
+    return typeof permissionId === "string"
+      ? parseInt(permissionId, 10)
+      : permissionId;
+  };
+
   // Update local state when toggling permissions (NO API CALL)
   const togglePermission = (permissionId: number, granted: boolean) => {
     setLocalAssignedIds((current) => {
@@ -95,11 +114,12 @@ export const usePermissionMatrix = (roleId: number) => {
 
   // Toggle all permissions for a module (NO API CALL)
   const toggleModulePermissions = (moduleKey: string, grant: boolean) => {
-    const modulePermissions = availablePermissions.filter((p) =>
+    const modulePermissions = availablePermissions?.filter((p) =>
       p.code.startsWith(`${moduleKey}.`),
     );
 
-    const modulePermissionIds = modulePermissions.map((p) => p.id);
+    const modulePermissionIds =
+      modulePermissions?.map((p) => getPermissionIdAsNumber(p.id)) || [];
 
     setLocalAssignedIds((current) => {
       const newIds = grant
@@ -113,7 +133,8 @@ export const usePermissionMatrix = (roleId: number) => {
 
   // Toggle all permissions for entire role (NO API CALL)
   const toggleAllPermissions = (grant: boolean) => {
-    const allPermissionIds = availablePermissions.map((p) => p.id);
+    const allPermissionIds =
+      availablePermissions?.map((p) => getPermissionIdAsNumber(p.id)) || [];
 
     setLocalAssignedIds(grant ? allPermissionIds : []);
     setHasUnsavedChanges(true);
@@ -144,8 +165,8 @@ export const usePermissionMatrix = (roleId: number) => {
 
   // Reset to original state
   const resetPermissions = () => {
-    if (data?.role_permissions) {
-      const originalIds = data.role_permissions.map((rp) => rp.permission_id);
+    if (rolePermissions) {
+      const originalIds = rolePermissions.map((rp) => rp.permission_id);
       setLocalAssignedIds(originalIds);
       setHasUnsavedChanges(false);
     }
@@ -155,8 +176,8 @@ export const usePermissionMatrix = (roleId: number) => {
 
   return {
     // Data
-    rolePermissions: data?.role_permissions || [],
-    availablePermissions,
+    rolePermissions: rolePermissions || [],
+    availablePermissions: availablePermissions || [],
     permissionMatrix: matrix,
     categories,
     modules,

@@ -7,14 +7,9 @@ export interface PermissionResponse {
   permissions: Permission[];
 }
 
-interface RolePermissionsResponse {
-  role_permissions: RolePermission[];
-  available_permissions: Permission[];
-}
-
 // Get all permissions for a specific role
 export const useGetRolePermissions = (roleId: number) => {
-  return useQuery<RolePermissionsResponse>({
+  return useQuery<RolePermission[]>({
     queryKey: ["role-permissions", roleId],
     queryFn: async () => {
       if (!roleId) throw new Error("Role ID is required");

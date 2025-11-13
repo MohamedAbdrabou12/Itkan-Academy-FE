@@ -1,4 +1,4 @@
-import { usePermissionMatrix } from "@/hooks/permissions/usePermissionMatrix";
+import { usePermissionMatrix } from "@/hooks/role_permissions/usePermissionMatrix";
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
 import type { RoleDetails } from "@/types/Roles";
 import { translateToArabic } from "@/utils/permissionTranslations";
@@ -337,7 +337,7 @@ const RolePermissionsModal = ({
               {/* Tooltip */}
               {tooltip.show && (
                 <div
-                  className="z-100 fixed max-w-xs rounded-md bg-gray-900/50 px-3 py-2 text-sm text-white shadow-lg"
+                  className="z-100 fixed max-w-xs rounded-md bg-gray-900/70 px-3 py-2 text-sm text-white shadow-lg"
                   style={{
                     left: tooltip.x,
                     top: tooltip.y - 10,
