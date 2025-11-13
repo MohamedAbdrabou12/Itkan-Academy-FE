@@ -116,7 +116,6 @@ const RolesGridPage = () => {
       await deleteMutation.mutateAsync(deletingRole.id);
       setIsDeleteModalOpen(false);
       setDeletingRole(null);
-      refetch();
     }
   };
 
@@ -191,8 +190,9 @@ const RolesGridPage = () => {
             editingRole
               ? {
                   name: editingRole.name,
-                  description: editingRole.description,
                   name_ar: editingRole.name_ar,
+                  description: editingRole.description,
+                  description_ar: editingRole.description_ar,
                 }
               : undefined
           }

@@ -7,7 +7,7 @@ interface GenericFormModalProps<T extends z.ZodType> {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: z.infer<T>) => Promise<void>;
-  initialData?: z.infer<T>;
+  initialData?: Partial<z.infer<T>>;
   isSubmitting?: boolean;
   isEditing?: boolean;
   closeOnBackdropClick?: boolean;
@@ -40,14 +40,14 @@ export const GenericFormModal = <T extends z.ZodType>({
   type FormData = z.infer<T>;
 
   // Form state management
-  const [formData, setFormData] = useState<FormData>({} as FormData);
+  const [formData, setFormData] = useState<Partial<FormData>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const enabled = isOpen && closeOnBackdropClick;
 
   const handleClose = () => {
-    setFormData({} as FormData);
+    setFormData({});
     setErrors({});
     setTouched({});
     onClose();
@@ -80,7 +80,14 @@ export const GenericFormModal = <T extends z.ZodType>({
   // Validate form
   const validateForm = (): boolean => {
     try {
-      schema.parse(formData);
+      // Create a complete form data object with empty strings for missing fields
+      const completeFormData: Record<string, unknown> = {};
+      fields.forEach((field) => {
+        completeFormData[field.name] =
+          formData[field.name as keyof FormData] || "";
+      });
+
+      schema.parse(completeFormData);
       setErrors({});
       return true;
     } catch (error) {
@@ -113,7 +120,14 @@ export const GenericFormModal = <T extends z.ZodType>({
     if (isValid) {
       console.log("Submitting form data:", formData);
       try {
-        await onSubmit(formData);
+        // Create complete data for submission
+        const submissionData: Record<string, unknown> = {};
+        fields.forEach((field) => {
+          submissionData[field.name] =
+            formData[field.name as keyof FormData] || "";
+        });
+
+        await onSubmit(submissionData as z.infer<T>);
         handleClose();
       } catch (error) {
         // Handle submission error (keep form open)
@@ -129,20 +143,19 @@ export const GenericFormModal = <T extends z.ZodType>({
       [fieldName]: true,
     }));
 
-    // Validate single field
+    // Validate single field using the full schema but only checking this field
     try {
-      schema
-        .pick({ [fieldName]: true })
-        .parse({ [fieldName]: formData[fieldName as keyof FormData] });
-      setErrors((prev) => ({
-        ...prev,
-        [fieldName]: "",
-      }));
+      const fieldSchema = schema.shape[fieldName as keyof typeof schema.shape];
+      if (fieldSchema) {
+        fieldSchema.parse(formData[fieldName as keyof FormData] || "");
+        setErrors((prev) => ({
+          ...prev,
+          [fieldName]: "",
+        }));
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldError = error.errors.find(
-          (err) => err.path[0] === fieldName,
-        );
+        const fieldError = error.errors[0];
         if (fieldError) {
           setErrors((prev) => ({
             ...prev,
@@ -153,29 +166,35 @@ export const GenericFormModal = <T extends z.ZodType>({
     }
   };
 
-  // Initialize form data when modal opens
+  // Initialize form data when modal opens or initialData changes
   useEffect(() => {
     if (isOpen) {
-      const defaultData = {
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
-        status: "active",
-        ...initialData,
-      } as FormData;
+      // Create default data based on fields
+      const defaultData: Partial<FormData> = {};
+      fields.forEach((field) => {
+        const initialValue = initialData?.[field.name as keyof FormData];
+        defaultData[field.name as keyof FormData] =
+          initialValue !== undefined ? initialValue : "";
+      });
 
       console.log("Initializing form with:", defaultData);
       setFormData(defaultData);
       setErrors({});
       setTouched({});
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, fields]);
 
   // Check form validity for submit button
   const isFormValid = (): boolean => {
     try {
-      schema.parse(formData);
+      // Create complete data for validation
+      const completeFormData: Record<string, unknown> = {};
+      fields.forEach((field) => {
+        completeFormData[field.name] =
+          formData[field.name as keyof FormData] || "";
+      });
+
+      schema.parse(completeFormData);
       return true;
     } catch {
       return false;
@@ -184,19 +203,26 @@ export const GenericFormModal = <T extends z.ZodType>({
 
   // Check if form is dirty
   const isFormDirty = (): boolean => {
-    if (!initialData) return true; // Always dirty for new forms
+    if (!initialData || Object.keys(initialData).length === 0) {
+      // For new forms, check if any required field has a value
+      // OR check if any field has been modified from its initial empty state
+      const hasAnyValue = Object.values(formData).some(
+        (value) => value !== undefined && value !== null && value !== "",
+      );
 
-    return (
-      JSON.stringify(formData) !==
-      JSON.stringify({
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
-        status: "active",
-        ...initialData,
-      })
-    );
+      // Also consider the form dirty if user has started typing in any field
+      const hasTouchedFields = Object.keys(touched).length > 0;
+
+      return hasAnyValue || hasTouchedFields;
+    }
+
+    // For editing, compare current form data with initial data
+    return fields.some((field) => {
+      const fieldName = field.name as keyof FormData;
+      const currentValue = formData[fieldName];
+      const initialValue = initialData[fieldName];
+      return currentValue !== initialValue;
+    });
   };
 
   const renderFormField = (field: FormField) => {
@@ -205,7 +231,6 @@ export const GenericFormModal = <T extends z.ZodType>({
     const error = errors[field.name];
     const isFieldTouched = touched[field.name];
 
-    // Create props without the key
     const commonProps = {
       name: field.name,
       label: field.label,
