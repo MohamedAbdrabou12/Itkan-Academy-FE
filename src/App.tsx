@@ -47,8 +47,8 @@ const App = () => {
         <Route
           element={<RoleBasedRoute allowedRoles={[UserRole.GENERAL_MANAGER]} />}
         >
-          <Route path="/roles-grid" element={<RolesGridPage />} />
-          <Route path="/branches-grid" element={<BranchesGridPage />} />
+          <Route path="/admin/roles" element={<RolesGridPage />} />
+          <Route path="/admin/branches" element={<BranchesGridPage />} />
         </Route>
 
         {/* DASHBOARD routes */}

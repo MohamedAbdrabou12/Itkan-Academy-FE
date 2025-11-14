@@ -16,8 +16,10 @@ export enum UserRole {
 export interface RoleDetails {
   id: number;
   name: UserRole;
-  description: string;
   name_ar: string;
+  description: string;
+  description_ar: string;
+  permissions_count: number;
   created_at: string;
   [key: string]: unknown; // index signature
 }

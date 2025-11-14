@@ -1,0 +1,60 @@
+export const ARABIC_TRANSLATIONS: Record<string, string> = {
+  // Categories
+  academic: "أكاديمي",
+  financial: "مالي",
+  communication: "اتصالات",
+  attendance: "حضور",
+  reports: "تقارير",
+  system: "النظام",
+  teacher: "معلمين",
+  evaluation: "تقييم",
+  activities: "أنشطة",
+  staff: "موظفين",
+  penalty: "جزاءات",
+  salary: "رواتب",
+  student: "طلاب",
+  training: "تدريب",
+
+  // Modules
+  curriculum: "المناهج",
+  performance: "الأداء",
+  invoices: "الفواتير",
+  payments: "المدفوعات",
+  exams: "الامتحانات",
+  management: "الإدارة",
+  classes: "الفصول",
+  daily: "اليومي",
+  supervisor: "المشرف",
+  announcements: "الإعلانات",
+  branch: "الفروع",
+  permissions: "الصلاحيات",
+  assignments: "التعيينات",
+  teacher_permissions: "صلاحيات المعلمين",
+  administrative: "إداري",
+  financial_expenses: "المصروفات المالية",
+  subscriptions: "الاشتراكات",
+  messages: "الرسائل",
+  seminars: "الندوات",
+  competitions: "المسابقات",
+  parties: "الحفلات",
+  accounts: "الحسابات",
+  expenses: "المصروفات",
+
+  // Actions
+  view: "عرض",
+  pay: "دفع",
+  perform: "أداء",
+  contact: "اتصال",
+  manage: "إدارة",
+  send: "إرسال",
+  supervise: "إشراف",
+  coordinate: "تنسيق",
+  approve: "اعتماد",
+  organize: "تنظيم",
+  generate: "إنشاء",
+  "*": "الكل",
+};
+
+export const translateToArabic = (key: string): string => {
+  return ARABIC_TRANSLATIONS[key] || key;
+};

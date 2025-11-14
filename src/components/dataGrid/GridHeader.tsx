@@ -13,9 +13,11 @@ const GridHeader = ({ title, onAddNew, addButtonText }: GridHeaderProps) => (
       {onAddNew && (
         <button
           onClick={onAddNew}
-          className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
+          className="flex cursor-pointer items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
         >
-          <span><Plus /></span>
+          <span>
+            <Plus />
+          </span>
           <span>{addButtonText}</span>
         </button>
       )}

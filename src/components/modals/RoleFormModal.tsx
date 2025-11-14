@@ -41,19 +41,27 @@ const roleFields: FormField[] = [
     placeholder: "أدخل الاسم بالإنجليزية",
   },
   {
-    name: "description",
-    label: "الوصف",
-    type: "textarea",
-    required: true,
-    placeholder: "ادخل وصف الوظيفة هنا...",
-    rows: 3,
-  },
-  {
-    name: "name_in_arabic",
+    name: "name_ar",
     label: "الاسم بالعربية",
     type: "text",
     required: true,
     placeholder: "أدخل الاسم بالعربية",
+  },
+  {
+    name: "description",
+    label: "الوصف",
+    type: "textarea",
+    required: false,
+    placeholder: "ادخل وصف الوظيفة هنا...",
+    rows: 3,
+  },
+  {
+    name: "description_ar",
+    label: "الوصف بالعربية",
+    type: "textarea",
+    required: false,
+    placeholder: "ادخل وصف الوظيفة هنا...",
+    rows: 3,
   },
 ];
 
