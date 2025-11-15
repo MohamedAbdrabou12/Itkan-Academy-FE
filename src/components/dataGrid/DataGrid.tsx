@@ -24,6 +24,7 @@ const DataGrid = <T extends Record<string, unknown>>({
   onEdit,
   onDelete,
   onView,
+  searchPlaceholder,
   addButtonText = "اضافة عنصر",
   entityName = "عنصر",
   pageSizeOptions = [10, 25, 50, 100],
@@ -61,7 +62,7 @@ const DataGrid = <T extends Record<string, unknown>>({
       {(enableSearch || enableFilters) && (
         <SearchFilterBar
           onSearch={handleSearch}
-          searchPlaceholder={`ابحث عن ${entityName}...`}
+          searchPlaceholder={searchPlaceholder}
           searchTerm={searchTerm}
         />
       )}

@@ -67,8 +67,8 @@ export default function ContactPage() {
             </div>
 
             <div className="transform rounded-xl bg-white p-8 text-center shadow-lg transition hover:-translate-y-1 hover:shadow-xl">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-                <Mail className="h-8 w-8 text-blue-600" />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
+                <Mail className="h-8 w-8 text-emerald-600" />
               </div>
               <h3 className="mb-2 text-xl font-bold text-gray-900">
                 البريد الإلكتروني
@@ -76,7 +76,7 @@ export default function ContactPage() {
               <p className="mb-2 text-gray-600">راسلنا عبر البريد</p>
               <a
                 href="mailto:info@alitqan.edu.sa"
-                className="font-semibold text-blue-600 hover:text-blue-700"
+                className="font-semibold text-emerald-600 hover:text-emerald-700"
               >
                 info@alitqan.edu.sa
               </a>
@@ -229,7 +229,7 @@ export default function ContactPage() {
                     href="#"
                     className="flex items-center justify-center space-x-2 space-x-reverse rounded-lg bg-white px-4 py-3 transition hover:bg-gray-50"
                   >
-                    <Facebook className="h-5 w-5 text-blue-600" />
+                    <Facebook className="h-5 w-5 text-emerald-600" />
                     <span className="font-semibold text-gray-700">فيسبوك</span>
                   </a>
                   <a

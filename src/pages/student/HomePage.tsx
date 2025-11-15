@@ -10,7 +10,12 @@ import {
 
 export default function Home() {
   const stats = [
-    { icon: Users, label: "عدد الطلاب", value: "2,500+", color: "bg-blue-500" },
+    {
+      icon: Users,
+      label: "عدد الطلاب",
+      value: "2,500+",
+      color: "bg-emerald-500",
+    },
     {
       icon: Award,
       label: "عدد الحفاظ",
@@ -132,9 +137,9 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="bg-linear-to-br rounded-xl border border-blue-100 from-blue-50 to-indigo-50 p-8">
+            <div className="bg-linear-to-br rounded-xl border border-emerald-100 from-emerald-50 to-indigo-50 p-8">
               <div className="mb-4 flex items-center">
-                <Award className="ml-3 h-8 w-8 text-blue-600" />
+                <Award className="ml-3 h-8 w-8 text-emerald-600" />
                 <h3 className="text-2xl font-bold text-gray-900">رسالتنا</h3>
               </div>
               <p className="leading-relaxed text-gray-700">
@@ -183,7 +188,7 @@ export default function Home() {
                         item.category === "achievement"
                           ? "bg-emerald-100 text-emerald-800"
                           : item.category === "announcement"
-                            ? "bg-blue-100 text-blue-800"
+                            ? "bg-emerald-100 text-emerald-800"
                             : "bg-orange-100 text-orange-800"
                       }`}
                     >

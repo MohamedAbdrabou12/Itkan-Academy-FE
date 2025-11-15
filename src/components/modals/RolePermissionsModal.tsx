@@ -29,7 +29,6 @@ const RolePermissionsModal = ({
     isUpdating,
     hasUnsavedChanges,
     togglePermission,
-    toggleModulePermissions,
     toggleAllPermissions,
     savePermissions,
     resetPermissions,
@@ -104,21 +103,6 @@ const RolePermissionsModal = ({
     return Array.from(allActions).sort();
   };
 
-  const isModuleFullyGranted = (moduleKey: string): boolean => {
-    const moduleActions = actions[moduleKey] || [];
-    return moduleActions.every(
-      (action) => permissionMatrix[moduleKey]?.[action]?.granted,
-    );
-  };
-
-  const isModulePartiallyGranted = (moduleKey: string): boolean => {
-    const moduleActions = actions[moduleKey] || [];
-    const grantedCount = moduleActions.filter(
-      (action) => permissionMatrix[moduleKey]?.[action]?.granted,
-    ).length;
-    return grantedCount > 0 && grantedCount < moduleActions.length;
-  };
-
   const getPermissionByCode = (
     moduleKey: string,
     action: string,
@@ -180,7 +164,7 @@ const RolePermissionsModal = ({
 
           {isLoading ? (
             <div className="flex justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent"></div>
             </div>
           ) : (
             <>
@@ -217,9 +201,6 @@ const RolePermissionsModal = ({
                       <th className="sticky top-0 z-10 bg-gray-50 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                         القسم / الوحدة
                       </th>
-                      <th className="sticky top-0 z-10 bg-gray-50 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                        اختيار الكل
-                      </th>
                       {allActions.map((action) => (
                         <th
                           key={action}
@@ -235,9 +216,6 @@ const RolePermissionsModal = ({
                       modules[category]?.map((module) => {
                         const moduleKey = `${category}.${module}`;
                         const moduleActions = actions[moduleKey] || [];
-                        const isFullyGranted = isModuleFullyGranted(moduleKey);
-                        const isPartiallyGranted =
-                          isModulePartiallyGranted(moduleKey);
 
                         return (
                           <tr
@@ -253,41 +231,6 @@ const RolePermissionsModal = ({
                                   {translateToArabic(category)}
                                 </div>
                               </div>
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4">
-                              <input
-                                type="checkbox"
-                                checked={isFullyGranted}
-                                ref={(el) => {
-                                  if (el) {
-                                    el.indeterminate = isPartiallyGranted;
-                                  }
-                                }}
-                                onChange={(e) =>
-                                  toggleModulePermissions(
-                                    moduleKey,
-                                    e.target.checked,
-                                  )
-                                }
-                                onMouseEnter={(e) => {
-                                  const firstPermission =
-                                    availablePermissions.find((p) =>
-                                      p.code.startsWith(`${moduleKey}.`),
-                                    );
-                                  if (firstPermission?.description_ar) {
-                                    const rect =
-                                      e.currentTarget.getBoundingClientRect();
-                                    setTooltip({
-                                      show: true,
-                                      content: firstPermission.description_ar,
-                                      x: rect.left,
-                                      y: rect.top,
-                                    });
-                                  }
-                                }}
-                                onMouseLeave={handleMouseLeave}
-                                className="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                              />
                             </td>
                             {allActions.map((action) => {
                               const { permissionId, granted } =
@@ -314,7 +257,7 @@ const RolePermissionsModal = ({
                                           handleMouseEnter(e, moduleKey, action)
                                         }
                                         onMouseLeave={handleMouseLeave}
-                                        className="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        className="h-4 w-4 cursor-pointer rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                                         disabled={isUpdating}
                                       />
                                     </div>
@@ -355,7 +298,7 @@ const RolePermissionsModal = ({
                     type="button"
                     onClick={resetPermissions}
                     disabled={!hasUnsavedChanges || isUpdating}
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     إعادة تعيين
                   </button>
@@ -365,7 +308,7 @@ const RolePermissionsModal = ({
                     type="button"
                     onClick={handleClose}
                     disabled={isUpdating}
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50"
                   >
                     إلغاء
                   </button>
@@ -373,7 +316,7 @@ const RolePermissionsModal = ({
                     type="button"
                     onClick={handleSave}
                     disabled={isUpdating || !hasUnsavedChanges}
-                    className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isUpdating ? (
                       <span className="flex items-center gap-2">
@@ -406,7 +349,7 @@ const RolePermissionsModal = ({
                 <div className="mt-4 flex justify-end gap-3">
                   <button
                     onClick={handleCancelClose}
-                    className="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
                   >
                     البقاء
                   </button>

@@ -129,9 +129,9 @@ export default function AboutPage() {
               </p>
             </div>
 
-            <div className="bg-linear-to-br rounded-2xl border-2 border-blue-100 from-blue-50 to-indigo-50 p-8">
+            <div className="bg-linear-to-br rounded-2xl border-2 border-emerald-100 from-emerald-50 to-indigo-50 p-8">
               <div className="mb-6 flex items-center">
-                <Target className="ml-4 h-12 w-12 text-blue-600" />
+                <Target className="ml-4 h-12 w-12 text-emerald-600" />
                 <h2 className="text-3xl font-bold text-gray-900">رسالتنا</h2>
               </div>
               <p className="text-lg leading-relaxed text-gray-700">

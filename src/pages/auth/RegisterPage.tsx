@@ -60,7 +60,7 @@ export default function RegisterPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-6">
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-6">
               <h3 className="mb-4 text-xl font-bold text-gray-900">
                 بيانات الطالب
               </h3>

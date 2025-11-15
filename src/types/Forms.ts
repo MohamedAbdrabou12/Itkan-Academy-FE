@@ -7,6 +7,7 @@ export interface FormField {
   options?: { value: string; label: string }[];
   dir?: "ltr" | "rtl";
   rows?: number;
+  disabled?: boolean;
 }
 
 export interface FormComponents {

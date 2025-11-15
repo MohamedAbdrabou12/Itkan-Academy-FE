@@ -25,7 +25,7 @@ export default function StudentDashboardPage() {
       icon: Calendar,
       label: "نسبة الحضور",
       value: "92%",
-      color: "blue",
+      color: "emerald",
       percent: 92,
     },
     {
@@ -164,7 +164,7 @@ export default function StudentDashboardPage() {
                             className={`rounded-full px-2 py-1 text-xs font-semibold ${
                               cls.status === "active"
                                 ? "bg-green-100 text-green-800"
-                                : "bg-blue-100 text-blue-800"
+                                : "bg-emerald-100 text-emerald-800"
                             }`}
                           >
                             {cls.status === "active" ? "جارٍ الآن" : "قريباً"}
@@ -208,7 +208,7 @@ export default function StudentDashboardPage() {
                               assessment.type === "حفظ"
                                 ? "bg-emerald-100 text-emerald-800"
                                 : assessment.type === "مراجعة"
-                                  ? "bg-blue-100 text-blue-800"
+                                  ? "bg-emerald-100 text-emerald-800"
                                   : "bg-purple-100 text-purple-800"
                             }`}
                           >
@@ -219,7 +219,7 @@ export default function StudentDashboardPage() {
                               assessment.score >= 90
                                 ? "text-green-600"
                                 : assessment.score >= 75
-                                  ? "text-blue-600"
+                                  ? "text-emerald-600"
                                   : "text-orange-600"
                             }`}
                           >
@@ -314,10 +314,10 @@ export default function StudentDashboardPage() {
                     بعد 3 أيام
                   </p>
                 </div>
-                <div className="rounded-lg border-r-4 border-blue-500 bg-blue-50 p-4">
+                <div className="rounded-lg border-r-4 border-emerald-500 bg-emerald-50 p-4">
                   <p className="font-bold text-gray-900">اختبار التجويد</p>
                   <p className="text-sm text-gray-600">أحكام النون والميم</p>
-                  <p className="mt-1 text-sm font-semibold text-blue-600">
+                  <p className="mt-1 text-sm font-semibold text-emerald-600">
                     بعد أسبوع
                   </p>
                 </div>
