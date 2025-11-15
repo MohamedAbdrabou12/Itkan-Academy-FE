@@ -31,3 +31,7 @@ export interface RolesResponse {
   size: number;
   pages: number;
 }
+export interface UpdateUserRoleData {
+  user_id: number;
+  role_id: number;
+}

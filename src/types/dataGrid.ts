@@ -53,6 +53,7 @@ export interface DataGridProps<T> {
 
   // Configuration
   title?: string;
+  searchPlaceholder: string;
   addButtonText?: string;
   entityName?: string;
   pageSizeOptions?: number[];

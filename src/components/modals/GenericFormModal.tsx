@@ -241,6 +241,7 @@ export const GenericFormModal = <T extends z.ZodType>({
       error: isFieldTouched ? error : undefined,
       placeholder: field.placeholder,
       dir: field.dir,
+      disabled: field.disabled,
     };
 
     switch (field.type) {

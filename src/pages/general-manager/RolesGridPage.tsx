@@ -20,7 +20,7 @@ const RolesGridPage = () => {
     pageSize: PAGE_SIZE,
   });
   const [sortInfo, setSortInfo] = useState({
-    sortBy: "name" as string,
+    sortBy: "id" as string,
     sortOrder: "asc" as "asc" | "desc",
   });
   const [searchTerm, setSearchTerm] = useState("");
@@ -175,6 +175,7 @@ const RolesGridPage = () => {
         onDelete={handleDelete}
         addButtonText="اضافة وظيفة"
         entityName="وظيفة"
+        searchPlaceholder="ابحث باسم الوظيفة..."
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={false}
