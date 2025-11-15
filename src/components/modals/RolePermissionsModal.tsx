@@ -29,7 +29,6 @@ const RolePermissionsModal = ({
     isUpdating,
     hasUnsavedChanges,
     togglePermission,
-    toggleModulePermissions,
     toggleAllPermissions,
     savePermissions,
     resetPermissions,
@@ -102,21 +101,6 @@ const RolePermissionsModal = ({
       moduleActions.forEach((action) => allActions.add(action));
     });
     return Array.from(allActions).sort();
-  };
-
-  const isModuleFullyGranted = (moduleKey: string): boolean => {
-    const moduleActions = actions[moduleKey] || [];
-    return moduleActions.every(
-      (action) => permissionMatrix[moduleKey]?.[action]?.granted,
-    );
-  };
-
-  const isModulePartiallyGranted = (moduleKey: string): boolean => {
-    const moduleActions = actions[moduleKey] || [];
-    const grantedCount = moduleActions.filter(
-      (action) => permissionMatrix[moduleKey]?.[action]?.granted,
-    ).length;
-    return grantedCount > 0 && grantedCount < moduleActions.length;
   };
 
   const getPermissionByCode = (
@@ -217,9 +201,6 @@ const RolePermissionsModal = ({
                       <th className="sticky top-0 z-10 bg-gray-50 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                         القسم / الوحدة
                       </th>
-                      <th className="sticky top-0 z-10 bg-gray-50 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                        اختيار الكل
-                      </th>
                       {allActions.map((action) => (
                         <th
                           key={action}
@@ -235,9 +216,6 @@ const RolePermissionsModal = ({
                       modules[category]?.map((module) => {
                         const moduleKey = `${category}.${module}`;
                         const moduleActions = actions[moduleKey] || [];
-                        const isFullyGranted = isModuleFullyGranted(moduleKey);
-                        const isPartiallyGranted =
-                          isModulePartiallyGranted(moduleKey);
 
                         return (
                           <tr
@@ -253,41 +231,6 @@ const RolePermissionsModal = ({
                                   {translateToArabic(category)}
                                 </div>
                               </div>
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4">
-                              <input
-                                type="checkbox"
-                                checked={isFullyGranted}
-                                ref={(el) => {
-                                  if (el) {
-                                    el.indeterminate = isPartiallyGranted;
-                                  }
-                                }}
-                                onChange={(e) =>
-                                  toggleModulePermissions(
-                                    moduleKey,
-                                    e.target.checked,
-                                  )
-                                }
-                                onMouseEnter={(e) => {
-                                  const firstPermission =
-                                    availablePermissions.find((p) =>
-                                      p.code.startsWith(`${moduleKey}.`),
-                                    );
-                                  if (firstPermission?.description_ar) {
-                                    const rect =
-                                      e.currentTarget.getBoundingClientRect();
-                                    setTooltip({
-                                      show: true,
-                                      content: firstPermission.description_ar,
-                                      x: rect.left,
-                                      y: rect.top,
-                                    });
-                                  }
-                                }}
-                                onMouseLeave={handleMouseLeave}
-                                className="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                              />
                             </td>
                             {allActions.map((action) => {
                               const { permissionId, granted } =

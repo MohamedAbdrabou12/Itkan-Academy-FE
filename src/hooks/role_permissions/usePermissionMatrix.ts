@@ -15,16 +15,22 @@ export const usePermissionMatrix = (roleId: number) => {
 
   // Local state for managing changes before saving
   const [localAssignedIds, setLocalAssignedIds] = useState<number[]>([]);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [originalIds, setOriginalIds] = useState<number[]>([]); // Track original state
 
   const isLoading = isRolePermissionsLoading || isAvailablePermissionsLoading;
+
+  // Calculate hasUnsavedChanges by comparing current state with original
+  const hasUnsavedChanges =
+    localAssignedIds.length !== originalIds.length ||
+    !localAssignedIds.every((id) => originalIds.includes(id)) ||
+    !originalIds.every((id) => localAssignedIds.includes(id));
 
   // Initialize local state when data loads
   useEffect(() => {
     if (rolePermissions) {
       const initialIds = rolePermissions.map((rp) => rp.permission_id);
       setLocalAssignedIds(initialIds);
-      setHasUnsavedChanges(false);
+      setOriginalIds(initialIds); // Set the original state
     }
   }, [rolePermissions]);
 
@@ -103,12 +109,9 @@ export const usePermissionMatrix = (roleId: number) => {
   // Update local state when toggling permissions (NO API CALL)
   const togglePermission = (permissionId: number, granted: boolean) => {
     setLocalAssignedIds((current) => {
-      const newIds = granted
+      return granted
         ? [...current, permissionId]
         : current.filter((id) => id !== permissionId);
-
-      setHasUnsavedChanges(true);
-      return newIds;
     });
   };
 
@@ -122,12 +125,9 @@ export const usePermissionMatrix = (roleId: number) => {
       modulePermissions?.map((p) => getPermissionIdAsNumber(p.id)) || [];
 
     setLocalAssignedIds((current) => {
-      const newIds = grant
+      return grant
         ? [...new Set([...current, ...modulePermissionIds])]
         : current.filter((id) => !modulePermissionIds.includes(id));
-
-      setHasUnsavedChanges(true);
-      return newIds;
     });
   };
 
@@ -137,7 +137,6 @@ export const usePermissionMatrix = (roleId: number) => {
       availablePermissions?.map((p) => getPermissionIdAsNumber(p.id)) || [];
 
     setLocalAssignedIds(grant ? allPermissionIds : []);
-    setHasUnsavedChanges(true);
   };
 
   // Save all changes to backend (SINGLE API CALL)
@@ -155,7 +154,10 @@ export const usePermissionMatrix = (roleId: number) => {
       });
 
       console.log("Save result:", result);
-      setHasUnsavedChanges(false);
+
+      // Update original IDs to match current state after successful save
+      setOriginalIds([...localAssignedIds]);
+
       return true;
     } catch (error) {
       console.error("Failed to save permissions:", error);
@@ -166,9 +168,7 @@ export const usePermissionMatrix = (roleId: number) => {
   // Reset to original state
   const resetPermissions = () => {
     if (rolePermissions) {
-      const originalIds = rolePermissions.map((rp) => rp.permission_id);
-      setLocalAssignedIds(originalIds);
-      setHasUnsavedChanges(false);
+      setLocalAssignedIds([...originalIds]);
     }
   };
 
