@@ -23,7 +23,7 @@ const SearchFilterBar = ({
             value={searchTerm}
             onChange={(e) => onSearch(e.target.value)}
             placeholder={searchPlaceholder}
-            className="block w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            className="block w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500"
           />
         </div>
       </div>

@@ -142,7 +142,7 @@ const RolesGridPage = () => {
           <span>{(value as number) || 0} صلاحيات</span>
           <button
             onClick={() => handleManagePermissions(row)}
-            className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800"
+            className="cursor-pointer text-sm font-medium text-emerald-600 hover:text-emerald-800"
           >
             إدارة
           </button>

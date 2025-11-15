@@ -164,7 +164,7 @@ const RolePermissionsModal = ({
 
           {isLoading ? (
             <div className="flex justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent"></div>
             </div>
           ) : (
             <>
@@ -257,7 +257,7 @@ const RolePermissionsModal = ({
                                           handleMouseEnter(e, moduleKey, action)
                                         }
                                         onMouseLeave={handleMouseLeave}
-                                        className="h-4 w-4 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        className="h-4 w-4 cursor-pointer rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                                         disabled={isUpdating}
                                       />
                                     </div>
@@ -298,7 +298,7 @@ const RolePermissionsModal = ({
                     type="button"
                     onClick={resetPermissions}
                     disabled={!hasUnsavedChanges || isUpdating}
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     إعادة تعيين
                   </button>
@@ -308,7 +308,7 @@ const RolePermissionsModal = ({
                     type="button"
                     onClick={handleClose}
                     disabled={isUpdating}
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50"
                   >
                     إلغاء
                   </button>
@@ -316,7 +316,7 @@ const RolePermissionsModal = ({
                     type="button"
                     onClick={handleSave}
                     disabled={isUpdating || !hasUnsavedChanges}
-                    className="rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {isUpdating ? (
                       <span className="flex items-center gap-2">
@@ -349,7 +349,7 @@ const RolePermissionsModal = ({
                 <div className="mt-4 flex justify-end gap-3">
                   <button
                     onClick={handleCancelClose}
-                    className="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
                   >
                     البقاء
                   </button>

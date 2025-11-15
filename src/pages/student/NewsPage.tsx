@@ -100,7 +100,7 @@ export default function NewsPage() {
   const getCategoryColor = (category: string) => {
     const colors: any = {
       achievement: "bg-emerald-100 text-emerald-800",
-      announcement: "bg-blue-100 text-blue-800",
+      announcement: "bg-emerald-100 text-emerald-800",
       event: "bg-orange-100 text-orange-800",
     };
     return colors[category] || "bg-gray-100 text-gray-800";

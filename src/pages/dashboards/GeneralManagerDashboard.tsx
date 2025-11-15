@@ -33,7 +33,7 @@ export default function GeneralManagerDashboardPage() {
       label: "إجمالي الطلاب",
       value: "2,547",
       change: "+12%",
-      color: "blue",
+      color: "emerald",
     },
     {
       icon: BookOpen,
@@ -127,7 +127,7 @@ export default function GeneralManagerDashboardPage() {
       color: "emerald",
       path: "/manage/branches",
     },
-    { title: "التقارير", icon: BarChart3, color: "blue", path: "/reports" },
+    { title: "التقارير", icon: BarChart3, color: "emerald", path: "/reports" },
     {
       title: "الموارد البشرية",
       icon: Users,
@@ -207,7 +207,7 @@ export default function GeneralManagerDashboardPage() {
                     <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
                       <div>
                         <p className="text-gray-600">الطلاب</p>
-                        <p className="font-bold text-blue-600">
+                        <p className="font-bold text-emerald-600">
                           {branch.students}
                         </p>
                       </div>
@@ -323,11 +323,11 @@ export default function GeneralManagerDashboardPage() {
                     يرجى المتابعة مع أولياء الأمور
                   </p>
                 </div>
-                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-                  <p className="text-sm font-semibold text-blue-800">
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                  <p className="text-sm font-semibold text-emerald-800">
                     اجتماع الإدارة
                   </p>
-                  <p className="mt-1 text-xs text-blue-600">
+                  <p className="mt-1 text-xs text-emerald-600">
                     غداً الساعة 10:00 صباحاً
                   </p>
                 </div>

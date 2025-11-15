@@ -34,7 +34,7 @@ export default function TeacherDashboardPage() {
   );
 
   const stats = [
-    { icon: Users, label: "عدد الطلاب", value: "45", color: "blue" },
+    { icon: Users, label: "عدد الطلاب", value: "45", color: "emerald" },
     { icon: BookOpen, label: "الحلقات النشطة", value: "3", color: "emerald" },
     {
       icon: CheckSquare,
@@ -149,7 +149,7 @@ export default function TeacherDashboardPage() {
                         cls.status === "completed"
                           ? "bg-green-100 text-green-800"
                           : cls.status === "active"
-                            ? "bg-blue-100 text-blue-800"
+                            ? "bg-emerald-100 text-emerald-800"
                             : "bg-gray-100 text-gray-800"
                       }`}
                     >
@@ -201,7 +201,7 @@ export default function TeacherDashboardPage() {
                       className={`rounded-full px-2 py-1 text-xs font-semibold ${
                         assessment.type === "حفظ"
                           ? "bg-emerald-100 text-emerald-800"
-                          : "bg-blue-100 text-blue-800"
+                          : "bg-emerald-100 text-emerald-800"
                       }`}
                     >
                       {assessment.type}
@@ -239,7 +239,7 @@ export default function TeacherDashboardPage() {
             </button>
             <button
               onClick={() => setShowAssessmentModal(true)}
-              className="rounded-lg bg-blue-100 p-4 font-semibold text-blue-700 transition hover:bg-blue-200"
+              className="rounded-lg bg-emerald-100 p-4 font-semibold text-emerald-700 transition hover:bg-emerald-200"
             >
               إضافة تقييم
             </button>
@@ -318,7 +318,7 @@ export default function TeacherDashboardPage() {
             <option>مراجعة</option>
           </select>
           <input type="date" className="mb-4 w-full rounded-lg border p-2" />
-          <button className="w-full rounded-lg bg-blue-600 py-2 text-white transition hover:bg-blue-700">
+          <button className="w-full rounded-lg bg-emerald-600 py-2 text-white transition hover:bg-emerald-700">
             حفظ التقييم
           </button>
         </Modal>
@@ -338,7 +338,7 @@ export default function TeacherDashboardPage() {
               >
                 <span>{s.name}</span>
                 <div className="text-sm">
-                  <span className="mr-2 text-blue-600">{s.evaluation}</span>
+                  <span className="mr-2 text-emerald-600">{s.evaluation}</span>
                   <span
                     className={`${
                       s.absence === "غائب" ? "text-red-600" : "text-green-600"
@@ -370,7 +370,7 @@ export default function TeacherDashboardPage() {
             <button className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">
               <FileDown className="h-5 w-5" /> تحميل Excel
             </button>
-            <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+            <button className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700">
               <FileText className="h-5 w-5" /> طباعة PDF
             </button>
           </div>
@@ -412,7 +412,7 @@ function Modal({
 
 // export default function TeacherDashboard() {
 //   const stats = [
-//     { icon: Users, label: 'عدد الطلاب', value: '45', color: 'blue' },
+//     { icon: Users, label: 'عدد الطلاب', value: '45', color: 'emerald' },
 //     { icon: BookOpen, label: 'الحلقات النشطة', value: '3', color: 'emerald' },
 //     { icon: CheckSquare, label: 'التقييمات اليوم', value: '12', color: 'purple' },
 //     { icon: TrendingUp, label: 'معدل التقدم', value: '85%', color: 'orange' }
@@ -464,7 +464,7 @@ function Modal({
 //                     <h3 className="font-bold text-gray-900">{cls.name}</h3>
 //                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
 //                       cls.status === 'completed' ? 'bg-green-100 text-green-800' :
-//                       cls.status === 'active' ? 'bg-blue-100 text-blue-800' :
+//                       cls.status === 'active' ? 'bg-emerald-100 text-emerald-800' :
 //                       'bg-gray-100 text-gray-800'
 //                     }`}>
 //                       {cls.status === 'completed' ? 'مكتملة' : cls.status === 'active' ? 'جارية' : 'قادمة'}
@@ -500,7 +500,7 @@ function Modal({
 //                   <div className="flex items-center justify-between mb-2">
 //                     <h3 className="font-bold text-gray-900">{assessment.student}</h3>
 //                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-//                       assessment.type === 'حفظ' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'
+//                       assessment.type === 'حفظ' ? 'bg-emerald-100 text-emerald-800' : 'bg-emerald-100 text-emerald-800'
 //                     }`}>
 //                       {assessment.type}
 //                     </span>
@@ -522,7 +522,7 @@ function Modal({
 //             <button className="bg-emerald-100 text-emerald-700 p-4 rounded-lg hover:bg-emerald-200 transition font-semibold">
 //               تسجيل الحضور
 //             </button>
-//             <button className="bg-blue-100 text-blue-700 p-4 rounded-lg hover:bg-blue-200 transition font-semibold">
+//             <button className="bg-emerald-100 text-emerald-700 p-4 rounded-lg hover:bg-emerald-200 transition font-semibold">
 //               إضافة تقييم
 //             </button>
 //             <button className="bg-purple-100 text-purple-700 p-4 rounded-lg hover:bg-purple-200 transition font-semibold">
