@@ -21,6 +21,7 @@ import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { UserRole } from "@/types/Roles";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
+import ItkanDashboardLayout from "./components/layouts/ItkanDashboardLayout";
 
 const App = () => {
   return (
@@ -51,6 +52,15 @@ const App = () => {
           <Route path="/admin/roles" element={<RolesGridPage />} />
           <Route path="/admin/branches" element={<BranchesGridPage />} />
           <Route path="/admin/users/roles" element={<UsersRoleGridPage />} />
+        </Route>
+
+        <Route element={<ItkanDashboardLayout />}>
+          <Route path="/itkan-dashboard" element={<>Hello</>} />
+          <Route path="/itkan-dashboard/roles" element={<RolesGridPage />} />
+          <Route
+            path="/itkan-dashboard/branches"
+            element={<BranchesGridPage />}
+          />
         </Route>
 
         {/* DASHBOARD routes */}

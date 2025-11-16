@@ -75,13 +75,7 @@ export default function LoginPage() {
                 <Lock className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  {...register("password", {
-                    required: "كلمة المرور مطلوبة",
-                    minLength: {
-                      value: 8,
-                      message: "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
-                    },
-                  })}
+                  {...register("password")}
                   className="w-full rounded-lg border border-gray-300 py-3 pl-12 pr-10 focus:border-transparent focus:ring-2 focus:ring-emerald-600"
                   placeholder="••••••••"
                 />

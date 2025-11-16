@@ -2,6 +2,7 @@ import apiReq from "@/services/apiReq";
 import type { RolesResponse } from "@/types/Roles";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../useDebounce";
+import { useAuthStore } from "@/stores/auth";
 
 interface RoleQueryParams {
   page?: number;
@@ -13,6 +14,7 @@ interface RoleQueryParams {
 
 export const useGetRoles = (params: RoleQueryParams = {}) => {
   const debouncedSearch = useDebounce(params?.search, 300);
+  const activeBranch = useAuthStore((state) => state.activeBranch);
 
   const defaultParams = {
     page: 1,
@@ -23,7 +25,7 @@ export const useGetRoles = (params: RoleQueryParams = {}) => {
   };
 
   const { data, isPending, error, refetch } = useQuery<RolesResponse>({
-    queryKey: ["roles", { ...params, search: debouncedSearch }],
+    queryKey: ["roles", { ...params, search: debouncedSearch }, activeBranch],
     queryFn: async () => {
       const queryParams = new URLSearchParams();
 

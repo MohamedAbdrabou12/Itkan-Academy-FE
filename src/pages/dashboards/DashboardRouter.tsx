@@ -18,15 +18,15 @@ export default function DashboardRouterPage() {
     );
   }
 
-  if (!me) {
-    return <Navigate to="/login" />;
-  }
+  // if (!me) {
+  //   return <Navigate to="/login" />;
+  // }
 
-  switch (me.role) {
+  switch (me.role_name) {
     case "student":
     case "guardian":
       return <StudentDashboardPage />;
-    case "teacher":
+    case "Teacher":
       return <TeacherDashboardPage />;
     case "general_manager":
     case "administrative_manager":
