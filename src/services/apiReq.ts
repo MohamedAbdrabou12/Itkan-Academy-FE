@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/stores/auth";
+import { UserRole } from "@/types/Roles";
 
 const API_BASE_URL =
   import.meta.env.VITE_APP_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -12,6 +13,15 @@ const apiReq = async (method: string, endpoint: string, body?: unknown) => {
     options.headers = {
       ...options.headers,
       Authorization: `Bearer ${accessToken}`,
+    };
+  }
+
+  const userRole = useAuthStore.getState().user?.role_name;
+  const activeBranch = useAuthStore.getState().activeBranch;
+  if (userRole != UserRole.STUDENT && activeBranch?.id) {
+    options.headers = {
+      ...options.headers,
+      "X-Branch-ID": activeBranch?.id,
     };
   }
   if (body) {
