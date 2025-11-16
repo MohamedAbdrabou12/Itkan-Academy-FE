@@ -20,7 +20,7 @@ const RolesGridPage = () => {
     pageSize: PAGE_SIZE,
   });
   const [sortInfo, setSortInfo] = useState({
-    sortBy: "name" as string,
+    sortBy: "id" as string,
     sortOrder: "asc" as "asc" | "desc",
   });
   const [searchTerm, setSearchTerm] = useState("");
@@ -142,7 +142,7 @@ const RolesGridPage = () => {
           <span>{(value as number) || 0} صلاحيات</span>
           <button
             onClick={() => handleManagePermissions(row)}
-            className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800"
+            className="cursor-pointer text-sm font-medium text-emerald-600 hover:text-emerald-800"
           >
             إدارة
           </button>
@@ -175,6 +175,7 @@ const RolesGridPage = () => {
         onDelete={handleDelete}
         addButtonText="اضافة وظيفة"
         entityName="وظيفة"
+        searchPlaceholder="ابحث باسم الوظيفة..."
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={false}

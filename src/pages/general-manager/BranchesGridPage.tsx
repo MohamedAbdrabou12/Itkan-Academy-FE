@@ -19,7 +19,7 @@ const BranchesGridPage = () => {
     pageSize: PAGE_SIZE,
   });
   const [sortInfo, setSortInfo] = useState({
-    sortBy: "name" as string,
+    sortBy: "id" as string,
     sortOrder: "asc" as "asc" | "desc",
   });
   const [searchTerm, setSearchTerm] = useState("");
@@ -181,6 +181,7 @@ const BranchesGridPage = () => {
         // onView={handleView}
         addButtonText="اضافة فرع"
         entityName="فرع"
+        searchPlaceholder="ابحث باسم الفرع..."
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}

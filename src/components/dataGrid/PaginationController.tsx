@@ -80,7 +80,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
             id="page-size"
             value={pagination.pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
-            className="rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            className="rounded-md border border-gray-300 px-3 py-1 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500"
           >
             {pageSizeOptions.map((size) => (
               <option key={size} value={size}>
@@ -111,7 +111,7 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
               disabled={page === "..."}
               className={`relative inline-flex items-center border px-3 py-2 text-sm font-medium transition-colors ${
                 page === pagination.page
-                  ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
+                  ? "z-10 border-emerald-500 bg-emerald-50 text-emerald-600"
                   : page === "..."
                     ? "cursor-default border-transparent text-gray-500"
                     : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"

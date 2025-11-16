@@ -31,7 +31,9 @@ const GridTable = <T extends Record<string, unknown>>({
   }) => (
     <svg
       className={`h-4 w-4 transition-transform duration-200 ${
-        isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600"
+        isActive
+          ? "text-emerald-600"
+          : "text-gray-400 group-hover:text-gray-600"
       } ${direction === "desc" ? "rotate-180" : ""}`}
       fill="none"
       stroke="currentColor"
@@ -73,7 +75,7 @@ const GridTable = <T extends Record<string, unknown>>({
                           direction={isSorted ? sortInfo.sortOrder : "asc"}
                         />
                         {isSorted && (
-                          <span className="ml-1 text-xs font-normal text-blue-600">
+                          <span className="ml-1 text-xs font-normal text-emerald-600">
                             {sortInfo.sortOrder === "asc" ? "A-Z" : "Z-A"}
                           </span>
                         )}

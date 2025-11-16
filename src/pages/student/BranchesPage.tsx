@@ -131,8 +131,8 @@ export default function BranchesPage() {
                           </div>
                           <div className="text-xs text-gray-600">طالب</div>
                         </div>
-                        <div className="rounded-lg bg-blue-50 px-4 py-2 text-center">
-                          <div className="text-2xl font-bold text-blue-600">
+                        <div className="rounded-lg bg-emerald-50 px-4 py-2 text-center">
+                          <div className="text-2xl font-bold text-emerald-600">
                             {branch.teachers}
                           </div>
                           <div className="text-xs text-gray-600">معلم</div>

@@ -9,6 +9,7 @@ import StudentDashboardPage from "@/pages/dashboards/StudentDashboard";
 import TeacherDashboardPage from "@/pages/dashboards/TeacherDashboard";
 import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
+import UsersRoleGridPage from "@/pages/general-manager/UsersRoleGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AboutPage from "@/pages/student/AboutPage";
 import BranchesPage from "@/pages/student/BranchesPage";
@@ -50,6 +51,7 @@ const App = () => {
         >
           <Route path="/admin/roles" element={<RolesGridPage />} />
           <Route path="/admin/branches" element={<BranchesGridPage />} />
+          <Route path="/admin/users/roles" element={<UsersRoleGridPage />} />
         </Route>
 
         <Route element={<ItkanDashboardLayout />}>
