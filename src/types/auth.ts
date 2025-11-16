@@ -1,3 +1,4 @@
+import type { JWTBranch } from "./Branches";
 import type { UserRole } from "./Roles";
 
 export interface LoginResponse {
@@ -7,7 +8,7 @@ export interface LoginResponse {
 
 export interface User {
   id: number;
-  name: string;
+  full_name: string;
   email: string;
   role_name: UserRole;
   status: string;
@@ -15,6 +16,7 @@ export interface User {
 
 export interface JWTTokenDecodedContent {
   permissions: Permission[];
+  branches: JWTBranch[];
 }
 
 export interface PermissionModuleResponse {
