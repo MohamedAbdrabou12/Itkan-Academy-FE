@@ -1,5 +1,6 @@
 import GuestOnlyRoute from "@/components/auth/GuestOnlyRoute";
 import RoleBasedRoute from "@/components/auth/RoleBasedRoute";
+import GeneralManagerLayout from "@/components/layouts/GeneralManagerLayout";
 import StudentLayout from "@/components/layouts/StudentLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
@@ -48,9 +49,11 @@ const App = () => {
         <Route
           element={<RoleBasedRoute allowedRoles={[UserRole.GENERAL_MANAGER]} />}
         >
-          <Route path="/admin/roles" element={<RolesGridPage />} />
-          <Route path="/admin/branches" element={<BranchesGridPage />} />
-          <Route path="/admin/users/roles" element={<UsersRoleGridPage />} />
+          <Route element={<GeneralManagerLayout />}>
+            <Route path="/admin/roles" element={<RolesGridPage />} />
+            <Route path="/admin/branches" element={<BranchesGridPage />} />
+            <Route path="/admin/users/roles" element={<UsersRoleGridPage />} />
+          </Route>
         </Route>
 
         {/* DASHBOARD routes */}

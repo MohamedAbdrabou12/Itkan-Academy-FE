@@ -9,6 +9,7 @@ const GridTable = <T extends Record<string, unknown>>({
   onEdit,
   onDelete,
   onView,
+  // permission,
 }: GridTableProps<T>) => {
   const hasActions = onEdit || onDelete || onView;
 
@@ -119,6 +120,7 @@ const GridTable = <T extends Record<string, unknown>>({
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onView={onView}
+                    // permission={permission}
                   />
                 </td>
               )}

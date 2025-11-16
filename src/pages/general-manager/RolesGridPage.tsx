@@ -7,11 +7,12 @@ import { useDeleteRole } from "@/hooks/roles/useDeleteRole";
 import { useGetRoles } from "@/hooks/roles/useGetRoles";
 import { useUpdateRole } from "@/hooks/roles/useUpdateRole";
 import type { Column } from "@/types/dataGrid";
+// import { PermissionKeys } from "@/types/permissions";
 import type { RoleDetails } from "@/types/Roles";
 import type { RoleFormData } from "@/validation/roleSchema";
 import { useState } from "react";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [5, 10];
 
 const RolesGridPage = () => {
@@ -179,6 +180,7 @@ const RolesGridPage = () => {
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={false}
+        // permission={PermissionKeys.SYSTEM_ROLES_MANAGE}
       />
 
       {/* Role Form Modal */}

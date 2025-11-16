@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+// import type { PermissionKeys } from "./permissions";
 
 export interface Column<T> {
   key: keyof T | string;
@@ -59,6 +60,7 @@ export interface DataGridProps<T> {
   pageSizeOptions?: number[];
   enableSearch?: boolean;
   enableFilters?: boolean;
+  // permission: (typeof PermissionKeys)[keyof typeof PermissionKeys];
 }
 
 // Generic response interface for API calls
@@ -79,6 +81,7 @@ export interface GridTableProps<T> {
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   onView?: (item: T) => void;
+  // permission: (typeof PermissionKeys)[keyof typeof PermissionKeys];
 }
 
 export interface ActionMenuProps<T> {
@@ -86,6 +89,7 @@ export interface ActionMenuProps<T> {
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   onView?: (item: T) => void;
+  // permission: (typeof PermissionKeys)[keyof typeof PermissionKeys];
 }
 
 export interface PaginationControlsProps {

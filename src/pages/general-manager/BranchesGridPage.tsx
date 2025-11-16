@@ -1,16 +1,17 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
-import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
 import { BranchFormModal } from "@/components/modals/BranchFormModal";
+import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
 import { useCreateBranch } from "@/hooks/branches/useCreateBranch";
 import { useDeleteBranch } from "@/hooks/branches/useDeleteBranch";
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useUpdateBranch } from "@/hooks/branches/useUpdateBranch";
-import type { Column } from "@/types/dataGrid";
 import type { BranchDetails } from "@/types/Branches";
+import type { Column } from "@/types/dataGrid";
+// import { PermissionKeys } from "@/types/permissions";
 import type { BranchFormData } from "@/validation/branchSchema";
 import { useState } from "react";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [5, 10];
 
 const BranchesGridPage = () => {
@@ -185,6 +186,7 @@ const BranchesGridPage = () => {
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}
+        // permission={PermissionKeys.SYSTEM_BRANCHES_MANAGE}
       />
 
       {isFormModalOpen && (

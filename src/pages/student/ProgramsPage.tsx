@@ -97,7 +97,7 @@ export default function ProgramsPage() {
         text: "text-emerald-600",
         border: "border-emerald-200",
       },
-      emerald: {
+      blue: {
         bg: "bg-emerald-500",
         light: "bg-emerald-50",
         text: "text-emerald-600",
