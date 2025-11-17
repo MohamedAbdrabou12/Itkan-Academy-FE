@@ -50,7 +50,7 @@ export default function GeneralManagerNavbar() {
                   : "text-gray-600 hover:bg-gray-50 hover:text-emerald-700"
               }`}
             >
-              الوظائف
+              الأدوار
             </Link>
             <Link
               to="/admin/users/roles"
@@ -132,7 +132,7 @@ export default function GeneralManagerNavbar() {
             {/* Navigation Links */}
             {[
               { to: "/admin/branches", label: "الفروع" },
-              { to: "/admin/roles", label: "الوظائف" },
+              { to: "/admin/roles", label: "الأدوار" },
               { to: "/admin/users/roles", label: "المستخدمين" },
             ].map((item) => (
               <Link

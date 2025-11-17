@@ -3,7 +3,7 @@ import { UsersRoleModal } from "@/components/modals/UsersRoleModal";
 import { useGetAllUsers } from "@/hooks/users/useGetUsers";
 import { useUpdateUserRole } from "@/hooks/users/useUpdateUserRole";
 import type { Column } from "@/types/dataGrid";
-// import { PermissionKeys } from "@/types/permissions";
+import { PermissionKeys } from "@/types/permissions";
 import type { UpdateUserRoleData } from "@/types/Roles";
 import type { UserDetails } from "@/types/users";
 import { useState } from "react";
@@ -92,7 +92,7 @@ const UsersRoleGridPage = () => {
     },
     {
       key: "role_name_ar",
-      title: "الوظيفة",
+      title: "الدور",
       sortable: true,
       render: (value: unknown) => (
         <span className="font-medium">{String(value)}</span>
@@ -153,7 +153,7 @@ const UsersRoleGridPage = () => {
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}
-        // permission={PermissionKeys.SYSTEM_ROLE_PERMISSIONS_MANAGE}
+        editPermission={PermissionKeys.SYSTEM_USERS_EDIT}
       />
 
       {isRolesModalOpen && editingUser && (

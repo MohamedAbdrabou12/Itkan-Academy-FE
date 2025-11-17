@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Schema for form validation (uses strings)
 export const userRolesFormSchema = z.object({
-  role_id: z.string().min(1, "الوظيفة مطلوبة"),
+  role_id: z.string().min(1, "الدور مطلوبة"),
 });
 
 export type UserRolesFormData = z.infer<typeof userRolesFormSchema>;

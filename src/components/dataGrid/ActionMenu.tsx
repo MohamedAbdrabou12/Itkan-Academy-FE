@@ -1,15 +1,17 @@
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
 import type { ActionMenuProps } from "@/types/dataGrid";
-// import PermissionGate from "../auth/PermissionGate";
 import { EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
 import { useRef, useState } from "react";
+import PermissionGate from "../auth/PermissionGate";
+import FallbackPermissionButton from "./FallbackPermissionButton";
 
 const ActionMenu = <T extends Record<string, unknown>>({
   item,
   onEdit,
   onDelete,
   onView,
-  // permission,
+  editPermission,
+  deletePermission,
 }: ActionMenuProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -51,15 +53,15 @@ const ActionMenu = <T extends Record<string, unknown>>({
       {isOpen && (
         <div className="absolute left-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-gray-50 shadow-lg">
           <div className="py-1">
-            {/* <PermissionGate
-              permission={permission}
-              fallback={
-                <div className="cursor-not-allowed px-4 py-2 text-center text-sm text-gray-500">
-                  لا تمتلك الصلاحيات للاجراءات
-                </div>
-              }
-            > */}
-              {actions.map((action, index) => (
+            {actions.map((action, index) => (
+              <PermissionGate
+                permission={
+                  action.destructive
+                    ? deletePermission || ""
+                    : editPermission || ""
+                }
+                fallback={<FallbackPermissionButton reason={action.label} />}
+              >
                 <button
                   key={index}
                   onClick={() => {
@@ -75,8 +77,8 @@ const ActionMenu = <T extends Record<string, unknown>>({
                   <span>{action.icon}</span>
                   <span>{action.label}</span>
                 </button>
-              ))}
-            {/* </PermissionGate> */}
+              </PermissionGate>
+            ))}
           </div>
         </div>
       )}

@@ -55,10 +55,10 @@ export const PermissionKeys = {
   REPORTS_ACADEMIC_VIEW: "reports.academic.view",
   REPORTS_STAFF_VIEW: "reports.staff.view",
   REPORTS_FINANCIAL_VIEW: "reports.financial.view",
-  REPORTS_FINANCIAL_GENERATE: "reports.financial.generate",
+  REPORTS_FINANCIAL_ADD: "reports.financial.add",
 
-  REPORTS_BRANCH_ALL: "reports.branch.*",
-  REPORTS_BRANCH_VIEW: "reports.branch.view",
+  REPORTS_BRANCHES_ALL: "reports.branches.*",
+  REPORTS_BRANCHES_VIEW: "reports.branches.view",
 
   REPORTS_TEACHER_ALL: "reports.teacher.*",
   REPORTS_TEACHER_VIEW: "reports.teacher.view",
@@ -74,13 +74,19 @@ export const PermissionKeys = {
   REPORTS_FINANCIAL_EXPENSES_APPROVE: "reports.financial_expenses.approve",
 
   SYSTEM_ROLES_ALL: "system.roles.*",
-  SYSTEM_ROLES_MANAGE: "system.roles.manage",
+  SYSTEM_ROLES_ADD: "system.roles.add",
+  SYSTEM_ROLES_EDIT: "system.roles.edit",
+  SYSTEM_ROLES_DELETE: "system.roles.delete",
 
   SYSTEM_ROLE_PERMISSIONS_ALL: "system.role_permissions.*",
   SYSTEM_ROLE_PERMISSIONS_MANAGE: "system.role_permissions.manage",
 
   SYSTEM_BRANCHES_ALL: "system.branches.*",
-  SYSTEM_BRANCHES_MANAGE: "system.branches.manage",
+  SYSTEM_BRANCHES_ADD: "system.branches.add",
+  SYSTEM_BRANCHES_EDIT: "system.branches.edit",
+
+  SYSTEM_USERS_ALL: "system.users.*",
+  SYSTEM_USERS_EDIT: "system.users.edit",
 
   SYSTEM_ASSIGNMENTS_ALL: "system.assignments.*",
   SYSTEM_ASSIGNMENTS_MANAGE: "system.assignments.manage",

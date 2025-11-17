@@ -23,8 +23,8 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   exams: "الامتحانات",
   management: "الإدارة",
   classes: "الفصول",
-  roles: "الوظائف",
-  role_permissions: "صلاحيات الوظائف",
+  roles: "الأدوار",
+  role_permissions: "صلاحيات الأدوار",
   daily: "اليومي",
   supervisor: "المشرف",
   announcements: "الإعلانات",
@@ -41,6 +41,7 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   parties: "الحفلات",
   accounts: "الحسابات",
   expenses: "المصروفات",
+  users: "المستخدمين",
 
   // Actions
   view: "عرض",
@@ -53,7 +54,9 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   coordinate: "تنسيق",
   approve: "اعتماد",
   organize: "تنظيم",
-  generate: "إنشاء",
+  add: "إضافة",
+  edit: "تعديل",
+  delete: "حذف",
   "*": "الكل",
 };
 

@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/stores/auth";
 import { useGetPermissionModules } from "./useGetPermissionModules";
-import type { Permission } from "@/types/auth";
+import type { tokenPermission } from "@/types/auth";
 import { UserRole } from "@/types/Roles";
 
 export const usePermissionsGate = () => {
@@ -45,7 +45,7 @@ export const usePermissionsGate = () => {
     if (isAdmin()) return true;
     if (!user || !userPermissions || !permissionModules) return false;
 
-    const modulesPermissions: Permission[] = [];
+    const modulesPermissions: tokenPermission[] = [];
     permissionModules.moduleGroups.map((moduleGroup) => {
       if (moduleGroups.includes(moduleGroup.groupName)) {
         moduleGroup.modules.map((module) => {
@@ -66,7 +66,7 @@ export const usePermissionsGate = () => {
     if (isAdmin()) return true;
     if (!user || !userPermissions || !permissionModules) return false;
 
-    const moduleGroupsPermissions: Permission[] = [];
+    const moduleGroupsPermissions: tokenPermission[] = [];
 
     for (const moduleGroup of permissionModules.moduleGroups) {
       for (const mod of moduleGroup.modules) {

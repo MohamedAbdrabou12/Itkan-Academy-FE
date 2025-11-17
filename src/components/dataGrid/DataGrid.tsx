@@ -25,7 +25,9 @@ const DataGrid = <T extends Record<string, unknown>>({
   onDelete,
   onView,
   searchPlaceholder,
-  // permission,
+  addPermission,
+  editPermission,
+  deletePermission,
   addButtonText = "اضافة عنصر",
   entityName = "عنصر",
   pageSizeOptions = [10, 25, 50, 100],
@@ -57,6 +59,7 @@ const DataGrid = <T extends Record<string, unknown>>({
         title={title}
         onAddNew={onAddNew}
         addButtonText={addButtonText}
+        addPermission={addPermission}
       />
 
       {/* Search & Filter Bar */}
@@ -91,7 +94,8 @@ const DataGrid = <T extends Record<string, unknown>>({
             onEdit={onEdit}
             onDelete={onDelete}
             onView={onView}
-            // permission={permission}
+            editPermission={editPermission}
+            deletePermission={deletePermission}
           />
         )}
       </div>
