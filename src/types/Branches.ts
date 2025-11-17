@@ -21,3 +21,8 @@ export interface BranchesResponse {
   size: number;
   pages: number;
 }
+
+export interface JWTBranch {
+  id: string;
+  name: string;
+}

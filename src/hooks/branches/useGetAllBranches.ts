@@ -2,6 +2,7 @@ import apiReq from "@/services/apiReq";
 import type { BranchesResponse } from "@/types/Branches";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../useDebounce";
+import { useAuthStore } from "@/stores/auth";
 
 interface UseGetAllBranchesParams {
   page?: number;
@@ -13,9 +14,14 @@ interface UseGetAllBranchesParams {
 
 export const useGetAllBranches = (params?: UseGetAllBranchesParams) => {
   const debouncedSearch = useDebounce(params?.search, 300);
+  const activeBranch = useAuthStore((state) => state.activeBranch);
 
   const { data, isPending, error, refetch } = useQuery<BranchesResponse>({
-    queryKey: ["branches", { ...params, search: debouncedSearch }],
+    queryKey: [
+      "branches",
+      { ...params, search: debouncedSearch },
+      activeBranch,
+    ],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
 
