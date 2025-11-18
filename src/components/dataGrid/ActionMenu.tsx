@@ -1,13 +1,17 @@
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
 import type { ActionMenuProps } from "@/types/dataGrid";
 import { EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
+import PermissionGate from "../auth/PermissionGate";
+import FallbackPermissionButton from "./FallbackPermissionButton";
 
 const ActionMenu = <T extends Record<string, unknown>>({
   item,
   onEdit,
   onDelete,
   onView,
+  editPermission,
+  deletePermission,
 }: ActionMenuProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -47,24 +51,33 @@ const ActionMenu = <T extends Record<string, unknown>>({
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="absolute left-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-gray-50 shadow-lg">
           <div className="py-1">
             {actions.map((action, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  action.action(item);
-                  setIsOpen(false);
-                }}
-                className={`flex w-full items-center space-x-2 px-4 py-2 text-left text-sm transition-colors ${
+              <PermissionGate
+                permission={
                   action.destructive
-                    ? "text-red-600 hover:bg-red-50"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
+                    ? deletePermission || ""
+                    : editPermission || ""
+                }
+                fallback={<FallbackPermissionButton reason={action.label} />}
               >
-                <span>{action.icon}</span>
-                <span>{action.label}</span>
-              </button>
+                <button
+                  key={index}
+                  onClick={() => {
+                    action.action(item);
+                    setIsOpen(false);
+                  }}
+                  className={`flex w-full items-center space-x-2 px-4 py-2 text-left text-sm transition-colors ${
+                    action.destructive
+                      ? "text-red-600 hover:bg-red-50"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <span>{action.icon}</span>
+                  <span>{action.label}</span>
+                </button>
+              </PermissionGate>
             ))}
           </div>
         </div>

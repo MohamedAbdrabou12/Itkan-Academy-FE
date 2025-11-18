@@ -137,10 +137,10 @@ const RolePermissionsModal = ({
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-right text-lg font-semibold leading-6 text-gray-900">
-                  إدارة صلاحيات الوظيفة: {role.name_ar}
+                  إدارة صلاحيات الدور: {role.name_ar}
                 </h3>
                 <p className="mt-1 text-right text-sm text-gray-500">
-                  قم بتحديد الصلاحيات المسموحة لهذه الوظيفة
+                  قم بتحديد الصلاحيات المسموحة لهذه الدور
                 </p>
               </div>
               <div className="text-left text-sm text-gray-500">

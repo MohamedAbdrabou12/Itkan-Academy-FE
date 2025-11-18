@@ -1,3 +1,4 @@
+import PermissionGate from "@/components/auth/PermissionGate";
 import DataGrid from "@/components/dataGrid/DataGrid";
 import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
 import { RoleFormModal } from "@/components/modals/RoleFormModal";
@@ -7,11 +8,12 @@ import { useDeleteRole } from "@/hooks/roles/useDeleteRole";
 import { useGetRoles } from "@/hooks/roles/useGetRoles";
 import { useUpdateRole } from "@/hooks/roles/useUpdateRole";
 import type { Column } from "@/types/dataGrid";
+import { PermissionKeys } from "@/types/permissions";
 import type { RoleDetails } from "@/types/Roles";
 import type { RoleFormData } from "@/validation/roleSchema";
 import { useState } from "react";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [5, 10];
 
 const RolesGridPage = () => {
@@ -140,12 +142,16 @@ const RolesGridPage = () => {
       render: (value: unknown, row: RoleDetails) => (
         <div className="text-cneter flex justify-center gap-2">
           <span>{(value as number) || 0} صلاحيات</span>
-          <button
-            onClick={() => handleManagePermissions(row)}
-            className="cursor-pointer text-sm font-medium text-emerald-600 hover:text-emerald-800"
+          <PermissionGate
+            permission={PermissionKeys.SYSTEM_ROLE_PERMISSIONS_MANAGE}
           >
-            إدارة
-          </button>
+            <button
+              onClick={() => handleManagePermissions(row)}
+              className="cursor-pointer text-sm font-medium text-emerald-600 hover:text-emerald-800"
+            >
+              إدارة
+            </button>
+          </PermissionGate>
         </div>
       ),
     },
@@ -154,7 +160,7 @@ const RolesGridPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <DataGrid<RoleDetails>
-        title="ادارة الوظائف"
+        title="ادارة الأدوار"
         columns={columns}
         data={roles}
         loading={isPending}
@@ -173,12 +179,14 @@ const RolesGridPage = () => {
         onAddNew={handleAddNew}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        addButtonText="اضافة وظيفة"
-        entityName="وظيفة"
-        searchPlaceholder="ابحث باسم الوظيفة..."
+        addButtonText="اضافة دور"
+        entityName="دور"
+        searchPlaceholder="ابحث باسم الدور..."
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={false}
+        editPermission={PermissionKeys.SYSTEM_ROLES_EDIT}
+        deletePermission={PermissionKeys.SYSTEM_ROLES_DELETE}
       />
 
       {/* Role Form Modal */}
@@ -224,8 +232,8 @@ const RolesGridPage = () => {
             setDeletingRole(null);
           }}
           onConfirm={handleConfirmDelete}
-          title="حذف الوظيفة"
-          description="هل أنت متأكد من أنك تريد حذف هذا الوظيفة؟ لا يمكن التراجع عن هذا الإجراء."
+          title="حذف الدور"
+          description="هل أنت متأكد من أنك تريد حذف هذا الدور؟ لا يمكن التراجع عن هذا الإجراء."
           itemName={deletingRole?.name_ar}
           isDeleting={deleteMutation.isPending}
         />
