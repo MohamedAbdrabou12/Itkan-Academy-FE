@@ -4,6 +4,7 @@ import { navLinks } from "@/utils/navItems";
 import { LayoutGrid } from "lucide-react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import clsx from "clsx";
+
 export default function ItkanDashboardLayout() {
   const activeBranch = useAuthStore((state) => state.activeBranch);
   const user = useAuthStore((state) => state.user);
@@ -122,6 +123,7 @@ export default function ItkanDashboardLayout() {
               <div className="divider my-0 mt-0"></div>
               {branches?.map((branch) => (
                 <li
+                  key={branch.id}
                   className={
                     activeBranch?.id === branch.id ? "bg-base-300" : ""
                   }
@@ -137,7 +139,7 @@ export default function ItkanDashboardLayout() {
 
           <ul className="menu w-full grow">
             {navLinks.map((link) => (
-              <li>
+              <li key={link.id}>
                 <a
                   href={link.url}
                   className={clsx(

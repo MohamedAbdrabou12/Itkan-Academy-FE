@@ -1,4 +1,4 @@
-import { BookA, Warehouse } from "lucide-react";
+import { BookA, Warehouse, UserCheck } from "lucide-react";
 
 export const navLinks = [
   {
@@ -12,5 +12,11 @@ export const navLinks = [
     title: "الادوار الوظيفية",
     icon: BookA,
     url: "/itkan-dashboard/roles",
+  },
+  {
+    id: "attendance_and_evaluations",
+    title: "الحضور و التقييمات",
+    icon: UserCheck,
+    url: "/itkan-dashboard/attendance-and-evaluations",
   },
 ];
