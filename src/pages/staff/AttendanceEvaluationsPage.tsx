@@ -5,12 +5,21 @@ import Spinner from "@/components/shared/Spinner";
 import { useGetClassStudents } from "@/hooks/classes/useGetClassStudents";
 import { useGetTeacherClasses } from "@/hooks/classes/useGetTeacherClasses";
 import { useAuthStore } from "@/stores/auth";
-import type { AttendanceStatus, EvaluationGrade } from "@/types/classes";
+import {
+  AttendanceStatus,
+  type EvaluationGrade,
+  type StudentAttendanceStatus,
+} from "@/types/classes";
 import { useState, useEffect } from "react";
+
+export const EVALUATION_MAX_GRADE = 10;
+
+// Define the type for the attendance status state
+type AttendanceStatusMap = Record<number, StudentAttendanceStatus>;
 
 const AttendanceEvaluationsPage = () => {
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
-  const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatus>(
+  const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatusMap>(
     {},
   );
   const { user, activeBranch } = useAuthStore();
@@ -28,24 +37,28 @@ const AttendanceEvaluationsPage = () => {
   useEffect(() => {
     setSelectedClassId(null);
     setAttendanceStatus({});
-  }, [activeBranch?.id]); // Reset when branch ID changes
+  }, [activeBranch?.id]);
 
   const initializeEvaluations = (): EvaluationGrade[] => {
     return (
-      selectedClass?.evaluation_config.map((criteria) => ({
-        criteria: criteria.name,
+      selectedClass?.evaluation_config.map((evaluation_name) => ({
+        name: evaluation_name,
         grade: 0,
-        max_grade: criteria.max_grade,
       })) || []
     );
   };
 
-  const handleAttendanceChange = (studentId: number, present: boolean) => {
+  const handleAttendanceChange = (
+    studentId: number,
+    status: AttendanceStatus,
+  ) => {
     setAttendanceStatus((prev) => {
       const currentStatus = prev[studentId];
-      const evaluations = present
+      const isPresent = status === AttendanceStatus.PRESENT;
+
+      const evaluations = isPresent
         ? currentStatus?.evaluations || initializeEvaluations()
-        : currentStatus?.evaluations.map((evalItem) => ({
+        : currentStatus?.evaluations?.map((evalItem) => ({
             ...evalItem,
             grade: 0,
           })) || initializeEvaluations();
@@ -53,7 +66,7 @@ const AttendanceEvaluationsPage = () => {
       return {
         ...prev,
         [studentId]: {
-          present,
+          status,
           notes: currentStatus?.notes || "",
           evaluations,
         },
@@ -65,7 +78,8 @@ const AttendanceEvaluationsPage = () => {
     setAttendanceStatus((prev) => ({
       ...prev,
       [studentId]: {
-        present: prev[studentId]?.present || false,
+        ...prev[studentId],
+        status: prev[studentId]?.status || AttendanceStatus.ABSENT,
         notes,
         evaluations: prev[studentId]?.evaluations || initializeEvaluations(),
       },
@@ -84,10 +98,7 @@ const AttendanceEvaluationsPage = () => {
       const updatedEvaluations = [...currentStudent.evaluations];
       updatedEvaluations[criteriaIndex] = {
         ...updatedEvaluations[criteriaIndex],
-        grade: Math.min(
-          Math.max(0, grade),
-          updatedEvaluations[criteriaIndex].max_grade,
-        ),
+        grade: Math.min(Math.max(0, grade), EVALUATION_MAX_GRADE),
       };
 
       return {

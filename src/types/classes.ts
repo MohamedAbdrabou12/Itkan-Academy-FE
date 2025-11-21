@@ -1,14 +1,9 @@
-export interface EvaluationCriteria {
-  name: string;
-  max_grade: number;
-}
-
 export interface Class {
   id: number;
   branch_id: number;
   name: string;
   schedule: Record<string, string[]>;
-  evaluation_config: EvaluationCriteria[];
+  evaluation_config: string[];
   created_at: string;
   updated_at: string;
 }
@@ -19,17 +14,19 @@ export interface ClassStudent {
 }
 
 export interface EvaluationGrade {
-  criteria: string;
+  name: string;
   grade: number;
-  max_grade: number;
+}
+
+export enum AttendanceStatus {
+  PRESENT = "present",
+  ABSENT = "absent",
+  LATE = "late",
+  EXCUSED = "excused",
 }
 
 export interface StudentAttendanceStatus {
-  present: boolean;
+  status: AttendanceStatus;
   notes: string;
   evaluations: EvaluationGrade[];
-}
-
-export interface AttendanceStatus {
-  [key: number]: StudentAttendanceStatus;
 }

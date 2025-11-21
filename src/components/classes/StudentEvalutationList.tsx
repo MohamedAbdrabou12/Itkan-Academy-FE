@@ -1,17 +1,23 @@
 import Spinner from "@/components/shared/Spinner";
-import type { AttendanceStatus } from "@/types/classes";
-import type { Class, ClassStudent, EvaluationCriteria } from "@/types/classes";
+import type {
+  AttendanceStatus,
+  StudentAttendanceStatus,
+} from "@/types/classes";
+import type { Class, ClassStudent } from "@/types/classes";
 import { ArrowRight, User } from "lucide-react";
 import StudentEvaluationItem from "./StudentEvaluationItem";
+
+// Define the type for the attendance status prop
+type AttendanceStatusMap = Record<number, StudentAttendanceStatus>;
 
 interface StudentEvaluationListProps {
   selectedClassId: number;
   teacherClasses?: Class[];
   classStudents?: ClassStudent[];
   studentsLoading: boolean;
-  attendanceStatus: AttendanceStatus;
-  evaluationConfig: EvaluationCriteria[];
-  onAttendanceChange: (studentId: number, present: boolean) => void;
+  attendanceStatus: AttendanceStatusMap;
+  evaluationConfig: string[];
+  onAttendanceChange: (studentId: number, status: AttendanceStatus) => void;
   onNotesChange: (studentId: number, notes: string) => void;
   onEvaluationChange: (
     studentId: number,
