@@ -1,8 +1,18 @@
+export type Weekday =
+  | "saturday"
+  | "sunday"
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday";
+export type ClassSchedule = Record<Weekday, string[]>;
+
 export interface Class {
   id: number;
   branch_id: number;
   name: string;
-  schedule: Record<string, string[]>;
+  schedule: ClassSchedule;
   evaluation_config: string[];
   created_at: string;
   updated_at: string;
@@ -30,3 +40,5 @@ export interface StudentAttendanceStatus {
   notes: string;
   evaluations: EvaluationGrade[];
 }
+
+export type AttendanceStatusMap = Record<number, StudentAttendanceStatus>;

@@ -4,24 +4,26 @@ import StudentEvaluationList from "@/components/classes/StudentEvalutationList";
 import Spinner from "@/components/shared/Spinner";
 import { useGetClassStudents } from "@/hooks/classes/useGetClassStudents";
 import { useGetTeacherClasses } from "@/hooks/classes/useGetTeacherClasses";
+import { useCreateBulkEvaluation } from "@/hooks/evaluations/useCreateBulkEvaluation";
 import { useAuthStore } from "@/stores/auth";
 import {
   AttendanceStatus,
   type EvaluationGrade,
-  type StudentAttendanceStatus,
+  type AttendanceStatusMap,
 } from "@/types/classes";
 import { useState, useEffect } from "react";
 
 export const EVALUATION_MAX_GRADE = 10;
-
-// Define the type for the attendance status state
-type AttendanceStatusMap = Record<number, StudentAttendanceStatus>;
 
 const AttendanceEvaluationsPage = () => {
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatusMap>(
     {},
   );
+  const [classDate, setClassDate] = useState(new Date());
+
+  const { createBulkEvaluation } = useCreateBulkEvaluation();
+
   const { user, activeBranch } = useAuthStore();
 
   const { teacherClasses, isPending: classesLoading } = useGetTeacherClasses(
@@ -112,8 +114,11 @@ const AttendanceEvaluationsPage = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Evaluation data:", attendanceStatus);
-    // API call here
+    createBulkEvaluation({
+      class_id: selectedClassId!,
+      date: classDate.toLocaleString("en-US"),
+      records: attendanceStatus,
+    });
   };
 
   const handleBackToClasses = () => {
@@ -138,6 +143,7 @@ const AttendanceEvaluationsPage = () => {
             selectedClassId={selectedClassId}
             teacherClasses={teacherClasses}
             classStudents={classStudents}
+            classDate={classDate}
             studentsLoading={studentsLoading}
             attendanceStatus={attendanceStatus}
             evaluationConfig={selectedClass?.evaluation_config || []}
@@ -145,6 +151,7 @@ const AttendanceEvaluationsPage = () => {
             onNotesChange={handleNotesChange}
             onEvaluationChange={handleEvaluationChange}
             onBackToClasses={handleBackToClasses}
+            onClassDateChange={setClassDate}
           />
 
           {classStudents && classStudents.length > 0 && (

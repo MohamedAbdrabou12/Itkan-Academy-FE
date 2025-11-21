@@ -1,4 +1,4 @@
-import { usePermissionsGate } from "@/hooks/auth/UsePermissionGate";
+import { usePermissionsGate } from "@/hooks/auth/usePermissionGate";
 
 export interface PermissionGateProps {
   permission: string;

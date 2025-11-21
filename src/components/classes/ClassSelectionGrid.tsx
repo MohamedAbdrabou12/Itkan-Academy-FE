@@ -1,4 +1,5 @@
-import type { Class } from "@/types/classes";
+import type { Class, Weekday } from "@/types/classes";
+import { englishToArabicDayMap } from "@/utils/getArabicDayName";
 import { ChevronLeft } from "lucide-react";
 
 interface ClassSelectionGridProps {
@@ -39,7 +40,7 @@ const ClassSelectionGrid = ({
                   {Object.entries(classItem.schedule).map(([day, time]) => (
                     <div key={day} className="flex justify-between text-sm">
                       <span className="text-gray-500">
-                        {getArabicDayName(day)}
+                        {englishToArabicDayMap[day as Weekday]}
                       </span>
                       <span className="font-medium text-emerald-600">
                         {time}
@@ -58,20 +59,6 @@ const ClassSelectionGrid = ({
       )}
     </div>
   );
-};
-
-// Helper function to convert English day names to Arabic
-const getArabicDayName = (englishDay: string): string => {
-  const dayMap: { [key: string]: string } = {
-    sunday: "الأحد",
-    monday: "الإثنين",
-    tuesday: "الثلاثاء",
-    wednesday: "الأربعاء",
-    thursday: "الخميس",
-    friday: "الجمعة",
-    saturday: "السبت",
-  };
-  return dayMap[englishDay.toLowerCase()] || englishDay;
 };
 
 export default ClassSelectionGrid;
