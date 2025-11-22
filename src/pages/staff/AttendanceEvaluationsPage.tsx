@@ -113,10 +113,17 @@ const AttendanceEvaluationsPage = () => {
     });
   };
 
+  const handleClassDateChange = (date: Date) => {
+    const newDateWithoutTime = new Date(date);
+    newDateWithoutTime.setHours(0, 0, 0, 0);
+
+    setClassDate(newDateWithoutTime);
+  };
+
   const handleSubmit = () => {
     createBulkEvaluation({
       class_id: selectedClassId!,
-      date: classDate.toLocaleString("en-US"),
+      date: classDate.toLocaleDateString("en-US"),
       records: attendanceStatus,
     });
   };
@@ -151,7 +158,7 @@ const AttendanceEvaluationsPage = () => {
             onNotesChange={handleNotesChange}
             onEvaluationChange={handleEvaluationChange}
             onBackToClasses={handleBackToClasses}
-            onClassDateChange={setClassDate}
+            onClassDateChange={handleClassDateChange}
           />
 
           {classStudents && classStudents.length > 0 && (
