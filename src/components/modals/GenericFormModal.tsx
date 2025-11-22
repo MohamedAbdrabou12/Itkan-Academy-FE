@@ -18,6 +18,7 @@ interface GenericFormModalProps<T extends z.ZodType> {
   submitButtonText: string;
   editingSubmitButtonText: string;
   formComponents: FormComponents;
+  hideRequiredIndicator?: boolean;
 }
 
 export const GenericFormModal = <T extends z.ZodType>({
@@ -145,7 +146,7 @@ export const GenericFormModal = <T extends z.ZodType>({
 
     // Validate single field using the full schema but only checking this field
     try {
-      const fieldSchema = schema.shape[fieldName as keyof typeof schema.shape];
+      const fieldSchema = schema.shape[fieldName as keyof typeof schema.shape];  
       if (fieldSchema) {
         fieldSchema.parse(formData[fieldName as keyof FormData] || "");
         setErrors((prev) => ({

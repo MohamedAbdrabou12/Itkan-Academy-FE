@@ -31,6 +31,7 @@ const apiReq = async (method: string, endpoint: string, body?: unknown) => {
       options.body = body;
     } else {
       options.headers = {
+        ...options.headers,
         "Content-Type": "application/json",
       };
       options.body = JSON.stringify(body);

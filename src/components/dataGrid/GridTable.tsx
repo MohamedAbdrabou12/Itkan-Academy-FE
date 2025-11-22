@@ -12,7 +12,7 @@ const GridTable = <T extends Record<string, unknown>>({
   editPermission,
   deletePermission,
 }: GridTableProps<T>) => {
-  const hasActions = onEdit || onDelete || onView;
+  const hasActions = !!(onEdit || onDelete || onView);
 
   const renderCell = (column: Column<T>, row: T) => {
     if (column.render) {
@@ -84,7 +84,6 @@ const GridTable = <T extends Record<string, unknown>>({
                       </div>
                     </button>
                   ) : (
-                    // Non-sortable column - just display the title
                     <span className="block w-full text-center font-semibold text-gray-600">
                       {column.title}
                     </span>
