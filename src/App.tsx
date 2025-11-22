@@ -1,6 +1,5 @@
 import GuestOnlyRoute from "@/components/auth/GuestOnlyRoute";
 import RoleBasedRoute from "@/components/auth/RoleBasedRoute";
-import ItkanDashboardLayout from "@/components/layouts/ItkanDashboardLayout";
 import StudentLayout from "@/components/layouts/StudentLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
@@ -25,6 +24,8 @@ import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { UserRole } from "@/types/Roles";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
+import ItkanDashboardLayout from "./components/layouts/ItkanDashboardLayout";
+import TeachersGridPage from "./pages/general-manager/TeachersGridPage";
 
 const App = () => {
   return (
@@ -70,7 +71,15 @@ const App = () => {
             path="/itkan-dashboard/attendance-and-evaluations"
             element={<AttendanceEvaluationsPage />}
           />
-          <Route path="/itkan-dashboard/students" element={<StudentsGridPage />} />
+          <Route
+            path="/itkan-dashboard/students"
+            element={<StudentsGridPage />}
+          />
+
+          <Route
+            path="/itkan-dashboard/teachers"
+            element={<TeachersGridPage />}
+          />
         </Route>
 
         {/* DASHBOARD routes */}
