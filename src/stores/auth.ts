@@ -1,7 +1,7 @@
 import type {
   JWTTokenDecodedContent,
   LoginResponse,
-  Permission,
+  JWTPermission,
   User,
 } from "@/types/auth";
 import { create } from "zustand";
@@ -20,7 +20,7 @@ interface AuthState {
 interface AuthActions {
   login: (loginResponse: LoginResponse) => void;
   logout: () => void;
-  getUserPermission: () => Permission[] | null;
+  getUserPermission: () => JWTPermission[] | null;
   setActiveBranch: (branch: JWTBranch) => void;
 }
 export const useAuthStore = create<AuthState & AuthActions>()(

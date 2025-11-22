@@ -1,5 +1,6 @@
 import GuestOnlyRoute from "@/components/auth/GuestOnlyRoute";
 import RoleBasedRoute from "@/components/auth/RoleBasedRoute";
+import GeneralManagerLayout from "@/components/layouts/GeneralManagerLayout";
 import StudentLayout from "@/components/layouts/StudentLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";

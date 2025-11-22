@@ -15,7 +15,7 @@ export interface User {
 }
 
 export interface JWTTokenDecodedContent {
-  permissions: Permission[];
+  permissions: JWTPermission[];
   branches: JWTBranch[];
 }
 
@@ -31,10 +31,10 @@ export interface ModuleGroup {
 
 export interface Module {
   moduleName: string;
-  permissions: Permission[];
+  permissions: JWTPermission[];
 }
 
-export interface Permission {
+export interface JWTPermission {
   id: string;
   code: string;
   description: string;

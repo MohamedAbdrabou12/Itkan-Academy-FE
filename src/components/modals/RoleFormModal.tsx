@@ -20,14 +20,14 @@ export const RoleFormModal = (props: RoleFormModalProps) => (
     {...props}
     schema={roleSchema}
     fields={roleFields}
-    title={props.isEditing ? "تعديل الوظيفة" : "إضافة وظيفة جديدة"}
+    title={props.isEditing ? "تعديل الدور" : "إضافة دور جديدة"}
     description={
       props.isEditing
-        ? "قم بتحديث بيانات الوظيفة أدناه."
-        : "املأ البيانات لإنشاء وظيفة جديدة."
+        ? "قم بتحديث بيانات الدور أدناه."
+        : "املأ البيانات لإنشاء دور جديدة."
     }
-    submitButtonText="إنشاء الوظيفة"
-    editingSubmitButtonText="تحديث الوظيفة"
+    submitButtonText="إنشاء الدور"
+    editingSubmitButtonText="تحديث الدور"
     formComponents={formComponents}
   />
 );
@@ -52,7 +52,7 @@ const roleFields: FormField[] = [
     label: "الوصف",
     type: "textarea",
     required: false,
-    placeholder: "ادخل وصف الوظيفة هنا...",
+    placeholder: "ادخل وصف الدور هنا...",
     rows: 3,
   },
   {
@@ -60,7 +60,7 @@ const roleFields: FormField[] = [
     label: "الوصف بالعربية",
     type: "textarea",
     required: false,
-    placeholder: "ادخل وصف الوظيفة هنا...",
+    placeholder: "ادخل وصف الدور هنا...",
     rows: 3,
   },
 ];
