@@ -5,3 +5,6 @@ export const formatDate = (value: unknown) => {
     day: "numeric",
   });
 };
+
+export const toISOStringWithoutTime = (date: Date) =>
+  date.toISOString().split("T")[0];

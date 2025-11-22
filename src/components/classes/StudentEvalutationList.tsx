@@ -11,6 +11,7 @@ import { englishToArabicDayMap } from "@/utils/getArabicDayName";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import StudentEvaluationItem from "./StudentEvaluationItem";
+import { toISOStringWithoutTime } from "@/utils/formatDate";
 
 interface StudentEvaluationListProps {
   selectedClassId: number;
@@ -117,8 +118,6 @@ const StudentEvaluationList = ({
       onClassDateChange(getValidClassDates[0]);
     }
   };
-  const formatDateAsHtmlInput = (date: Date) =>
-    date.toISOString().split("T")[0];
 
   // Format date for display
   const formattedDate = classDate.toLocaleDateString("ar-EG", {
@@ -129,7 +128,7 @@ const StudentEvaluationList = ({
   });
 
   // Format date for input value (YYYY-MM-DD)
-  const inputDateValue = formatDateAsHtmlInput(classDate);
+  const inputDateValue = toISOStringWithoutTime(classDate);
 
   const getClassTimes = (date: Date) => {
     const dayName = date
@@ -214,12 +213,12 @@ const StudentEvaluationList = ({
                         onChange={handleNativeDateChange}
                         className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
                         // min is the oldest date (last in reversed array)
-                        min={formatDateAsHtmlInput(
+                        min={toISOStringWithoutTime(
                           getValidClassDates[getValidClassDates.length - 1] ||
                             new Date(),
                         )}
                         // max is the newest date (first in reversed array)
-                        max={formatDateAsHtmlInput(
+                        max={toISOStringWithoutTime(
                           getValidClassDates[0] || new Date(),
                         )}
                         list="validClassDates"
@@ -229,7 +228,7 @@ const StudentEvaluationList = ({
                         {getValidClassDates.map((date) => (
                           <option
                             key={date.toISOString()}
-                            value={formatDateAsHtmlInput(date)}
+                            value={toISOStringWithoutTime(date)}
                           />
                         ))}
                       </datalist>

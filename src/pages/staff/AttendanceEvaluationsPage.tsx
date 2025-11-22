@@ -11,7 +11,8 @@ import {
   type EvaluationGrade,
   type AttendanceStatusMap,
 } from "@/types/classes";
-import { useState, useEffect } from "react";
+import { toISOStringWithoutTime } from "@/utils/formatDate";
+import { useState, useEffect, useCallback } from "react";
 
 export const EVALUATION_MAX_GRADE = 10;
 
@@ -41,40 +42,46 @@ const AttendanceEvaluationsPage = () => {
     setAttendanceStatus({});
   }, [activeBranch?.id]);
 
-  const initializeEvaluations = (): EvaluationGrade[] => {
+  const initializeEvaluations = useCallback((): EvaluationGrade[] => {
     return (
       selectedClass?.evaluation_config.map((evaluation_name) => ({
         name: evaluation_name,
         grade: 0,
       })) || []
     );
-  };
+  }, [selectedClass?.evaluation_config]);
 
-  const handleAttendanceChange = (
-    studentId: number,
-    status: AttendanceStatus,
-  ) => {
-    setAttendanceStatus((prev) => {
-      const currentStatus = prev[studentId];
-      const isPresent = status === AttendanceStatus.PRESENT;
+  const handleAttendanceChange = useCallback(
+    (studentId: number, status: AttendanceStatus) => {
+      setAttendanceStatus((prev) => {
+        const currentStatus = prev[studentId];
+        const isPresent = status === AttendanceStatus.PRESENT;
 
-      const evaluations = isPresent
-        ? currentStatus?.evaluations || initializeEvaluations()
-        : currentStatus?.evaluations?.map((evalItem) => ({
-            ...evalItem,
-            grade: 0,
-          })) || initializeEvaluations();
+        const evaluations = isPresent
+          ? (currentStatus?.evaluations ?? initializeEvaluations())
+          : (currentStatus?.evaluations?.map((evalItem) => ({
+              ...evalItem,
+              grade: 0,
+            })) ?? initializeEvaluations());
 
-      return {
-        ...prev,
-        [studentId]: {
-          status,
-          notes: currentStatus?.notes || "",
-          evaluations,
-        },
-      };
-    });
-  };
+        return {
+          ...prev,
+          [studentId]: {
+            status,
+            notes: currentStatus?.notes ?? "",
+            evaluations,
+          },
+        };
+      });
+    },
+    [initializeEvaluations],
+  );
+
+  useEffect(() => {
+    for (const student of classStudents ?? []) {
+      handleAttendanceChange(student.student_id, AttendanceStatus.ABSENT);
+    }
+  }, [classStudents, handleAttendanceChange]);
 
   const handleNotesChange = (studentId: number, notes: string) => {
     setAttendanceStatus((prev) => ({
@@ -123,7 +130,7 @@ const AttendanceEvaluationsPage = () => {
   const handleSubmit = () => {
     createBulkEvaluation({
       class_id: selectedClassId!,
-      date: classDate.toLocaleDateString("en-US"),
+      date: toISOStringWithoutTime(classDate),
       records: attendanceStatus,
     });
   };
