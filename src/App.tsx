@@ -22,7 +22,8 @@ import { UserRole } from "@/types/Roles";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
 import ItkanDashboardLayout from "./components/layouts/ItkanDashboardLayout";
-
+import RegisterPendingPage from "./pages/student/RegisterPendingPage";
+import StudentsGridPage from "./pages/general-manager/StudentsGridPage";
 const App = () => {
   return (
     <>
@@ -30,6 +31,7 @@ const App = () => {
         {/* GUEST-only routes */}
         <Route element={<GuestOnlyRoute />}>
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/register-pending" element={<RegisterPendingPage />} />
           <Route path="/login" element={<LoginPage />} />
         </Route>
 
@@ -52,6 +54,7 @@ const App = () => {
           <Route path="/admin/roles" element={<RolesGridPage />} />
           <Route path="/admin/branches" element={<BranchesGridPage />} />
           <Route path="/admin/users/roles" element={<UsersRoleGridPage />} />
+          <Route path="/admin/students" element={<StudentsGridPage />} />
         </Route>
 
         <Route element={<ItkanDashboardLayout />}>
@@ -61,6 +64,7 @@ const App = () => {
             path="/itkan-dashboard/branches"
             element={<BranchesGridPage />}
           />
+          <Route path="/itkan-dashboard/students" element={<StudentsGridPage />} />
         </Route>
 
         {/* DASHBOARD routes */}

@@ -1,20 +1,22 @@
 import { useAuthStore } from "@/stores/auth";
 import type { JWTBranch } from "@/types/Branches";
 import { navLinks } from "@/utils/navItems";
-import { LayoutGrid } from "lucide-react";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import { BookOpen, User, LayoutGrid, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { Outlet, useLocation, useNavigate, Link } from "react-router";
 import clsx from "clsx";
+import { useState } from "react";
+
 export default function ItkanDashboardLayout() {
   const activeBranch = useAuthStore((state) => state.activeBranch);
   const user = useAuthStore((state) => state.user);
   const branches = useAuthStore((state) => state.branches);
   const navigate = useNavigate();
   const location = useLocation();
-
   const { setActiveBranch, logout } = useAuthStore();
+  const [isOpen, setIsOpen] = useState(true);
 
-  function handleChangeActiveBranch(activeBranchId: JWTBranch) {
-    setActiveBranch(activeBranchId);
+  function handleChangeActiveBranch(branchId: JWTBranch) {
+    setActiveBranch(branchId);
     (document.activeElement as HTMLElement).blur();
   }
 
@@ -25,138 +27,86 @@ export default function ItkanDashboardLayout() {
   }
 
   return (
-    <div className="drawer lg:drawer-open">
-      <input
-        id="my-drawer-4"
-        type="checkbox"
-        defaultChecked
-        className="drawer-toggle"
-      />
-      <div className="drawer-content">
-        {/* Navbar */}
-        <nav className="navbar bg-base-300 flex w-full items-center justify-between">
-          <label
-            htmlFor="my-drawer-4"
-            aria-label="open sidebar"
-            className="btn btn-square btn-ghost"
-          >
-            {/* Sidebar toggle icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="2"
-              fill="none"
-              stroke="currentColor"
-              className="my-1.5 inline-block size-4"
-            >
-              <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
-              <path d="M9 4v16"></path>
-              <path d="M14 10l2 2l-2 2"></path>
-            </svg>
-          </label>
+    <div className="flex h-screen">
+      <div
+        className={clsx(
+          "relative bg-base-200 text-gray-900 flex flex-col transition-all duration-300",
+          isOpen ? "w-64" : "w-20"
+        )}
+      >
+        <div className="flex items-center justify-center px-4 py-4">
+          <Link to="/" className="flex items-center gap-2">
+            <BookOpen className="h-8 w-8 text-emerald-600" />
+            {isOpen && <span className="text-xl font-bold text-gray-900 truncate">مدرسة الإتقان</span>}
+          </Link>
+        </div>
 
-          {/* user icon */}
-          {user ? (
-            <div className="dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-circle avatar"
+        <div className="flex flex-col items-center gap-2 mt-4">
+          {branches?.map((branch) => (
+            <button
+              key={branch.id}
+              onClick={() => handleChangeActiveBranch(branch)}
+              className={clsx(
+                "flex items-center gap-2 w-full px-4 py-2 rounded hover:bg-emerald-50 transition relative group",
+                activeBranch?.id === branch.id ? "bg-emerald-100" : ""
+              )}
+              title={!isOpen ? branch.name : undefined}
+            >
+              <LayoutGrid className="text-emerald-600 shrink-0" />
+              {isOpen && <span className="truncate">{branch.name}</span>}
+            </button>
+          ))}
+        </div>
+
+        <ul className="flex flex-col mt-6 w-full">
+          {navLinks.map((link) => (
+            <li key={link.id}>
+              <a
+                href={link.url}
+                className={clsx(
+                  "flex items-center gap-3 px-4 py-2 rounded hover:bg-emerald-50 transition relative group",
+                  isOpen ? "justify-start" : "justify-center",
+                  location.pathname.includes(link.id) ? "bg-emerald-100" : ""
+                )}
+                title={!isOpen ? link.title : undefined}
               >
-                <div className="flex h-full w-10 items-center justify-center rounded-full bg-gray-200">
-                  {user.full_name.substring(0, 2)}
-                </div>
-              </div>
-              <ul
-                tabIndex={-1}
-                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-              >
-                <li className="cursor-pointer" onClick={handleLogout}>
-                  تسجيل الخروج
-                </li>
-              </ul>
-            </div>
-          ) : (
-            <div>
-              <a href="/login" className="btn btn-ghost">
-                تسجيل الدخول
+                <link.icon className="text-emerald-600 shrink-0" />
+                {isOpen && <span className="truncate">{link.title}</span>}
               </a>
+            </li>
+          ))}
+        </ul>
+
+        {user && (
+          <div className="mt-auto w-full px-4 py-4 flex items-center gap-2 hover:bg-emerald-50 transition rounded group">
+            <div className="flex items-center justify-center w-10 h-10 bg-emerald-100 rounded-full">
+              <User className="text-emerald-600" />
             </div>
+            {isOpen && <span className="truncate">{user.full_name}</span>}
+            <button
+              onClick={handleLogout}
+              className="ml-auto flex items-center gap-1 text-emerald-600 hover:text-emerald-800 transition"
+              title="تسجيل الخروج"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+
+        <button
+          className={clsx(
+            "absolute top-1/2 -right-4 transform -translate-y-1/2 bg-emerald-600 text-white p-2 rounded-full shadow-lg hover:bg-emerald-700 transition",
           )}
-        </nav>
-        {/* Page content here */}
-        <Outlet />
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <ChevronLeft /> : <ChevronRight />}
+        </button>
       </div>
 
-      <div className="drawer-side overflow-visible">
-        <label
-          htmlFor="my-drawer-4"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-        <div className="bg-base-200 is-drawer-close:w-20 is-drawer-open:w-64 flex min-h-full flex-col items-start">
-          {/* Sidebar content here */}
-
-          <div className="dropdown dropdown-right w-full px-2 py-3">
-            <div
-              tabIndex={0}
-              role="button"
-              className="hover:bg-base-300 flex cursor-pointer items-center gap-4 px-3 py-2"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-400">
-                <LayoutGrid className="shrink-0 text-white" />
-              </div>
-              <p className="is-drawer-close:scale-x-0 is-drawer-close:overflow-hidden is-drawer-close:leading-0 origin-right scale-x-100 text-lg font-bold transition-all duration-100">
-                {activeBranch?.name}
-              </p>
-            </div>
-
-            <ul
-              tabIndex={1}
-              className="dropdown-content menu bg-base-100 rounded-box top-2 w-52 p-2 shadow-sm"
-            >
-              <p className="font-bold">قم باختيار الفرع</p>
-
-              <div className="divider my-0 mt-0"></div>
-              {branches?.map((branch) => (
-                <li
-                  className={
-                    activeBranch?.id === branch.id ? "bg-base-300" : ""
-                  }
-                  onClick={() => {
-                    handleChangeActiveBranch(branch);
-                  }}
-                >
-                  <a>{branch.name}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <ul className="menu w-full grow">
-            {navLinks.map((link) => (
-              <li>
-                <a
-                  href={link.url}
-                  className={clsx(
-                    "hover:bg-base-300 is-drawer-close:justify-center flex items-center gap-3 px-3 py-2 text-center",
-                    {
-                      "bg-base-300": location.pathname.includes(link.id),
-                    },
-                  )}
-                >
-                  <link.icon className="size-4.5 shrink-0" />
-                  <span className="is-drawer-close:hidden text-start">
-                    {link.title}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="flex-1 bg-gray-50 overflow-auto transition-all duration-300">
+        <Outlet />
       </div>
     </div>
   );
 }
+

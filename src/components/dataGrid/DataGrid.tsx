@@ -23,7 +23,7 @@ const DataGrid = <T extends Record<string, unknown>>({
   onAddNew,
   onEdit,
   onDelete,
-  onView,
+  onView, // added support for view
   searchPlaceholder,
   addButtonText = "اضافة عنصر",
   entityName = "عنصر",
@@ -32,19 +32,17 @@ const DataGrid = <T extends Record<string, unknown>>({
   enableFilters = true,
 }: DataGridProps<T>) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [localFilters, setLocalFilters] = useState<Record<string, FilterValue>>(
-    {},
-  );
+  const [localFilters, setLocalFilters] = useState<Record<string, FilterValue>>({});
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-    onSearch(term);
+    onSearch?.(term);
   };
 
   const handleClearFilters = () => {
     setLocalFilters({});
     setSearchTerm("");
-    onSearch("");
+    onSearch?.("");
   };
 
   const hasActiveFilters = !!searchTerm || Object.keys(localFilters).length > 0;
@@ -89,7 +87,7 @@ const DataGrid = <T extends Record<string, unknown>>({
             onSort={onSort}
             onEdit={onEdit}
             onDelete={onDelete}
-            onView={onView}
+            onView={onView} // passed down to table rows
           />
         )}
       </div>

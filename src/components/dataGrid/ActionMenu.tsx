@@ -31,13 +31,12 @@ const ActionMenu = <T extends Record<string, unknown>>({
       : []),
   ];
 
-  /* Hook to detect click outside menu or escape key */
   useClickOutsideModal(menuRef, () => setIsOpen(false));
 
   if (actions.length === 0) return null;
 
   return (
-    <div ref={menuRef}>
+    <div ref={menuRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="rounded-lg p-2 transition-colors hover:bg-gray-100"
