@@ -7,7 +7,7 @@ import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useUpdateBranch } from "@/hooks/branches/useUpdateBranch";
 import type { BranchDetails } from "@/types/Branches";
 import type { Column } from "@/types/dataGrid";
-import { PermissionKeys } from "@/types/permissions";
+import { PermissionKeys } from "@/constants/Permissions";
 import type { BranchFormData } from "@/validation/branchSchema";
 import { useState } from "react";
 
@@ -186,6 +186,7 @@ const BranchesGridPage = () => {
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}
+        viewPermission={PermissionKeys.SYSTEM_BRANCHES_VIEW}
         addPermission={PermissionKeys.SYSTEM_BRANCHES_ADD}
         editPermission={PermissionKeys.SYSTEM_BRANCHES_EDIT}
       />

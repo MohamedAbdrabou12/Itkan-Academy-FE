@@ -3,7 +3,7 @@ import { UsersRoleModal } from "@/components/modals/UsersRoleModal";
 import { useGetAllUsers } from "@/hooks/users/useGetUsers";
 import { useUpdateUserRole } from "@/hooks/users/useUpdateUserRole";
 import type { Column } from "@/types/dataGrid";
-import { PermissionKeys } from "@/types/permissions";
+import { PermissionKeys } from "@/constants/Permissions";
 import type { UpdateUserRoleData } from "@/types/Roles";
 import type { UserDetails } from "@/types/users";
 import { useState } from "react";
@@ -153,6 +153,7 @@ const UsersRoleGridPage = () => {
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}
+        viewPermission={PermissionKeys.SYSTEM_USERS_VIEW}
         editPermission={PermissionKeys.SYSTEM_USERS_EDIT}
       />
 

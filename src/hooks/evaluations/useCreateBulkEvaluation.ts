@@ -1,0 +1,25 @@
+import apiReq from "@/services/apiReq";
+import type { AttendanceStatusMap } from "@/types/classes";
+import { useMutation } from "@tanstack/react-query";
+
+interface CreateBulkEvaluationData {
+  class_id: number;
+  // YYYY-MM-DD
+  date: string;
+  records: AttendanceStatusMap;
+}
+
+export const useCreateBulkEvaluation = () => {
+  const {
+    mutate: createBulkEvaluation,
+    isPending,
+    error,
+  } = useMutation({
+    mutationFn: async (data: CreateBulkEvaluationData) => {
+      const response = await apiReq("POST", "/evaluations", data);
+      return response;
+    },
+  });
+
+  return { createBulkEvaluation, isPending, error };
+};
