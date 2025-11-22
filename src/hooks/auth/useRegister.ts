@@ -4,7 +4,9 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 interface RegisterFormData {
+  full_name: string;
   email: string;
+  phone: string;
   password: string;
 }
 
@@ -16,7 +18,8 @@ export function useRegister() {
       return await apiReq("POST", "/auth/register", values);
     },
     onSuccess: () => {
-      navigate("/login", { replace: true });
+      // After successful registration, navigate to the register-pending page
+      navigate("/register-pending", { replace: true });
     },
     onError: (err) => {
       console.log("Error in Register: ", err);

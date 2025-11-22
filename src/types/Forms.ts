@@ -1,13 +1,14 @@
 export interface FormField {
   name: string;
   label: string;
-  type: "text" | "email" | "textarea" | "select" | "phone" | "password";
+  type: "text" | "email" | "textarea" | "select" | "phone" | "password" | "date";
   required?: boolean;
   placeholder?: string;
   options?: { value: string; label: string }[];
   dir?: "ltr" | "rtl";
   rows?: number;
   disabled?: boolean;
+  onChange?: (value: string) => void; 
 }
 
 export interface FormComponents {
