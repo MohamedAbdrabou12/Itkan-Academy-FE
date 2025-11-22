@@ -1,5 +1,6 @@
 import type { DataGridProps, FilterValue } from "@/types/dataGrid";
 import { useState } from "react";
+import PermissionGate from "../auth/PermissionGate";
 import Spinner from "../shared/Spinner";
 import EmptyState from "./EmptyState";
 import GridError from "./GridError";
@@ -23,8 +24,9 @@ const DataGrid = <T extends Record<string, unknown>>({
   onAddNew,
   onEdit,
   onDelete,
-  onView,
+  onView, // added support for view
   searchPlaceholder,
+  viewPermission,
   addPermission,
   editPermission,
   deletePermission,
@@ -41,13 +43,13 @@ const DataGrid = <T extends Record<string, unknown>>({
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-    onSearch(term);
+    onSearch?.(term);
   };
 
   const handleClearFilters = () => {
     setLocalFilters({});
     setSearchTerm("");
-    onSearch("");
+    onSearch?.("");
   };
 
   const hasActiveFilters = !!searchTerm || Object.keys(localFilters).length > 0;
@@ -72,33 +74,36 @@ const DataGrid = <T extends Record<string, unknown>>({
       )}
 
       {/* Data Grid Content */}
-      <div className="relative">
-        {loading && <Spinner />}
 
-        {error && <GridError message={error} />}
+      <PermissionGate permission={viewPermission || ""}>
+        <div className="relative">
+          {loading && <Spinner />}
 
-        {!loading && !error && data.length === 0 && (
-          <EmptyState
-            hasFilters={hasActiveFilters}
-            onClearFilters={handleClearFilters}
-            entityName={entityName}
-          />
-        )}
+          {error && <GridError message={error} />}
 
-        {!loading && !error && data.length > 0 && (
-          <GridTable<T>
-            data={data}
-            columns={columns}
-            sortInfo={sortInfo}
-            onSort={onSort}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onView={onView}
-            editPermission={editPermission}
-            deletePermission={deletePermission}
-          />
-        )}
-      </div>
+          {!loading && !error && data.length === 0 && (
+            <EmptyState
+              hasFilters={hasActiveFilters}
+              onClearFilters={handleClearFilters}
+              entityName={entityName}
+            />
+          )}
+
+          {!loading && !error && data.length > 0 && (
+            <GridTable<T>
+              data={data}
+              columns={columns}
+              sortInfo={sortInfo}
+              onSort={onSort}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onView={onView}
+              editPermission={editPermission}
+              deletePermission={deletePermission}
+            />
+          )}
+        </div>
+      </PermissionGate>
 
       {!loading && !error && data.length > 0 && (
         <PaginationControls

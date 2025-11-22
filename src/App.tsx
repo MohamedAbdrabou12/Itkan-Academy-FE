@@ -1,6 +1,5 @@
 import GuestOnlyRoute from "@/components/auth/GuestOnlyRoute";
 import RoleBasedRoute from "@/components/auth/RoleBasedRoute";
-import GeneralManagerLayout from "@/components/layouts/GeneralManagerLayout";
 import ItkanDashboardLayout from "@/components/layouts/ItkanDashboardLayout";
 import StudentLayout from "@/components/layouts/StudentLayout";
 import LoginPage from "@/pages/auth/LoginPage";
@@ -11,6 +10,7 @@ import StudentDashboardPage from "@/pages/dashboards/StudentDashboard";
 import TeacherDashboardPage from "@/pages/dashboards/TeacherDashboard";
 import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
+import StudentsGridPage from "@/pages/general-manager/StudentsGridPage";
 import UsersRoleGridPage from "@/pages/general-manager/UsersRoleGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
@@ -20,6 +20,7 @@ import ContactPage from "@/pages/student/ContactPage";
 import HomePage from "@/pages/student/HomePage";
 import NewsPage from "@/pages/student/NewsPage";
 import ProgramsPage from "@/pages/student/ProgramsPage";
+import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { UserRole } from "@/types/Roles";
 import { Route, Routes } from "react-router";
@@ -32,6 +33,7 @@ const App = () => {
         {/* GUEST-only routes */}
         <Route element={<GuestOnlyRoute />}>
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/register-pending" element={<RegisterPendingPage />} />
           <Route path="/login" element={<LoginPage />} />
         </Route>
 
@@ -51,11 +53,10 @@ const App = () => {
         <Route
           element={<RoleBasedRoute allowedRoles={[UserRole.GENERAL_MANAGER]} />}
         >
-          <Route element={<GeneralManagerLayout />}>
-            <Route path="/admin/roles" element={<RolesGridPage />} />
-            <Route path="/admin/branches" element={<BranchesGridPage />} />
-            <Route path="/admin/users/roles" element={<UsersRoleGridPage />} />
-          </Route>
+          <Route path="/admin/roles" element={<RolesGridPage />} />
+          <Route path="/admin/branches" element={<BranchesGridPage />} />
+          <Route path="/admin/users/roles" element={<UsersRoleGridPage />} />
+          <Route path="/admin/students" element={<StudentsGridPage />} />
         </Route>
 
         <Route element={<ItkanDashboardLayout />}>
@@ -69,6 +70,7 @@ const App = () => {
             path="/itkan-dashboard/attendance-and-evaluations"
             element={<AttendanceEvaluationsPage />}
           />
+          <Route path="/itkan-dashboard/students" element={<StudentsGridPage />} />
         </Route>
 
         {/* DASHBOARD routes */}

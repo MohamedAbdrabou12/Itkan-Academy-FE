@@ -1,4 +1,4 @@
-import type { PermissionKeys } from "@/types/permissions";
+import type { PermissionKeys } from "@/constants/Permissions";
 import { Plus } from "lucide-react";
 import PermissionGate from "../auth/PermissionGate";
 

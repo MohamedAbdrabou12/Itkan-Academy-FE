@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "react-jsx",
+    "types": ["react", "react-dom"],
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["/src/*"]
-    }
+    "paths": { "@/*": ["src/*"] }
   },
   "files": [],
   "references": [

@@ -3,7 +3,6 @@ import type { ActionMenuProps } from "@/types/dataGrid";
 import { EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
 import { useRef, useState } from "react";
 import PermissionGate from "../auth/PermissionGate";
-import FallbackPermissionButton from "./FallbackPermissionButton";
 
 const ActionMenu = <T extends Record<string, unknown>>({
   item,
@@ -35,13 +34,12 @@ const ActionMenu = <T extends Record<string, unknown>>({
       : []),
   ];
 
-  /* Hook to detect click outside menu or escape key */
   useClickOutsideModal(menuRef, () => setIsOpen(false));
 
   if (actions.length === 0) return null;
 
   return (
-    <div ref={menuRef}>
+    <div ref={menuRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="rounded-lg p-2 transition-colors hover:bg-gray-100"
@@ -60,7 +58,6 @@ const ActionMenu = <T extends Record<string, unknown>>({
                     ? deletePermission || ""
                     : editPermission || ""
                 }
-                fallback={<FallbackPermissionButton reason={action.label} />}
               >
                 <button
                   key={index}
