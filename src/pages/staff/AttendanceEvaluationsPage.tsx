@@ -11,7 +11,7 @@ import {
   type EvaluationGrade,
   type AttendanceStatusMap,
 } from "@/types/classes";
-import { toISOStringWithoutTime } from "@/utils/formatDate";
+import { getLocalDateString } from "@/utils/formatDate";
 import { useState, useEffect, useCallback } from "react";
 
 export const EVALUATION_MAX_GRADE = 10;
@@ -51,18 +51,21 @@ const AttendanceEvaluationsPage = () => {
     );
   }, [selectedClass?.evaluation_config]);
 
+  const canEvaluate = (status: AttendanceStatus): boolean => {
+    return (
+      status === AttendanceStatus.PRESENT || status === AttendanceStatus.LATE
+    );
+  };
+
   const handleAttendanceChange = useCallback(
     (studentId: number, status: AttendanceStatus) => {
       setAttendanceStatus((prev) => {
         const currentStatus = prev[studentId];
-        const isPresent = status === AttendanceStatus.PRESENT;
+        const isEvaluable = canEvaluate(status);
 
-        const evaluations = isPresent
+        const evaluations = isEvaluable
           ? (currentStatus?.evaluations ?? initializeEvaluations())
-          : (currentStatus?.evaluations?.map((evalItem) => ({
-              ...evalItem,
-              grade: 0,
-            })) ?? initializeEvaluations());
+          : null; // null for non-evaluable statuses
 
         return {
           ...prev,
@@ -88,9 +91,7 @@ const AttendanceEvaluationsPage = () => {
       ...prev,
       [studentId]: {
         ...prev[studentId],
-        status: prev[studentId]?.status || AttendanceStatus.ABSENT,
         notes,
-        evaluations: prev[studentId]?.evaluations || initializeEvaluations(),
       },
     }));
   };
@@ -104,7 +105,16 @@ const AttendanceEvaluationsPage = () => {
       const currentStudent = prev[studentId];
       if (!currentStudent) return prev;
 
-      const updatedEvaluations = [...currentStudent.evaluations];
+      // Only allow evaluation changes if student is present or late
+      if (!canEvaluate(currentStudent.status)) {
+        return prev;
+      }
+
+      // If evaluations is null, initialize it first
+      const currentEvaluations =
+        currentStudent.evaluations || initializeEvaluations();
+
+      const updatedEvaluations = [...currentEvaluations];
       updatedEvaluations[criteriaIndex] = {
         ...updatedEvaluations[criteriaIndex],
         grade: Math.min(Math.max(0, grade), EVALUATION_MAX_GRADE),
@@ -130,7 +140,7 @@ const AttendanceEvaluationsPage = () => {
   const handleSubmit = () => {
     createBulkEvaluation({
       class_id: selectedClassId!,
-      date: toISOStringWithoutTime(classDate),
+      date: getLocalDateString(classDate),
       records: attendanceStatus,
     });
   };

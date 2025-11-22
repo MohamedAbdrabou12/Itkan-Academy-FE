@@ -7,11 +7,11 @@ import type {
   ClassStudent,
   Weekday,
 } from "@/types/classes";
+import { getLocalDateString } from "@/utils/formatDate";
 import { englishToArabicDayMap } from "@/utils/getArabicDayName";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import StudentEvaluationItem from "./StudentEvaluationItem";
-import { toISOStringWithoutTime } from "@/utils/formatDate";
 
 interface StudentEvaluationListProps {
   selectedClassId: number;
@@ -106,16 +106,29 @@ const StudentEvaluationList = ({
     return validDates.reverse();
   }, [isValidDateForClass]);
 
-  // Initialize with the most recent class date
-  useEffect(() => {
-    if (getValidClassDates.length > 0 && !classDate) {
-      onClassDateChange(getValidClassDates[0]);
+  // Find the nearest previous class date (most recent valid date)
+  const getNearestPreviousClassDate = useCallback(() => {
+    const validDates = getValidClassDates;
+    if (validDates.length === 0) {
+      return new Date(); // Fallback to today if no valid dates
     }
-  }, [getValidClassDates, classDate, onClassDateChange]);
+
+    // reverse chronological order (newest first),
+    return validDates[0];
+  }, [getValidClassDates]);
+
+  // Initialize with the nearest previous class date
+  useEffect(() => {
+    if (getValidClassDates.length > 0) {
+      const nearestDate = getNearestPreviousClassDate();
+      onClassDateChange(nearestDate);
+    }
+  }, [getValidClassDates, getNearestPreviousClassDate, onClassDateChange]);
 
   const goToMostRecent = () => {
     if (getValidClassDates.length > 0) {
-      onClassDateChange(getValidClassDates[0]);
+      const nearestDate = getNearestPreviousClassDate();
+      onClassDateChange(nearestDate);
     }
   };
 
@@ -127,8 +140,7 @@ const StudentEvaluationList = ({
     day: "numeric",
   });
 
-  // Format date for input value (YYYY-MM-DD)
-  const inputDateValue = toISOStringWithoutTime(classDate);
+  const inputDateValue = getLocalDateString(classDate);
 
   const getClassTimes = (date: Date) => {
     const dayName = date
@@ -137,28 +149,26 @@ const StudentEvaluationList = ({
     return selectedClass?.schedule[dayName] || [];
   };
 
-  // Handle date change from date picker with validation
-  const handleDateChange = (newDate: Date) => {
+  const handleNativeDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = new Date(e.target.value);
+
     if (isValidDateForClass(newDate)) {
       onClassDateChange(newDate);
-      setShowDatePicker(false);
-    } else {
-      // Find the closest valid date
-      const time = newDate.getTime();
-      const closest = getValidClassDates.reduce((prev, curr) => {
-        return Math.abs(curr.getTime() - time) < Math.abs(prev.getTime() - time)
-          ? curr
-          : prev;
-      });
-      onClassDateChange(closest);
       setShowDatePicker(false);
     }
   };
 
-  // Custom date validation for native input
-  const handleNativeDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value);
-    handleDateChange(newDate);
+  // Helper functions for date input min/max
+  const getMinDateValue = () => {
+    if (getValidClassDates.length === 0) return getLocalDateString(new Date());
+    const oldestDate = getValidClassDates[getValidClassDates.length - 1];
+    return getLocalDateString(oldestDate);
+  };
+
+  const getMaxDateValue = () => {
+    if (getValidClassDates.length === 0) return getLocalDateString(new Date());
+    const newestDate = getValidClassDates[0];
+    return getLocalDateString(newestDate);
   };
 
   const currentClassTimes = getClassTimes(classDate);
@@ -212,23 +222,17 @@ const StudentEvaluationList = ({
                         value={inputDateValue}
                         onChange={handleNativeDateChange}
                         className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                        // min is the oldest date (last in reversed array)
-                        min={toISOStringWithoutTime(
-                          getValidClassDates[getValidClassDates.length - 1] ||
-                            new Date(),
-                        )}
-                        // max is the newest date (first in reversed array)
-                        max={toISOStringWithoutTime(
-                          getValidClassDates[0] || new Date(),
-                        )}
+                        min={getMinDateValue()}
+                        max={getMaxDateValue()}
                         list="validClassDates"
+                        title="يمكنك اختيار تواريخ الحصص السابقة أو حصة اليوم فقط"
                       />
 
                       <datalist id="validClassDates">
                         {getValidClassDates.map((date) => (
                           <option
                             key={date.toISOString()}
-                            value={toISOStringWithoutTime(date)}
+                            value={getLocalDateString(date)}
                           />
                         ))}
                       </datalist>
