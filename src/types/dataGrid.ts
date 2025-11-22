@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { PermissionKeys } from "./permissions";
+import type { PermissionKeys } from "@/constants/Permissions";
 
 export interface Column<T> {
   key: keyof T | string;
@@ -60,6 +60,7 @@ export interface DataGridProps<T> {
   pageSizeOptions?: number[];
   enableSearch?: boolean;
   enableFilters?: boolean;
+  viewPermission: (typeof PermissionKeys)[keyof typeof PermissionKeys];
   addPermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
   editPermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
   deletePermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];

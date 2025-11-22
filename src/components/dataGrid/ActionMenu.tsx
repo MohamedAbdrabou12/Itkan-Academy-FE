@@ -3,7 +3,6 @@ import type { ActionMenuProps } from "@/types/dataGrid";
 import { EllipsisVertical, Eye, Pencil, Trash } from "lucide-react";
 import { useRef, useState } from "react";
 import PermissionGate from "../auth/PermissionGate";
-import FallbackPermissionButton from "./FallbackPermissionButton";
 
 const ActionMenu = <T extends Record<string, unknown>>({
   item,
@@ -59,7 +58,6 @@ const ActionMenu = <T extends Record<string, unknown>>({
                     ? deletePermission || ""
                     : editPermission || ""
                 }
-                fallback={<FallbackPermissionButton reason={action.label} />}
               >
                 <button
                   key={index}
