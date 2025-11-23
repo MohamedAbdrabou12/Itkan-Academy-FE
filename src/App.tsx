@@ -1,6 +1,5 @@
 import GuestOnlyRoute from "@/components/auth/GuestOnlyRoute";
 import RoleBasedRoute from "@/components/auth/RoleBasedRoute";
-import ItkanDashboardLayout from "@/components/layouts/ItkanDashboardLayout";
 import StudentLayout from "@/components/layouts/StudentLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
@@ -25,7 +24,10 @@ import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { UserRole } from "@/types/Roles";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-
+import ItkanDashboardLayout from "./components/layouts/ItkanDashboardLayout";
+import TeachersGridPage from "./pages/general-manager/TeachersGridPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage"; 
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 const App = () => {
   return (
     <>
@@ -34,6 +36,8 @@ const App = () => {
         <Route element={<GuestOnlyRoute />}>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/register-pending" element={<RegisterPendingPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/login" element={<LoginPage />} />
         </Route>
 
@@ -70,7 +74,15 @@ const App = () => {
             path="/itkan-dashboard/attendance-and-evaluations"
             element={<AttendanceEvaluationsPage />}
           />
-          <Route path="/itkan-dashboard/students" element={<StudentsGridPage />} />
+          <Route
+            path="/itkan-dashboard/students"
+            element={<StudentsGridPage />}
+          />
+
+          <Route
+            path="/itkan-dashboard/teachers"
+            element={<TeachersGridPage />}
+          />
         </Route>
 
         {/* DASHBOARD routes */}
