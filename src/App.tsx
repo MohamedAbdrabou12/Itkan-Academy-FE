@@ -26,7 +26,8 @@ import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
 import ItkanDashboardLayout from "./components/layouts/ItkanDashboardLayout";
 import TeachersGridPage from "./pages/general-manager/TeachersGridPage";
-
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage"; 
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 const App = () => {
   return (
     <>
@@ -35,6 +36,8 @@ const App = () => {
         <Route element={<GuestOnlyRoute />}>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/register-pending" element={<RegisterPendingPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/login" element={<LoginPage />} />
         </Route>
 
