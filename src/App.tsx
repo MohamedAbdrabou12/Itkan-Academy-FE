@@ -1,5 +1,3 @@
-import GuestOnlyRoute from "@/components/auth/GuestOnlyRoute";
-import RoleBasedRoute from "@/components/auth/RoleBasedRoute";
 import StudentLayout from "@/components/layouts/StudentLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
@@ -21,47 +19,36 @@ import NewsPage from "@/pages/student/NewsPage";
 import ProgramsPage from "@/pages/student/ProgramsPage";
 import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
-import { UserRole } from "@/types/Roles";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
 import ItkanDashboardLayout from "./components/layouts/ItkanDashboardLayout";
-import TeachersGridPage from "./pages/general-manager/TeachersGridPage";
-import ResetPasswordPage from "./pages/auth/ResetPasswordPage"; 
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import TeachersGridPage from "./pages/general-manager/TeachersGridPage";
 const App = () => {
   return (
     <>
       <Routes>
         {/* GUEST-only routes */}
-        <Route element={<GuestOnlyRoute />}>
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/register-pending" element={<RegisterPendingPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/login" element={<LoginPage />} />
-        </Route>
+        {/* <Route element={<GuestOnlyRoute />}> */}
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register-pending" element={<RegisterPendingPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        {/* </Route> */}
 
         {/* STUDENT-only routes */}
-        <Route element={<RoleBasedRoute allowedRoles={[UserRole.STUDENT]} />}>
-          <Route element={<StudentLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/branches" element={<BranchesPage />} />
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="/programs" element={<ProgramsPage />} />
-          </Route>
+        {/* <Route element={<RoleBasedRoute allowedRoles={[UserRole.STUDENT]} />}> */}
+        <Route element={<StudentLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/branches" element={<BranchesPage />} />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="/programs" element={<ProgramsPage />} />
         </Route>
-
-        {/* General-Manager-only routes */}
-        <Route
-          element={<RoleBasedRoute allowedRoles={[UserRole.GENERAL_MANAGER]} />}
-        >
-          <Route path="/admin/roles" element={<RolesGridPage />} />
-          <Route path="/admin/branches" element={<BranchesGridPage />} />
-          <Route path="/admin/users/roles" element={<UsersRoleGridPage />} />
-          <Route path="/admin/students" element={<StudentsGridPage />} />
-        </Route>
+        {/* </Route> */}
 
         <Route element={<ItkanDashboardLayout />}>
           <Route path="/itkan-dashboard" element={<>Hello</>} />
@@ -69,6 +56,10 @@ const App = () => {
           <Route
             path="/itkan-dashboard/branches"
             element={<BranchesGridPage />}
+          />
+          <Route
+            path="/itkan-dashboard/users"
+            element={<UsersRoleGridPage />}
           />
           <Route
             path="/itkan-dashboard/attendance-and-evaluations"
