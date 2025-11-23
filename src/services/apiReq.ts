@@ -8,8 +8,15 @@ const apiReq = async (method: string, endpoint: string, body?: unknown) => {
   const options: RequestInit = {
     method,
   };
+
+  // Skip Authorization for forgot/reset password endpoints
+  const skipAuth =
+    endpoint.includes("/auth/forgot-password") ||
+    endpoint.includes("/auth/reset-password") ||
+    endpoint.includes("/auth/validate-reset-token");
+
   const accessToken = useAuthStore.getState().access_token;
-  if (accessToken) {
+  if (!skipAuth && accessToken) {
     options.headers = {
       ...options.headers,
       Authorization: `Bearer ${accessToken}`,
@@ -18,16 +25,16 @@ const apiReq = async (method: string, endpoint: string, body?: unknown) => {
 
   const userRole = useAuthStore.getState().user?.role_name;
   const activeBranch = useAuthStore.getState().activeBranch;
-  if (userRole != UserRole.STUDENT && activeBranch?.id) {
+  if (!skipAuth && userRole != UserRole.STUDENT && activeBranch?.id) {
     options.headers = {
       ...options.headers,
       "X-Branch-ID": activeBranch?.id,
     };
   }
+
   if (body) {
     if (body instanceof FormData) {
       // The browser will automatically set Content-Type to 'multipart/form-data'
-
       options.body = body;
     } else {
       options.headers = {
