@@ -1,5 +1,6 @@
 import apiReq from "@/services/apiReq";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 export const useDeleteTeacher = () => {
   const queryClient = useQueryClient();
@@ -11,6 +12,10 @@ export const useDeleteTeacher = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teachers"] });
+      toast.success("تم الحذف المعلم بنجاح");
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 };

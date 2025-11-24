@@ -1,6 +1,7 @@
 import apiReq from "@/services/apiReq";
 import type { TeacherFormData } from "@/validation/teacher";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 export const useUpdateTeacher = () => {
   const queryClient = useQueryClient();
@@ -12,6 +13,10 @@ export const useUpdateTeacher = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teachers"] });
+      toast.success("تم تعديل المعلم بنجاح");
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 };
