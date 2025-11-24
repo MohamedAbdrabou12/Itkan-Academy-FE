@@ -23,7 +23,7 @@ const AttendanceEvaluationsPage = () => {
   );
   const [classDate, setClassDate] = useState(new Date());
 
-  const { createBulkEvaluation } = useCreateBulkEvaluation();
+  const { createBulkEvaluation } = useCreateBulkEvaluation(setSelectedClassId);
 
   const { user, activeBranch } = useAuthStore();
 
