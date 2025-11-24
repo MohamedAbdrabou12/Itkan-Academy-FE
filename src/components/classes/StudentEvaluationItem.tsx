@@ -5,6 +5,7 @@ import {
   type StudentAttendanceStatus,
 } from "@/types/classes";
 import { CircleSlash2, UserX } from "lucide-react";
+import { useCallback } from "react";
 
 // Map status to display names
 const STATUS_DISPLAY_NAMES = {
@@ -36,19 +37,25 @@ const StudentEvaluationItem = ({
   onEvaluationChange,
 }: StudentEvaluationItemProps) => {
   const currentStatus = attendanceStatus?.status || AttendanceStatus.ABSENT;
-  const canEvaluate =
-    currentStatus === AttendanceStatus.PRESENT ||
-    currentStatus === AttendanceStatus.LATE;
+
+  const canEvaluate = useCallback((status: AttendanceStatus): boolean => {
+    return (
+      status === AttendanceStatus.PRESENT || status === AttendanceStatus.LATE
+    );
+  }, []);
+
+  const isEvaluable = canEvaluate(currentStatus);
 
   // Use emerald for evaluable statuses, gray for non-evaluable
-  const statusColor = canEvaluate
+  const statusColor = isEvaluable
     ? "border-emerald-200 bg-emerald-50 text-emerald-700"
     : "border-gray-200 bg-gray-50 text-gray-600";
 
-  const evaluations = attendanceStatus?.evaluations || [];
+  // Evaluations will be null for non-evaluable statuses
+  const evaluations = attendanceStatus?.evaluations || null;
 
   const handleGradeInput = (criteriaIndex: number, value: string) => {
-    if (!canEvaluate) return;
+    if (!isEvaluable) return;
 
     if (value === "") {
       onEvaluationChange(student.student_id, criteriaIndex, 0);
@@ -87,7 +94,7 @@ const StudentEvaluationItem = ({
   return (
     <div
       className={`rounded-lg border-2 p-4 transition-all ${statusColor} ${
-        canEvaluate ? "bg-white hover:shadow-sm" : "bg-gray-50"
+        isEvaluable ? "bg-white hover:shadow-sm" : "bg-gray-50"
       }`}
     >
       {/* Header */}
@@ -95,12 +102,12 @@ const StudentEvaluationItem = ({
         <div className="flex items-center space-x-3">
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-full ${
-              canEvaluate ? "bg-emerald-100" : "bg-gray-200"
+              isEvaluable ? "bg-emerald-100" : "bg-gray-200"
             }`}
           >
             <span
               className={`text-sm font-semibold ${
-                canEvaluate ? "text-emerald-700" : "text-gray-600"
+                isEvaluable ? "text-emerald-700" : "text-gray-600"
               }`}
             >
               {student.full_name.charAt(0)}
@@ -137,7 +144,7 @@ const StudentEvaluationItem = ({
       </div>
 
       {/* Evaluation Matrix - Show for present and late students */}
-      {canEvaluate && evaluationConfig.length > 0 && (
+      {isEvaluable && evaluationConfig.length > 0 && evaluations && (
         <div className="mb-4">
           <h4 className="mb-2 text-sm font-medium text-gray-700">التقييم</h4>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -193,7 +200,7 @@ const StudentEvaluationItem = ({
         </div>
       )}
 
-      {!canEvaluate && (
+      {!isEvaluable && (
         <div className="mb-4">
           {currentStatus === AttendanceStatus.ABSENT && (
             <div className="flex items-center space-x-3 rounded-lg border border-amber-200 bg-amber-50 p-4">

@@ -38,7 +38,7 @@ export enum AttendanceStatus {
 export interface StudentAttendanceStatus {
   status: AttendanceStatus;
   notes: string;
-  evaluations: EvaluationGrade[];
+  evaluations: EvaluationGrade[] | null;
 }
 
 export type AttendanceStatusMap = Record<number, StudentAttendanceStatus>;

@@ -165,6 +165,13 @@ export const PermissionKeys = {
   SYSTEM_TEACHER_PERMISSIONS_EDIT: "system.teacher_permissions.edit",
   SYSTEM_TEACHER_PERMISSIONS_DELETE: "system.teacher_permissions.delete",
 
+  // System Student Permissions
+  SYSTEM_STUDENTS_ALL: "system.students.*",
+  SYSTEM_STUDENTS_VIEW: "system.students.view",
+  SYSTEM_STUDENTS_ADD: "system.students.add",
+  SYSTEM_STUDENTS_EDIT: "system.students.edit",
+  SYSTEM_STUDENTS_DELETE: "system.students.delete",
+
   // Staff Management
   STAFF_MANAGEMENT_ALL: "staff.management.*",
   STAFF_MANAGEMENT_VIEW: "staff.management.view",

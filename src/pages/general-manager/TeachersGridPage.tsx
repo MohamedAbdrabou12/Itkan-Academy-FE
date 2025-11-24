@@ -162,6 +162,7 @@ const TeachersGridPage = () => {
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}
+        viewPermission={PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_VIEW}
         addPermission={PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_ADD}
         editPermission={PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_EDIT}
         deletePermission={PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_DELETE}
