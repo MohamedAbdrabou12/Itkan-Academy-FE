@@ -1,13 +1,13 @@
+import ItkanDashboardLayout from "@/components/layouts/ItkanDashboardLayout";
 import StudentLayout from "@/components/layouts/StudentLayout";
+import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
-import DashboardRouterPage from "@/pages/dashboards/DashboardRouter";
-import GeneralManagerDashboardPage from "@/pages/dashboards/GeneralManagerDashboard";
-import StudentDashboardPage from "@/pages/dashboards/StudentDashboard";
-import TeacherDashboardPage from "@/pages/dashboards/TeacherDashboard";
+import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
 import StudentsGridPage from "@/pages/general-manager/StudentsGridPage";
+import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
 import UsersRoleGridPage from "@/pages/general-manager/UsersRoleGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
@@ -21,10 +21,7 @@ import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import ItkanDashboardLayout from "./components/layouts/ItkanDashboardLayout";
-import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
-import TeachersGridPage from "./pages/general-manager/TeachersGridPage";
+
 const App = () => {
   return (
     <>
@@ -76,15 +73,6 @@ const App = () => {
           />
         </Route>
 
-        {/* DASHBOARD routes */}
-        <Route path="/dashboard" element={<DashboardRouterPage />} />
-        <Route
-          path="/dashboard/general-manager"
-          element={<GeneralManagerDashboardPage />}
-        />
-        <Route path="/dashboard/teacher" element={<TeacherDashboardPage />} />
-        <Route path="/dashboard/student" element={<StudentDashboardPage />} />
-
         {/* Unauthorized route */}
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
@@ -93,7 +81,7 @@ const App = () => {
       </Routes>
 
       <ToastContainer
-        position="top-right"
+        position="top-left"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={true}

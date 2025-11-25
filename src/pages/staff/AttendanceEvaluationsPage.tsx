@@ -23,7 +23,8 @@ const AttendanceEvaluationsPage = () => {
   );
   const [classDate, setClassDate] = useState(new Date());
 
-  const { createBulkEvaluation } = useCreateBulkEvaluation(setSelectedClassId);
+  const { createBulkEvaluation, isPending: isCreatingEvaluation } =
+    useCreateBulkEvaluation(setSelectedClassId);
 
   const { user, activeBranch } = useAuthStore();
 
@@ -181,6 +182,7 @@ const AttendanceEvaluationsPage = () => {
           {classStudents && classStudents.length > 0 && (
             <EvaluationsActionButtons
               onSubmit={handleSubmit}
+              isSubmitting={isCreatingEvaluation}
               onCancel={handleBackToClasses}
             />
           )}

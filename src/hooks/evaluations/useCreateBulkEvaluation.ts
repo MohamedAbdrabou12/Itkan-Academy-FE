@@ -22,8 +22,8 @@ export const useCreateBulkEvaluation = (
       const response = await apiReq("POST", "/evaluations", data);
       return response;
     },
-    onSuccess: () => {
-      toast("تم تقييم الطلاب", { type: "success" });
+    onSuccess: (res) => {
+      toast(res.message, { type: "success" });
       setSelectedClassId(null);
     },
     onError: (error) => {
