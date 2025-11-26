@@ -25,6 +25,7 @@ import ItkanDashboardLayout from "./components/layouts/ItkanDashboardLayout";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import TeachersGridPage from "./pages/general-manager/TeachersGridPage";
+import ClassesGridPage from "./pages/general-manager/ClassesGridPage";
 const App = () => {
   return (
     <>
@@ -73,6 +74,11 @@ const App = () => {
           <Route
             path="/itkan-dashboard/teachers"
             element={<TeachersGridPage />}
+          />
+
+          <Route
+            path="/itkan-dashboard/classes"
+            element={<ClassesGridPage />}
           />
         </Route>
 

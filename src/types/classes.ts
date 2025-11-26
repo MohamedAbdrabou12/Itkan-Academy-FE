@@ -1,3 +1,5 @@
+import type { ClassFormData } from "@/validation/classSchema";
+
 export type Weekday =
   | "saturday"
   | "sunday"
@@ -10,12 +12,13 @@ export type ClassSchedule = Record<Weekday, string[]>;
 
 export interface Class {
   id: number;
-  branch_id: number;
+  branch_id: string;
   name: string;
   schedule: ClassSchedule;
   evaluation_config: string[];
   created_at: string;
   updated_at: string;
+  [key: string]: unknown; // index signature
 }
 
 export interface ClassStudent {
@@ -50,4 +53,18 @@ export interface ClassRead {
   status: "active" | "deactive";
   created_at: string;
   updated_at: string;
+}
+
+export interface ClassResponse {
+  items: Class[];
+  total: number;
+  page: number;
+  size: number;
+  pages: number;
+}
+
+export interface AddClassRequest extends Omit<ClassFormData, "schedule"> {
+  schedule: {
+    [key: string]: string[];
+  };
 }
