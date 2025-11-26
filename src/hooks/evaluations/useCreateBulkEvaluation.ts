@@ -1,6 +1,7 @@
 import apiReq from "@/services/apiReq";
 import type { AttendanceStatusMap } from "@/types/classes";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 interface CreateBulkEvaluationData {
   class_id: number;
@@ -9,7 +10,9 @@ interface CreateBulkEvaluationData {
   records: AttendanceStatusMap;
 }
 
-export const useCreateBulkEvaluation = () => {
+export const useCreateBulkEvaluation = (
+  setSelectedClassId: React.Dispatch<React.SetStateAction<number | null>>,
+) => {
   const {
     mutate: createBulkEvaluation,
     isPending,
@@ -18,6 +21,13 @@ export const useCreateBulkEvaluation = () => {
     mutationFn: async (data: CreateBulkEvaluationData) => {
       const response = await apiReq("POST", "/evaluations", data);
       return response;
+    },
+    onSuccess: (res) => {
+      toast(res.message, { type: "success" });
+      setSelectedClassId(null);
+    },
+    onError: (error) => {
+      toast(error.message, { type: "error" });
     },
   });
 
