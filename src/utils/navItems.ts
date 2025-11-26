@@ -38,6 +38,13 @@ export const navLinks = [
     permission: PermissionKeys.SYSTEM_STUDENTS_VIEW,
   },
   {
+    id: "classes",
+    title: "الفصول",
+    icon: BookmarkCheck,
+    url: "/itkan-dashboard/classes",
+    permission: PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_VIEW,
+  },
+  {
     id: "teachers",
     title: "المعلمين",
     icon: UserRound,

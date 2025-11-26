@@ -20,6 +20,9 @@ export const PermissionKeys = {
   // Academic Classes
   ACADEMIC_CLASSES_ALL: "academic.classes.*",
   ACADEMIC_CLASSES_VIEW: "academic.classes.view",
+  ACADEMIC_CLASSES_ADD: "academic.classes.add",
+  ACADEMIC_CLASSES_EDIT: "academic.classes.edit",
+  ACADEMIC_CLASSES_DELETE: "academic.classes.delete",
 
   // Financial Invoices
   FINANCIAL_INVOICES_ALL: "financial.invoices.*",

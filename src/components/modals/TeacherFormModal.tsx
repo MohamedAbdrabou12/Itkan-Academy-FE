@@ -127,7 +127,7 @@ export const TeacherFormModal = ({
             />
 
             <HookFormMultiSelect
-              label="الفرع"
+              label="الفروع"
               name="branch_ids"
               required
               options={branchesOptions}
@@ -135,7 +135,7 @@ export const TeacherFormModal = ({
             />
 
             <HookFormMultiSelect
-              label="الفرع"
+              label="الفصول"
               name="class_ids"
               disabled={!selectedBranchs.length}
               options={classesOptions}
