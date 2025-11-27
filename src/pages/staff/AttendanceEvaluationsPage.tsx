@@ -1,15 +1,18 @@
 import ClassSelectionGrid from "@/components/classes/ClassSelectionGrid";
+import EvaluationHistory from "@/components/classes/EvaluationHistory";
 import EvaluationsActionButtons from "@/components/classes/EvaluationsActionButtons";
 import StudentEvaluationList from "@/components/classes/StudentEvalutationList";
 import Spinner from "@/components/shared/Spinner";
 import { useGetClassStudents } from "@/hooks/classes/useGetClassStudents";
 import { useGetTeacherClasses } from "@/hooks/classes/useGetTeacherClasses";
 import { useCreateBulkEvaluation } from "@/hooks/evaluations/useCreateBulkEvaluation";
+import { useEditBulkEvaluation } from "@/hooks/evaluations/useEditBulkEvaluation";
 import { useAuthStore } from "@/stores/auth";
 import {
   AttendanceStatus,
   type EvaluationGrade,
   type AttendanceStatusMap,
+  type Evaluation,
 } from "@/types/classes";
 import { getLocalDateString } from "@/utils/formatDate";
 import { useState, useEffect, useCallback } from "react";
@@ -21,10 +24,14 @@ const AttendanceEvaluationsPage = () => {
   const [attendanceStatus, setAttendanceStatus] = useState<AttendanceStatusMap>(
     {},
   );
+  const [evaluationEditMode, setEvaluationEditMode] = useState<boolean>(false);
   const [classDate, setClassDate] = useState(new Date());
 
   const { createBulkEvaluation, isPending: isCreatingEvaluation } =
     useCreateBulkEvaluation(setSelectedClassId);
+
+  const { editBulkEvaluation, isPending: isEditingEvaluation } =
+    useEditBulkEvaluation(setSelectedClassId);
 
   const { user, activeBranch } = useAuthStore();
 
@@ -42,6 +49,12 @@ const AttendanceEvaluationsPage = () => {
     setSelectedClassId(null);
     setAttendanceStatus({});
   }, [activeBranch?.id]);
+
+  useEffect(() => {
+    if (!selectedClassId) {
+      setEvaluationEditMode(false);
+    }
+  }, [selectedClassId]);
 
   const initializeEvaluations = useCallback((): EvaluationGrade[] => {
     return (
@@ -82,10 +95,12 @@ const AttendanceEvaluationsPage = () => {
   );
 
   useEffect(() => {
-    for (const student of classStudents ?? []) {
-      handleAttendanceChange(student.student_id, AttendanceStatus.ABSENT);
+    if (!evaluationEditMode) {
+      for (const student of classStudents ?? []) {
+        handleAttendanceChange(student.student_id, AttendanceStatus.ABSENT);
+      }
     }
-  }, [classStudents, handleAttendanceChange]);
+  }, [classStudents, evaluationEditMode, handleAttendanceChange]);
 
   const handleNotesChange = (studentId: number, notes: string) => {
     setAttendanceStatus((prev) => ({
@@ -139,16 +154,45 @@ const AttendanceEvaluationsPage = () => {
   };
 
   const handleSubmit = () => {
-    createBulkEvaluation({
-      class_id: selectedClassId!,
-      date: getLocalDateString(classDate),
-      records: attendanceStatus,
-    });
+    if (evaluationEditMode) {
+      editBulkEvaluation({
+        class_id: selectedClassId!,
+        date: getLocalDateString(classDate),
+        records: attendanceStatus,
+      });
+    } else {
+      createBulkEvaluation({
+        class_id: selectedClassId!,
+        date: getLocalDateString(classDate),
+        records: attendanceStatus,
+      });
+    }
   };
 
   const handleBackToClasses = () => {
     setSelectedClassId(null);
     setAttendanceStatus({});
+  };
+
+  const handleEvaluationGroupChange = (
+    classId: number,
+    date: Date,
+    evaluations: Evaluation[],
+  ) => {
+    setSelectedClassId(classId);
+    handleClassDateChange(date);
+    setEvaluationEditMode(true);
+    setAttendanceStatus(() => {
+      const map: AttendanceStatusMap = {};
+      for (const evaluation of evaluations) {
+        map[evaluation.student_id] = {
+          status: evaluation.attendance_status,
+          notes: evaluation.notes ?? "",
+          evaluations: evaluation.evaluation_grades,
+        };
+      }
+      return map;
+    });
   };
 
   if (classesLoading) return <Spinner />;
@@ -158,10 +202,16 @@ const AttendanceEvaluationsPage = () => {
       <h1 className="mb-6 text-2xl font-bold text-gray-800">تقييم الحضور</h1>
 
       {!selectedClassId ? (
-        <ClassSelectionGrid
-          teacherClasses={teacherClasses}
-          onClassSelect={setSelectedClassId}
-        />
+        <>
+          <ClassSelectionGrid
+            teacherClasses={teacherClasses}
+            onClassSelect={setSelectedClassId}
+          />
+          <EvaluationHistory
+            teacherClasses={teacherClasses}
+            onEvaluationGroupSelect={handleEvaluationGroupChange}
+          />
+        </>
       ) : (
         <>
           <StudentEvaluationList
@@ -172,6 +222,7 @@ const AttendanceEvaluationsPage = () => {
             studentsLoading={studentsLoading}
             attendanceStatus={attendanceStatus}
             evaluationConfig={selectedClass?.evaluation_config || []}
+            evaluationEditMode={evaluationEditMode}
             onAttendanceChange={handleAttendanceChange}
             onNotesChange={handleNotesChange}
             onEvaluationChange={handleEvaluationChange}
@@ -182,7 +233,7 @@ const AttendanceEvaluationsPage = () => {
           {classStudents && classStudents.length > 0 && (
             <EvaluationsActionButtons
               onSubmit={handleSubmit}
-              isSubmitting={isCreatingEvaluation}
+              isSubmitting={isCreatingEvaluation || isEditingEvaluation}
               onCancel={handleBackToClasses}
             />
           )}

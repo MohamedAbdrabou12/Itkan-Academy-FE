@@ -21,6 +21,7 @@ interface StudentEvaluationListProps {
   classDate: Date;
   attendanceStatus: AttendanceStatusMap;
   evaluationConfig: string[];
+  evaluationEditMode: boolean | null;
   onAttendanceChange: (studentId: number, status: AttendanceStatus) => void;
   onNotesChange: (studentId: number, notes: string) => void;
   onEvaluationChange: (
@@ -40,6 +41,7 @@ const StudentEvaluationList = ({
   studentsLoading,
   attendanceStatus,
   evaluationConfig,
+  evaluationEditMode,
   onAttendanceChange,
   onNotesChange,
   onEvaluationChange,
@@ -88,7 +90,7 @@ const StudentEvaluationList = ({
   const getValidClassDates = useMemo(() => {
     const validDates: Date[] = [];
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 60); // Look back 60 days
+    startDate.setDate(startDate.getDate() - 3); // Look back 3 days
 
     const endDate = new Date(); // Today
 
@@ -119,11 +121,16 @@ const StudentEvaluationList = ({
 
   // Initialize with the nearest previous class date
   useEffect(() => {
-    if (getValidClassDates.length > 0) {
+    if (!evaluationEditMode && getValidClassDates.length > 0) {
       const nearestDate = getNearestPreviousClassDate();
       onClassDateChange(nearestDate);
     }
-  }, [getValidClassDates, getNearestPreviousClassDate, onClassDateChange]);
+  }, [
+    evaluationEditMode,
+    getValidClassDates,
+    getNearestPreviousClassDate,
+    onClassDateChange,
+  ]);
 
   const goToMostRecent = () => {
     if (getValidClassDates.length > 0) {
@@ -191,70 +198,75 @@ const StudentEvaluationList = ({
             <div className="flex items-center space-x-3 space-x-reverse">
               <div className="flex items-center ">
                 {/* Date Picker */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowDatePicker(!showDatePicker)}
-                    className="w-md flex items-center gap-2  rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                  >
-                    <Calendar className="h-4 w-4" />
-                    <span>{formattedDate}</span>
-                  </button>
-
-                  {showDatePicker && (
-                    <div
-                      ref={datePickerRef}
-                      className="w-md absolute left-0 top-full z-10 mt-1 rounded-lg border border-gray-200 bg-white p-4 shadow-lg rtl:left-auto rtl:right-0"
+                {evaluationEditMode ? (
+                  formattedDate
+                ) : (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowDatePicker(!showDatePicker)}
+                      className="w-md flex items-center gap-2  rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
                     >
-                      <div className="mb-3 flex items-center justify-between">
-                        <h3 className="text-sm font-medium text-gray-900">
-                          اختر تاريخ الحصة
-                        </h3>
-                        <button
-                          onClick={goToMostRecent}
-                          className="text-xs text-emerald-600 hover:text-emerald-700"
-                        >
-                          أحدث حصة
-                        </button>
+                      <Calendar className="h-4 w-4" />
+                      <span>{formattedDate}</span>
+                    </button>
+
+                    {showDatePicker && (
+                      <div
+                        ref={datePickerRef}
+                        className="w-md absolute left-0 top-full z-10 mt-1 rounded-lg border border-gray-200 bg-white p-4 shadow-lg rtl:left-auto rtl:right-0"
+                      >
+                        <div className="mb-3 flex items-center justify-between">
+                          <h3 className="text-sm font-medium text-gray-900">
+                            اختر تاريخ الحصة
+                          </h3>
+                          <button
+                            onClick={goToMostRecent}
+                            className="text-xs text-emerald-600 hover:text-emerald-700"
+                          >
+                            أحدث حصة
+                          </button>
+                        </div>
+
+                        <input
+                          type="date"
+                          value={inputDateValue}
+                          onChange={handleNativeDateChange}
+                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                          min={getMinDateValue()}
+                          max={getMaxDateValue()}
+                          list="validClassDates"
+                          title="يمكنك اختيار تواريخ الحصص السابقة أو حصة اليوم فقط"
+                        />
+
+                        <datalist id="validClassDates">
+                          {getValidClassDates.map((date) => (
+                            <option
+                              key={date.toISOString()}
+                              value={getLocalDateString(date)}
+                            />
+                          ))}
+                        </datalist>
+
+                        <div className="mt-3 space-y-2">
+                          <p className="text-xs text-gray-500">
+                            أيام الحصص: {classScheduleDays}
+                          </p>
+                          <p className="text-xs text-amber-600">
+                            ⚠️ يمكنك اختيار تواريخ الحصص السابقة أو حصة اليوم
+                            فقط
+                          </p>
+                        </div>
                       </div>
-
-                      <input
-                        type="date"
-                        value={inputDateValue}
-                        onChange={handleNativeDateChange}
-                        className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                        min={getMinDateValue()}
-                        max={getMaxDateValue()}
-                        list="validClassDates"
-                        title="يمكنك اختيار تواريخ الحصص السابقة أو حصة اليوم فقط"
-                      />
-
-                      <datalist id="validClassDates">
-                        {getValidClassDates.map((date) => (
-                          <option
-                            key={date.toISOString()}
-                            value={getLocalDateString(date)}
-                          />
-                        ))}
-                      </datalist>
-
-                      <div className="mt-3 space-y-2">
-                        <p className="text-xs text-gray-500">
-                          أيام الحصص: {classScheduleDays}
-                        </p>
-                        <p className="text-xs text-amber-600">
-                          ⚠️ يمكنك اختيار تواريخ الحصص السابقة أو حصة اليوم فقط
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
             {currentClassTimes.length > 0 && (
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <span>مواعيد الحصة:</span>
-                <div className="flex ">
+                <div className="flex">
                   {currentClassTimes.map((time, index) => (
                     <span
                       key={index}
