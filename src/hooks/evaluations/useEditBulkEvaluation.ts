@@ -1,6 +1,6 @@
 import apiReq from "@/services/apiReq";
 import type { AttendanceStatusMap } from "@/types/classes";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 interface EditBulkEvaluationData {
@@ -13,6 +13,8 @@ interface EditBulkEvaluationData {
 export const useEditBulkEvaluation = (
   setSelectedClassId: React.Dispatch<React.SetStateAction<number | null>>,
 ) => {
+  const queryClient = useQueryClient();
+
   const {
     mutate: editBulkEvaluation,
     isPending,
@@ -22,6 +24,7 @@ export const useEditBulkEvaluation = (
       return await apiReq("PUT", "/evaluations", data);
     },
     onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["evaluations"] });
       toast(res.message, { type: "success" });
       setSelectedClassId(null);
     },

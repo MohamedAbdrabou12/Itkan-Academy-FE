@@ -72,10 +72,10 @@ const AttendanceEvaluationsPage = () => {
   };
 
   const handleAttendanceChange = useCallback(
-    (studentId: number, status: AttendanceStatus) => {
+    (studentId: number, attendance_status: AttendanceStatus) => {
       setAttendanceStatus((prev) => {
         const currentStatus = prev[studentId];
-        const isEvaluable = canEvaluate(status);
+        const isEvaluable = canEvaluate(attendance_status);
 
         const evaluations = isEvaluable
           ? (currentStatus?.evaluations ?? initializeEvaluations())
@@ -84,7 +84,7 @@ const AttendanceEvaluationsPage = () => {
         return {
           ...prev,
           [studentId]: {
-            status,
+            attendance_status,
             notes: currentStatus?.notes ?? "",
             evaluations,
           },
@@ -122,17 +122,21 @@ const AttendanceEvaluationsPage = () => {
       if (!currentStudent) return prev;
 
       // Only allow evaluation changes if student is present or late
-      if (!canEvaluate(currentStudent.status)) {
+      if (!canEvaluate(currentStudent.attendance_status)) {
         return prev;
       }
 
-      // If evaluations is null, initialize it first
-      const currentEvaluations =
-        currentStudent.evaluations || initializeEvaluations();
+      // If evaluations is null or empty, initialize it first using class config
+      let currentEvaluations = currentStudent.evaluations;
+
+      if (!currentEvaluations || currentEvaluations.length === 0) {
+        currentEvaluations = initializeEvaluations();
+      }
 
       const updatedEvaluations = [...currentEvaluations];
+
       updatedEvaluations[criteriaIndex] = {
-        ...updatedEvaluations[criteriaIndex],
+        name: selectedClass!.evaluation_config[criteriaIndex],
         grade: Math.min(Math.max(0, grade), EVALUATION_MAX_GRADE),
       };
 
@@ -184,11 +188,38 @@ const AttendanceEvaluationsPage = () => {
     setEvaluationEditMode(true);
     setAttendanceStatus(() => {
       const map: AttendanceStatusMap = {};
+      const currentClass = teacherClasses?.find((c) => c.id === classId);
+
       for (const evaluation of evaluations) {
+        let evaluationGrades: EvaluationGrade[] = [];
+
+        if (
+          evaluation.evaluation_grades &&
+          evaluation.evaluation_grades.length > 0
+        ) {
+          // If evaluation_grades exist, use them directly
+          evaluationGrades = evaluation.evaluation_grades.map((grade) => ({
+            name: grade.name,
+            grade: grade.grade,
+          }));
+        } else if (
+          currentClass?.evaluation_config &&
+          canEvaluate(evaluation.attendance_status)
+        ) {
+          // If evaluation_grades is empty but student is evaluable, initialize with class config
+          evaluationGrades = currentClass.evaluation_config.map(
+            (evaluation_name) => ({
+              name: evaluation_name,
+              grade: 0,
+            }),
+          );
+        }
+        // If student is not evaluable (absent/excused), evaluationGrades remains empty array
+
         map[evaluation.student_id] = {
-          status: evaluation.attendance_status,
+          attendance_status: evaluation.attendance_status,
           notes: evaluation.notes ?? "",
-          evaluations: evaluation.evaluation_grades,
+          evaluations: evaluationGrades.length > 0 ? evaluationGrades : null,
         };
       }
       return map;

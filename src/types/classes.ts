@@ -36,7 +36,7 @@ export enum AttendanceStatus {
 }
 
 export interface StudentAttendanceStatus {
-  status: AttendanceStatus;
+  attendance_status: AttendanceStatus;
   notes: string;
   evaluations: EvaluationGrade[] | null;
 }
@@ -51,6 +51,7 @@ export interface Evaluation {
   attendance_status: AttendanceStatus;
   evaluation_grades: EvaluationGrade[];
   notes?: string;
+  created_at: string;
 }
 
 export interface ClassRead {
