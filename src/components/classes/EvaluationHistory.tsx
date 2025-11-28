@@ -1,6 +1,7 @@
 import { useGetEvaluations } from "@/hooks/evaluations/useGetEvaluations";
 import { useAuthStore } from "@/stores/auth";
 import type { Class, Evaluation } from "@/types/classes";
+import { formatArabicDate } from "@/utils/formatDate";
 import { useMemo } from "react";
 import Spinner from "../shared/Spinner";
 
@@ -13,68 +14,121 @@ export interface EvaluationHistoryProps {
   ) => void;
 }
 
-const EvaluationHistory: React.FC<EvaluationHistoryProps> = (props) => {
+const EvaluationHistory = ({
+  teacherClasses,
+  onEvaluationGroupSelect,
+}: EvaluationHistoryProps) => {
   const { user, activeBranch } = useAuthStore();
   const { evaluations } = useGetEvaluations(user, activeBranch);
 
   const evaluationsGroupedByDate = useMemo(() => {
-    const groups: Record<
+    const dateGroups: Record<
       string,
       {
-        class_id: number;
         date: number;
-        evaluations: Evaluation[];
+        formattedDate: string;
+        classGroups: {
+          class_id: number;
+          evaluations: Evaluation[];
+        }[];
       }
     > = {};
 
     for (const evaluation of evaluations ?? []) {
-      if (!groups[evaluation.date]) {
-        groups[evaluation.date] = {
-          class_id: evaluation.class_id,
-          date: new Date(evaluation.date).getTime(),
-          evaluations: [evaluation],
+      const date = new Date(evaluation.date);
+      const dateKey = evaluation.date;
+      const formattedDate = formatArabicDate(date);
+
+      if (!dateGroups[dateKey]) {
+        dateGroups[dateKey] = {
+          date: date.getTime(),
+          formattedDate,
+          classGroups: [
+            {
+              class_id: evaluation.class_id,
+              evaluations: [evaluation],
+            },
+          ],
         };
       } else {
-        groups[evaluation.date].evaluations.push(evaluation);
+        const existingClassGroup = dateGroups[dateKey].classGroups.find(
+          (group) => group.class_id === evaluation.class_id,
+        );
+
+        if (existingClassGroup) {
+          existingClassGroup.evaluations.push(evaluation);
+        } else {
+          dateGroups[dateKey].classGroups.push({
+            class_id: evaluation.class_id,
+            evaluations: [evaluation],
+          });
+        }
       }
     }
 
-    return Object.values(groups).sort((a, b) => b.date - a.date);
+    return Object.values(dateGroups).sort((a, b) => b.date - a.date);
   }, [evaluations]);
 
   if (!evaluations) return <Spinner />;
 
-  return evaluationsGroupedByDate.map((evaluationGroup) => {
-    const teacherClass = props.teacherClasses?.find(
-      (c) => c.id === evaluationGroup.class_id,
-    );
-
-    if (!teacherClass) return null;
-
-    const date = new Date(evaluationGroup.date);
-    const formattedDate = date.toLocaleDateString("ar-EG", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      weekday: "long",
-    });
-
-    return (
-      <div
-        className="mt-2 flex min-h-12 cursor-pointer items-center rounded-lg border border-gray-300 bg-white pr-2 shadow-lg transition-shadow hover:shadow-2xl"
-        key={`${evaluationGroup.class_id}-${evaluationGroup.date}`}
-        onClick={() =>
-          props.onEvaluationGroupSelect(
-            evaluationGroup.class_id,
-            date,
-            evaluationGroup.evaluations,
-          )
-        }
-      >
-        {formattedDate} - {teacherClass.name}
+  return (
+    <div className="space-y-6">
+      {/* Title Section */}
+      <div className="text-right">
+        <h2 className="text-2xl font-bold text-emerald-900">سجل التقييمات</h2>
       </div>
-    );
-  });
+
+      {/* Evaluations List */}
+      <div className="space-y-4">
+        {evaluationsGroupedByDate.map((dateGroup) => (
+          <div
+            key={dateGroup.date}
+            className="overflow-hidden rounded-lg border border-emerald-200 bg-white shadow-sm"
+          >
+            {/* Date Header */}
+            <div className="bg-linear-to-r border-b border-emerald-200 from-emerald-50 to-green-50 px-4 py-3">
+              <h3 className="text-right text-lg font-semibold text-emerald-900">
+                {dateGroup.formattedDate}
+              </h3>
+            </div>
+
+            {/* Class Records */}
+            <div className="divide-y divide-emerald-100">
+              {dateGroup.classGroups.map((classGroup) => {
+                const teacherClass = teacherClasses?.find(
+                  (c) => c.id === classGroup.class_id,
+                );
+
+                if (!teacherClass) return null;
+
+                return (
+                  <div
+                    key={`${classGroup.class_id}-${dateGroup.date}`}
+                    className="group cursor-pointer px-4 py-4 transition-all hover:bg-emerald-50 active:bg-emerald-100"
+                    onClick={() =>
+                      onEvaluationGroupSelect(
+                        classGroup.class_id,
+                        new Date(dateGroup.date),
+                        classGroup.evaluations,
+                      )
+                    }
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 text-right">
+                        <h4 className="text-lg font-medium text-emerald-900 group-hover:text-emerald-700">
+                          {teacherClass.name}
+                        </h4>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default EvaluationHistory;

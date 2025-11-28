@@ -1,6 +1,6 @@
 import apiReq from "@/services/apiReq";
 import type { AttendanceStatusMap } from "@/types/classes";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 interface CreateBulkEvaluationData {
@@ -13,6 +13,8 @@ interface CreateBulkEvaluationData {
 export const useCreateBulkEvaluation = (
   setSelectedClassId: React.Dispatch<React.SetStateAction<number | null>>,
 ) => {
+  const queryClient = useQueryClient();
+
   const {
     mutate: createBulkEvaluation,
     isPending,
@@ -23,6 +25,7 @@ export const useCreateBulkEvaluation = (
       return response;
     },
     onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["evaluations"] });
       toast(res.message, { type: "success" });
       setSelectedClassId(null);
     },

@@ -7,7 +7,7 @@ import type {
   ClassStudent,
   Weekday,
 } from "@/types/classes";
-import { getLocalDateString } from "@/utils/formatDate";
+import { formatArabicDate, getLocalDateString } from "@/utils/formatDate";
 import { englishToArabicDayMap } from "@/utils/getArabicDayName";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -90,7 +90,7 @@ const StudentEvaluationList = ({
   const getValidClassDates = useMemo(() => {
     const validDates: Date[] = [];
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 3); // Look back 3 days
+    startDate.setDate(startDate.getDate() - 30); // Look back 3 days
 
     const endDate = new Date(); // Today
 
@@ -140,12 +140,7 @@ const StudentEvaluationList = ({
   };
 
   // Format date for display
-  const formattedDate = classDate.toLocaleDateString("ar-EG", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = formatArabicDate(classDate);
 
   const inputDateValue = getLocalDateString(classDate);
 
