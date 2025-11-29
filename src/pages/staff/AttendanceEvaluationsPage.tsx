@@ -96,6 +96,7 @@ const AttendanceEvaluationsPage = () => {
 
   useEffect(() => {
     if (!evaluationEditMode) {
+      setAttendanceStatus({});
       for (const student of classStudents ?? []) {
         handleAttendanceChange(student.student_id, AttendanceStatus.ABSENT);
       }

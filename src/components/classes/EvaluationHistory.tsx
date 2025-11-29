@@ -1,7 +1,7 @@
 import { useGetEvaluations } from "@/hooks/evaluations/useGetEvaluations";
 import { useAuthStore } from "@/stores/auth";
 import type { Class, Evaluation } from "@/types/classes";
-import { formatArabicDate } from "@/utils/formatDate";
+import { formatArabicDate, formatArabicDatetime } from "@/utils/formatDate";
 import { useMemo } from "react";
 import Spinner from "../shared/Spinner";
 
@@ -27,6 +27,7 @@ const EvaluationHistory = ({
       {
         date: number;
         formattedDate: string;
+        formattedCreatedAt: string;
         classGroups: {
           class_id: number;
           evaluations: Evaluation[];
@@ -38,11 +39,15 @@ const EvaluationHistory = ({
       const date = new Date(evaluation.date);
       const dateKey = evaluation.date;
       const formattedDate = formatArabicDate(date);
+      const formattedCreatedAt = formatArabicDatetime(
+        new Date(evaluation.created_at),
+      );
 
       if (!dateGroups[dateKey]) {
         dateGroups[dateKey] = {
           date: date.getTime(),
           formattedDate,
+          formattedCreatedAt,
           classGroups: [
             {
               class_id: evaluation.class_id,
@@ -118,6 +123,9 @@ const EvaluationHistory = ({
                         <h4 className="text-lg font-medium text-emerald-900 group-hover:text-emerald-700">
                           {teacherClass.name}
                         </h4>
+                      </div>
+                      <div className="text-right text-gray-500">
+                        {dateGroup.formattedCreatedAt}
                       </div>
                     </div>
                   </div>

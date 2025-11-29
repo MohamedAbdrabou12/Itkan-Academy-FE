@@ -15,6 +15,17 @@ export const formatArabicDate = (date: Date) => {
   });
 };
 
+export const formatArabicDatetime = (date: Date) => {
+  return date.toLocaleString("ar-EG", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+    hour: "numeric",
+    minute: "numeric",
+  });
+};
+
 export const getLocalDateString = (date: Date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
