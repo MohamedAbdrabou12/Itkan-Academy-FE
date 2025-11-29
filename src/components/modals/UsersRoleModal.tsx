@@ -36,7 +36,10 @@ export const UsersRoleModal = (props: UsersRoleModalProps) => {
   // Filter out student role and transform to options
   const roleOptions =
     allRoles?.items
-      ?.filter((role) => role.name !== UserRole.STUDENT)
+      ?.filter(
+        (role) =>
+          role.name !== UserRole.STUDENT && role.name !== UserRole.TEACHER,
+      )
       .map((role) => ({
         value: role.id.toString(),
         label: role.name_ar,

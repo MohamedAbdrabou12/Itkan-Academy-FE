@@ -92,7 +92,7 @@ const EvaluationHistory = ({
           >
             {/* Date Header */}
             <div className="bg-linear-to-r border-b border-emerald-200 from-emerald-50 to-green-50 px-4 py-3">
-              <h3 className="text-right text-lg font-semibold text-emerald-900">
+              <h3 className="text-right font-semibold text-emerald-900">
                 {dateGroup.formattedDate}
               </h3>
             </div>
@@ -124,8 +124,8 @@ const EvaluationHistory = ({
                           {teacherClass.name}
                         </h4>
                       </div>
-                      <div className="text-right text-gray-500">
-                        {dateGroup.formattedCreatedAt}
+                      <div className="text-right text-xs text-gray-500">
+                        تم الانشاء: {dateGroup.formattedCreatedAt}
                       </div>
                     </div>
                   </div>

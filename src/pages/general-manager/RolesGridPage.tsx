@@ -186,6 +186,7 @@ const RolesGridPage = () => {
         enableSearch={true}
         enableFilters={false}
         viewPermission={PermissionKeys.SYSTEM_ROLES_VIEW}
+        addPermission={PermissionKeys.SYSTEM_ROLES_ADD}
         editPermission={PermissionKeys.SYSTEM_ROLES_EDIT}
         deletePermission={PermissionKeys.SYSTEM_ROLES_DELETE}
       />

@@ -12,6 +12,7 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   staff: "موظفين",
   penalty: "جزاءات",
   salary: "رواتب",
+  students: "طلاب",
   student: "طلاب",
   training: "تدريب",
 
