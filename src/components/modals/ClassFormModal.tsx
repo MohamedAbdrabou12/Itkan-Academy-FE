@@ -87,6 +87,7 @@ export const ClassFormModal = ({
     } else {
       await createMutation.mutateAsync(payload);
     }
+
     onCloseHandler();
   };
 
@@ -95,7 +96,6 @@ export const ClassFormModal = ({
       //  set initial values
       form.setValue("name", initialValues.name);
       form.setValue("branch_id", String(initialValues.branch_id));
-
       form.setValue("evaluation_config", initialValues.evaluation_config);
       const schedule = Object.keys(initialValues.schedule).map((key) => ({
         day: key,
@@ -103,18 +103,7 @@ export const ClassFormModal = ({
           key as keyof typeof initialValues.schedule
         ][0],
       }));
-
       form.setValue("schedule", schedule);
-    } else {
-      form.setValue("name", "");
-      form.setValue("branch_id", "");
-      form.setValue("evaluation_config", []);
-      form.setValue("schedule", [
-        {
-          day: "",
-          time: "",
-        },
-      ]);
     }
   }, [form, initialValues]);
 

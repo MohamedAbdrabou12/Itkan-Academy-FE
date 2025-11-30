@@ -19,12 +19,11 @@ export default function HookFormInput({
   disabled = false,
   icon,
 }: HookFormInputProps) {
-  const { control, formState } = useFormContext();
+  const { control } = useFormContext();
   const { field, fieldState } = useController({
     name,
     control,
   });
-  const isSubmitted = formState.isSubmitted;
   const finalError = fieldState.error?.message;
 
   return (
@@ -38,7 +37,7 @@ export default function HookFormInput({
 
       <div
         className={`flex items-center gap-2 rounded-xl border bg-gray-50 px-3 py-3 
-        ${finalError && isSubmitted ? "border-red-400" : "border-gray-300"}
+        ${finalError ? "border-red-400" : "border-gray-300"}
         transition focus-within:border-emerald-600 focus-within:ring-2
         focus-within:ring-emerald-300`}
       >
@@ -54,7 +53,7 @@ export default function HookFormInput({
         />
       </div>
 
-      {finalError && isSubmitted && (
+      {finalError && (
         <p className="mt-1 text-xs font-medium text-red-600">{finalError}</p>
       )}
     </div>

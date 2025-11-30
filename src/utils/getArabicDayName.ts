@@ -13,30 +13,30 @@ export const englishToArabicDayMap: Record<Weekday, string> = {
 export const arabicDaysOptions: { value: string; label: string }[] = [
   {
     label: "السبت",
-    value: "السبت",
+    value: "saturday",
   },
   {
     label: "الاحد",
-    value: "الاحد",
+    value: "sunday",
   },
   {
     label: "الاثنين",
-    value: "الاثنين",
+    value: "monday",
   },
   {
     label: "الثلاثاء",
-    value: "الثلاثاء",
+    value: "tuesday",
   },
   {
     label: "الاربعاء",
-    value: "الاربعاء",
+    value: "wednesday",
   },
   {
     label: "الخميس",
-    value: "الخميس",
+    value: "thursday",
   },
   {
     label: "الجمعة",
-    value: "الجمعة",
+    value: "friday",
   },
 ];
