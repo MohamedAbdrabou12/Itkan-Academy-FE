@@ -53,6 +53,7 @@ const ActionMenu = <T extends Record<string, unknown>>({
           <div className="py-1">
             {actions.map((action, index) => (
               <PermissionGate
+                key={index}
                 permission={
                   action.destructive
                     ? deletePermission || ""

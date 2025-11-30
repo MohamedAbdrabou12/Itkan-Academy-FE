@@ -6,6 +6,7 @@ import { useDeleteClass } from "@/hooks/classes/useDeleteClass";
 import { useGetAllClasses } from "@/hooks/classes/useGetAllClassess";
 import type { Class } from "@/types/classes";
 import type { Column } from "@/types/dataGrid";
+import { englishToArabicDayMap } from "@/utils/getArabicDayName";
 import { useState } from "react";
 
 const PAGE_SIZE = 10;
@@ -108,7 +109,14 @@ const ClassesGridPage = () => {
       sortable: true,
       render: (value: unknown) => (
         <span dir="ltr" className="text-left">
-          {Object.keys(value as Record<string, string[]>).join(", ")}
+          {Object.keys(value as Record<string, string[]>)
+            .map(
+              (key) =>
+                englishToArabicDayMap[
+                  key as keyof typeof englishToArabicDayMap
+                ],
+            )
+            .join(" , ")}
         </span>
       ),
     },
@@ -163,7 +171,6 @@ const ClassesGridPage = () => {
         editPermission={PermissionKeys.ACADEMIC_CLASSES_EDIT}
         deletePermission={PermissionKeys.ACADEMIC_CLASSES_DELETE}
       />
-
       {isFormModalOpen && (
         <ClassFormModal
           isOpen={isFormModalOpen}

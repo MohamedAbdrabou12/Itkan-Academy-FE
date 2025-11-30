@@ -1,6 +1,6 @@
 import { Check, ChevronDown, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useController, useFormContext, useWatch } from "react-hook-form";
+import { useController, useFormContext } from "react-hook-form";
 
 interface SelectOption {
   value: string;
@@ -29,31 +29,15 @@ export default function HookFormMultiSelect({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { register, setValue, control } = useFormContext();
+  const { control } = useFormContext();
 
-  // Use useController to get error and field properties
   const {
+    field: { onChange, onBlur, value = [], ref },
     fieldState: { error },
   } = useController({
     name,
     control,
-  });
-
-  const value: string[] =
-    useWatch({
-      name,
-      control: control,
-    }) || [];
-
-  const { onBlur, ref } = register(name, {
-    validate: {
-      requiredSelection: (currentValue) => {
-        if (required && (!currentValue || currentValue.length === 0)) {
-          return `${label} selection is required.`;
-        }
-        return true;
-      },
-    },
+    defaultValue: [],
   });
 
   // Extract error message
@@ -73,25 +57,25 @@ export default function HookFormMultiSelect({
       // Determine the new value array
       const isSelected = value.includes(optionValue);
       const newValue = isSelected
-        ? value.filter((v) => v !== optionValue)
+        ? value.filter((v: string) => v !== optionValue)
         : [...value, optionValue];
 
-      // Update RHF state manually using setValue
-      setValue(name, newValue, { shouldValidate: true, shouldDirty: true });
+      // Update RHF state using the onChange from useController
+      onChange(newValue);
     },
-    [disabled, value, name, setValue],
+    [disabled, value, onChange],
   );
 
   // Handler for removing a chip
   const handleRemove = useCallback(
     (optionValue: string) => {
       if (disabled) return;
-      const newValue = value.filter((v) => v !== optionValue);
+      const newValue = value.filter((v: string) => v !== optionValue);
 
       // Update RHF state manually
-      setValue(name, newValue, { shouldValidate: true, shouldDirty: true });
+      onChange(newValue);
     },
-    [disabled, value, name, setValue],
+    [disabled, value, onChange],
   );
 
   // Handle clicking outside the component
@@ -102,8 +86,9 @@ export default function HookFormMultiSelect({
         !containerRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
-        onBlur(event);
+        onBlur(); // Call onBlur from useController
       }
+      console.log("Rendered from ");
     },
     [onBlur],
   );
