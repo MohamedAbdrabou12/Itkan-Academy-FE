@@ -1,4 +1,4 @@
-export interface UserDetails {
+export interface StaffDetails {
   id: number;
   full_name: string;
   email: string;
@@ -17,7 +17,7 @@ export interface UserDetails {
 }
 
 export interface UsersResponse {
-  items: UserDetails[];
+  items: StaffDetails[];
   page: number;
   size: number;
   total: number;

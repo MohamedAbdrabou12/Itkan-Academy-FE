@@ -3,7 +3,7 @@ import { FormSelect } from "@/components/forms/FormSelect";
 import { useGetAllRoles } from "@/hooks/roles/useGetAllRoles";
 import type { FormComponents, FormField } from "@/types/Forms";
 import { UserRole } from "@/types/Roles";
-import type { UserDetails } from "@/types/users";
+import type { StaffDetails } from "@/types/users";
 import {
   userRolesApiSchema,
   userRolesFormSchema,
@@ -18,7 +18,7 @@ interface UsersRoleModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: UserRolesApiData) => Promise<void>;
-  user: UserDetails;
+  user: StaffDetails;
   isSubmitting?: boolean;
   closeOnBackdropClick?: boolean;
 }

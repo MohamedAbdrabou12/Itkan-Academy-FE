@@ -1,17 +1,17 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
 import { UsersRoleModal } from "@/components/modals/UsersRoleModal";
-import { useGetAllUsers } from "@/hooks/users/useGetUsers";
-import { useUpdateUserRole } from "@/hooks/users/useUpdateUserRole";
-import type { Column } from "@/types/dataGrid";
 import { PermissionKeys } from "@/constants/Permissions";
+import { useGetAllStaff } from "@/hooks/staff/useGetStaff";
+import { useUpdateUserRole } from "@/hooks/staff/useUpdateUserRole";
+import type { Column } from "@/types/dataGrid";
 import type { UpdateUserRoleData } from "@/types/Roles";
-import type { UserDetails } from "@/types/users";
+import type { StaffDetails } from "@/types/users";
 import { useState } from "react";
 
 const PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [5, 10];
 
-const UsersRoleGridPage = () => {
+const StaffRoleGridPage = () => {
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: PAGE_SIZE,
@@ -23,15 +23,15 @@ const UsersRoleGridPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isRolesModalOpen, setIsRolesModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<UserDetails | null>(null);
+  const [editingUser, setEditingUser] = useState<StaffDetails | null>(null);
 
   const {
-    users,
+    staff,
     pagination: apiPagination,
     isPending,
     error,
     refetch,
-  } = useGetAllUsers({
+  } = useGetAllStaff({
     page: pagination.page,
     size: pagination.pageSize,
     search: searchTerm,
@@ -67,7 +67,7 @@ const UsersRoleGridPage = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
-  const handleEditRoles = (user: UserDetails) => {
+  const handleEditRoles = (user: StaffDetails) => {
     setEditingUser(user);
     setIsRolesModalOpen(true);
   };
@@ -78,7 +78,7 @@ const UsersRoleGridPage = () => {
     refetch();
   };
 
-  const columns: Column<UserDetails>[] = [
+  const columns: Column<StaffDetails>[] = [
     { key: "id", title: "#", sortable: true },
     {
       key: "full_name",
@@ -102,7 +102,7 @@ const UsersRoleGridPage = () => {
       key: "branches",
       title: "الفروع",
       sortable: false,
-      render: (_, user: UserDetails) => {
+      render: (_, user: StaffDetails) => {
         const branches = user.branches;
         if (!branches || branches.length === 0) {
           return <span className="block text-center text-gray-500">-</span>;
@@ -130,10 +130,10 @@ const UsersRoleGridPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <DataGrid<UserDetails>
-        title="إدارة المستخدمين"
+      <DataGrid<StaffDetails>
+        title="إدارة الموظفين"
         columns={columns}
-        data={users}
+        data={staff}
         loading={isPending}
         error={error?.message || null}
         pagination={{
@@ -153,8 +153,8 @@ const UsersRoleGridPage = () => {
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}
-        viewPermission={PermissionKeys.SYSTEM_USERS_VIEW}
-        editPermission={PermissionKeys.SYSTEM_USERS_EDIT}
+        viewPermission={PermissionKeys.SYSTEM_STAFF_VIEW}
+        editPermission={PermissionKeys.SYSTEM_STAFF_EDIT}
       />
 
       {isRolesModalOpen && editingUser && (
@@ -173,4 +173,4 @@ const UsersRoleGridPage = () => {
   );
 };
 
-export default UsersRoleGridPage;
+export default StaffRoleGridPage;

@@ -3,7 +3,7 @@ import type { UsersResponse } from "@/types/users";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../useDebounce";
 
-interface UseGetAllUsersParams {
+interface UseGetAllStaffParams {
   page?: number;
   size?: number;
   search?: string;
@@ -11,11 +11,11 @@ interface UseGetAllUsersParams {
   sort_order?: "asc" | "desc";
 }
 
-export const useGetAllUsers = (params?: UseGetAllUsersParams) => {
+export const useGetAllStaff = (params?: UseGetAllStaffParams) => {
   const debouncedSearch = useDebounce(params?.search, 300);
 
   const { data, isPending, error, refetch } = useQuery<UsersResponse>({
-    queryKey: ["users", { ...params, search: debouncedSearch }],
+    queryKey: ["staff", { ...params, search: debouncedSearch }],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
 
@@ -28,14 +28,14 @@ export const useGetAllUsers = (params?: UseGetAllUsersParams) => {
         searchParams.append("sort_order", params.sort_order);
 
       const queryString = searchParams.toString();
-      const url = queryString ? `/users?${queryString}` : "/users";
+      const url = queryString ? `/staff?${queryString}` : "/staff";
 
       return await apiReq("GET", url);
     },
   });
 
   return {
-    users: data?.items || [],
+    staff: data?.items || [],
     pagination: {
       page: data?.page || 1,
       pageSize: data?.size || 10,

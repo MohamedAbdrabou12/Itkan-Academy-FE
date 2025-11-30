@@ -2,9 +2,9 @@ import { PermissionKeys } from "@/constants/Permissions";
 import {
   BookA,
   BookmarkCheck,
+  BriefcaseBusiness,
   LucideGraduationCap,
   UserRound,
-  Users,
   Warehouse,
 } from "lucide-react";
 
@@ -24,11 +24,11 @@ export const navLinks = [
     permission: PermissionKeys.SYSTEM_ROLES_VIEW,
   },
   {
-    id: "users",
-    title: "المستخدمين",
-    icon: Users,
-    url: "/itkan-dashboard/users",
-    permission: PermissionKeys.SYSTEM_USERS_VIEW,
+    id: "staff",
+    title: "الموظفين",
+    icon: BriefcaseBusiness,
+    url: "/itkan-dashboard/staff",
+    permission: PermissionKeys.SYSTEM_STAFF_VIEW,
   },
   {
     id: "students",

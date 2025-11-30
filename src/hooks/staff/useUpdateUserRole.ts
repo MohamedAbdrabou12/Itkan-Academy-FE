@@ -13,7 +13,7 @@ export const useUpdateUserRole = () => {
       return await apiReq("PATCH", "/users/role", updateData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
     },
   });
 
