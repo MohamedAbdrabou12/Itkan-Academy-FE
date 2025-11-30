@@ -36,7 +36,8 @@ const StudentEvaluationItem = ({
   onNotesChange,
   onEvaluationChange,
 }: StudentEvaluationItemProps) => {
-  const currentStatus = attendanceStatus?.status || AttendanceStatus.ABSENT;
+  const currentStatus =
+    attendanceStatus?.attendance_status || AttendanceStatus.ABSENT;
 
   const canEvaluate = useCallback((status: AttendanceStatus): boolean => {
     return (

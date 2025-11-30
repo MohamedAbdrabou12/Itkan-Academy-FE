@@ -39,12 +39,24 @@ export enum AttendanceStatus {
 }
 
 export interface StudentAttendanceStatus {
-  status: AttendanceStatus;
+  attendance_status: AttendanceStatus;
   notes: string;
   evaluations: EvaluationGrade[] | null;
 }
 
 export type AttendanceStatusMap = Record<number, StudentAttendanceStatus>;
+
+export interface Evaluation {
+  id: number;
+  student_id: number;
+  class_id: number;
+  date: string;
+  attendance_status: AttendanceStatus;
+  evaluation_grades: EvaluationGrade[];
+  notes?: string;
+  created_at: string;
+}
+
 export interface ClassRead {
   id: number;
   branch_id: number;

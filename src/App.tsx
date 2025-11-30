@@ -8,7 +8,7 @@ import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
 import StudentsGridPage from "@/pages/general-manager/StudentsGridPage";
 import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
-import UsersRoleGridPage from "@/pages/general-manager/UsersRoleGridPage";
+import StaffRoleGridPage from "@/pages/general-manager/StaffRoleGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
 import AboutPage from "@/pages/student/AboutPage";
@@ -56,8 +56,8 @@ const App = () => {
             element={<BranchesGridPage />}
           />
           <Route
-            path="/itkan-dashboard/users"
-            element={<UsersRoleGridPage />}
+            path="/itkan-dashboard/staff"
+            element={<StaffRoleGridPage />}
           />
           <Route
             path="/itkan-dashboard/attendance-and-evaluations"

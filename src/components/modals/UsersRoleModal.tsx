@@ -3,7 +3,7 @@ import { FormSelect } from "@/components/forms/FormSelect";
 import { useGetAllRoles } from "@/hooks/roles/useGetAllRoles";
 import type { FormComponents, FormField } from "@/types/Forms";
 import { UserRole } from "@/types/Roles";
-import type { UserDetails } from "@/types/users";
+import type { StaffDetails } from "@/types/users";
 import {
   userRolesApiSchema,
   userRolesFormSchema,
@@ -18,7 +18,7 @@ interface UsersRoleModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: UserRolesApiData) => Promise<void>;
-  user: UserDetails;
+  user: StaffDetails;
   isSubmitting?: boolean;
   closeOnBackdropClick?: boolean;
 }
@@ -36,7 +36,10 @@ export const UsersRoleModal = (props: UsersRoleModalProps) => {
   // Filter out student role and transform to options
   const roleOptions =
     allRoles?.items
-      ?.filter((role) => role.name !== UserRole.STUDENT)
+      ?.filter(
+        (role) =>
+          role.name !== UserRole.STUDENT && role.name !== UserRole.TEACHER,
+      )
       .map((role) => ({
         value: role.id.toString(),
         label: role.name_ar,

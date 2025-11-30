@@ -95,7 +95,6 @@ export const PermissionKeys = {
   EVALUATION_STUDENT_VIEW: "evaluation.student.view",
   EVALUATION_STUDENT_ADD: "evaluation.student.add",
   EVALUATION_STUDENT_EDIT: "evaluation.student.edit",
-  EVALUATION_STUDENT_DELETE: "evaluation.student.delete",
 
   // Teacher Training
   TRAINING_TEACHER_ALL: "training.teacher.*",
@@ -149,10 +148,10 @@ export const PermissionKeys = {
   SYSTEM_BRANCHES_ADD: "system.branches.add",
   SYSTEM_BRANCHES_EDIT: "system.branches.edit",
 
-  // System Users
-  SYSTEM_USERS_ALL: "system.users.*",
-  SYSTEM_USERS_VIEW: "system.users.view",
-  SYSTEM_USERS_EDIT: "system.users.edit",
+  // System Staff
+  SYSTEM_STAFF_ALL: "system.staff.*",
+  SYSTEM_STAFF_VIEW: "system.staff.view",
+  SYSTEM_STAFF_EDIT: "system.staff.edit",
 
   // System Assignments
   SYSTEM_ASSIGNMENTS_ALL: "system.assignments.*",
@@ -181,13 +180,6 @@ export const PermissionKeys = {
   STAFF_MANAGEMENT_ADD: "staff.management.add",
   STAFF_MANAGEMENT_EDIT: "staff.management.edit",
   STAFF_MANAGEMENT_DELETE: "staff.management.delete",
-
-  // Student Management
-  STUDENT_MANAGEMENT_ALL: "student.management.*",
-  STUDENT_MANAGEMENT_VIEW: "student.management.view",
-  STUDENT_MANAGEMENT_ADD: "student.management.add",
-  STUDENT_MANAGEMENT_EDIT: "student.management.edit",
-  STUDENT_MANAGEMENT_DELETE: "student.management.delete",
 
   // Penalty Staff
   PENALTY_STAFF_ALL: "penalty.staff.*",

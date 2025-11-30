@@ -3,26 +3,25 @@ import type { AttendanceStatusMap } from "@/types/classes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-interface CreateBulkEvaluationData {
+interface EditBulkEvaluationData {
   class_id: number;
   // YYYY-MM-DD
   date: string;
   records: AttendanceStatusMap;
 }
 
-export const useCreateBulkEvaluation = (
+export const useEditBulkEvaluation = (
   setSelectedClassId: React.Dispatch<React.SetStateAction<number | null>>,
 ) => {
   const queryClient = useQueryClient();
 
   const {
-    mutate: createBulkEvaluation,
+    mutate: editBulkEvaluation,
     isPending,
     error,
   } = useMutation({
-    mutationFn: async (data: CreateBulkEvaluationData) => {
-      const response = await apiReq("POST", "/evaluations", data);
-      return response;
+    mutationFn: async (data: EditBulkEvaluationData) => {
+      return await apiReq("PUT", "/evaluations", data);
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["evaluations"] });
@@ -34,5 +33,5 @@ export const useCreateBulkEvaluation = (
     },
   });
 
-  return { createBulkEvaluation, isPending, error };
+  return { editBulkEvaluation, isPending, error };
 };

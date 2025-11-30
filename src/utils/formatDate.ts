@@ -1,8 +1,28 @@
-export const formatDate = (value: unknown) => {
-  return new Date(value as string).toLocaleDateString("en-US", {
+export const formatEnglishDate = (value: string) => {
+  return new Date(value).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
+  });
+};
+
+export const formatArabicDate = (date: Date) => {
+  return date.toLocaleDateString("ar-EG", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  });
+};
+
+export const formatArabicDatetime = (date: Date) => {
+  return date.toLocaleString("ar-EG", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+    hour: "numeric",
+    minute: "numeric",
   });
 };
 

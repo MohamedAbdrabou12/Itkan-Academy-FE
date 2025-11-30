@@ -55,7 +55,7 @@ const DataGrid = <T extends Record<string, unknown>>({
   const hasActiveFilters = !!searchTerm || Object.keys(localFilters).length > 0;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className="relative rounded-lg border border-gray-200 bg-white shadow-sm">
       {/* Header */}
       <GridHeader
         title={title}
@@ -64,19 +64,18 @@ const DataGrid = <T extends Record<string, unknown>>({
         addPermission={addPermission}
       />
 
-      {/* Search & Filter Bar */}
-      {(enableSearch || enableFilters) && (
-        <SearchFilterBar
-          onSearch={handleSearch}
-          searchPlaceholder={searchPlaceholder}
-          searchTerm={searchTerm}
-        />
-      )}
-
-      {/* Data Grid Content */}
-
       <PermissionGate permission={viewPermission || ""}>
-        <div className="relative">
+        {/* Search & Filter Bar */}
+        {(enableSearch || enableFilters) && (
+          <SearchFilterBar
+            onSearch={handleSearch}
+            searchPlaceholder={searchPlaceholder}
+            searchTerm={searchTerm}
+          />
+        )}
+
+        {/* Data Grid Content */}
+        <div>
           {loading && <Spinner />}
 
           {error && <GridError message={error} />}
@@ -103,16 +102,16 @@ const DataGrid = <T extends Record<string, unknown>>({
             />
           )}
         </div>
-      </PermissionGate>
 
-      {!loading && !error && data.length > 0 && (
-        <PaginationControls
-          pagination={pagination}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
-          pageSizeOptions={pageSizeOptions}
-        />
-      )}
+        {!loading && !error && data.length > 0 && (
+          <PaginationControls
+            pagination={pagination}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
+            pageSizeOptions={pageSizeOptions}
+          />
+        )}
+      </PermissionGate>
     </div>
   );
 };
