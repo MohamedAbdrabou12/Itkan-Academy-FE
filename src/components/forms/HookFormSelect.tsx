@@ -22,7 +22,7 @@ export default function HookFormSelect({
   placeholder,
   disabled = false,
 }: HookFormSelectProps) {
-  const { control } = useFormContext();
+  const { control, formState } = useFormContext();
   const {
     field,
     fieldState: { error },
@@ -31,6 +31,7 @@ export default function HookFormSelect({
     control,
   });
   const finalError = error?.message;
+  const isSubmitted = formState.isSubmitted;
 
   return (
     <div className="mb-6 w-full">
@@ -64,7 +65,7 @@ export default function HookFormSelect({
         </select>
       </div>
 
-      {finalError && (
+      {finalError && isSubmitted && (
         <p className="mt-1 flex items-center text-sm text-red-600 dark:text-red-400">
           {finalError}
         </p>

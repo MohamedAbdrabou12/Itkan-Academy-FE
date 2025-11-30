@@ -11,7 +11,8 @@ import {
   type EvaluationGrade,
   type AttendanceStatusMap,
 } from "@/types/classes";
-import { useState, useEffect } from "react";
+import { getLocalDateString } from "@/utils/formatDate";
+import { useState, useEffect, useCallback } from "react";
 
 export const EVALUATION_MAX_GRADE = 10;
 
@@ -22,7 +23,8 @@ const AttendanceEvaluationsPage = () => {
   );
   const [classDate, setClassDate] = useState(new Date());
 
-  const { createBulkEvaluation } = useCreateBulkEvaluation();
+  const { createBulkEvaluation, isPending: isCreatingEvaluation } =
+    useCreateBulkEvaluation(setSelectedClassId);
 
   const { user, activeBranch } = useAuthStore();
 
@@ -41,49 +43,56 @@ const AttendanceEvaluationsPage = () => {
     setAttendanceStatus({});
   }, [activeBranch?.id]);
 
-  const initializeEvaluations = (): EvaluationGrade[] => {
+  const initializeEvaluations = useCallback((): EvaluationGrade[] => {
     return (
       selectedClass?.evaluation_config.map((evaluation_name) => ({
         name: evaluation_name,
         grade: 0,
       })) || []
     );
+  }, [selectedClass?.evaluation_config]);
+
+  const canEvaluate = (status: AttendanceStatus): boolean => {
+    return (
+      status === AttendanceStatus.PRESENT || status === AttendanceStatus.LATE
+    );
   };
 
-  const handleAttendanceChange = (
-    studentId: number,
-    status: AttendanceStatus,
-  ) => {
-    setAttendanceStatus((prev) => {
-      const currentStatus = prev[studentId];
-      const isPresent = status === AttendanceStatus.PRESENT;
+  const handleAttendanceChange = useCallback(
+    (studentId: number, status: AttendanceStatus) => {
+      setAttendanceStatus((prev) => {
+        const currentStatus = prev[studentId];
+        const isEvaluable = canEvaluate(status);
 
-      const evaluations = isPresent
-        ? currentStatus?.evaluations || initializeEvaluations()
-        : currentStatus?.evaluations?.map((evalItem) => ({
-            ...evalItem,
-            grade: 0,
-          })) || initializeEvaluations();
+        const evaluations = isEvaluable
+          ? (currentStatus?.evaluations ?? initializeEvaluations())
+          : null; // null for non-evaluable statuses
 
-      return {
-        ...prev,
-        [studentId]: {
-          status,
-          notes: currentStatus?.notes || "",
-          evaluations,
-        },
-      };
-    });
-  };
+        return {
+          ...prev,
+          [studentId]: {
+            status,
+            notes: currentStatus?.notes ?? "",
+            evaluations,
+          },
+        };
+      });
+    },
+    [initializeEvaluations],
+  );
+
+  useEffect(() => {
+    for (const student of classStudents ?? []) {
+      handleAttendanceChange(student.student_id, AttendanceStatus.ABSENT);
+    }
+  }, [classStudents, handleAttendanceChange]);
 
   const handleNotesChange = (studentId: number, notes: string) => {
     setAttendanceStatus((prev) => ({
       ...prev,
       [studentId]: {
         ...prev[studentId],
-        status: prev[studentId]?.status || AttendanceStatus.ABSENT,
         notes,
-        evaluations: prev[studentId]?.evaluations || initializeEvaluations(),
       },
     }));
   };
@@ -97,7 +106,16 @@ const AttendanceEvaluationsPage = () => {
       const currentStudent = prev[studentId];
       if (!currentStudent) return prev;
 
-      const updatedEvaluations = [...currentStudent.evaluations];
+      // Only allow evaluation changes if student is present or late
+      if (!canEvaluate(currentStudent.status)) {
+        return prev;
+      }
+
+      // If evaluations is null, initialize it first
+      const currentEvaluations =
+        currentStudent.evaluations || initializeEvaluations();
+
+      const updatedEvaluations = [...currentEvaluations];
       updatedEvaluations[criteriaIndex] = {
         ...updatedEvaluations[criteriaIndex],
         grade: Math.min(Math.max(0, grade), EVALUATION_MAX_GRADE),
@@ -123,7 +141,7 @@ const AttendanceEvaluationsPage = () => {
   const handleSubmit = () => {
     createBulkEvaluation({
       class_id: selectedClassId!,
-      date: classDate.toLocaleDateString("en-US"),
+      date: getLocalDateString(classDate),
       records: attendanceStatus,
     });
   };
@@ -164,6 +182,7 @@ const AttendanceEvaluationsPage = () => {
           {classStudents && classStudents.length > 0 && (
             <EvaluationsActionButtons
               onSubmit={handleSubmit}
+              isSubmitting={isCreatingEvaluation}
               onCancel={handleBackToClasses}
             />
           )}

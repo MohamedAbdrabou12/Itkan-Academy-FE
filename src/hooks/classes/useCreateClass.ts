@@ -1,19 +1,19 @@
 import apiReq from "@/services/apiReq";
-import type { TeacherFormData } from "@/validation/teacher";
+import type { AddClassRequest } from "@/types/classes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-export const useCreateTeacher = () => {
+export const useCreateClass = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: TeacherFormData) => {
-      const response = await apiReq("POST", "/teachers", data);
+    mutationFn: async (data: AddClassRequest) => {
+      const response = await apiReq("POST", "/classes", data);
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teachers"] });
-      toast.success("تم إضافة المعلم بنجاح");
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
+      toast.success("تم إضافة الفصل بنجاح");
     },
     onError: (error) => {
       toast.error(error.message);

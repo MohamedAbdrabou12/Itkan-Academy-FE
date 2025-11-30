@@ -1,17 +1,17 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
+import { ClassFormModal } from "@/components/modals/ClassFormModal";
 import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
-import { TeacherFormModal } from "@/components/modals/TeacherFormModal";
 import { PermissionKeys } from "@/constants/Permissions";
-import { useDeleteTeacher } from "@/hooks/teachers/useDeleteTeacher";
-import { useGetAllTeachers } from "@/hooks/teachers/useGetAllTeachers";
+import { useDeleteClass } from "@/hooks/classes/useDeleteClass";
+import { useGetAllClasses } from "@/hooks/classes/useGetAllClassess";
+import type { Class } from "@/types/classes";
 import type { Column } from "@/types/dataGrid";
-import type { Teacher } from "@/types/teachers";
 import { useState } from "react";
 
 const PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [5, 10];
 
-const TeachersGridPage = () => {
+const ClassesGridPage = () => {
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: PAGE_SIZE,
@@ -23,18 +23,18 @@ const TeachersGridPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
+  const [editingClass, setEditingClass] = useState<Class | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deletingTeacher, setDeletingTeacher] = useState<Teacher | null>(null);
+  const [deletingClass, setDeletingClass] = useState<Class | null>(null);
 
   // Use the hook with parameters (you might need to update your hook to accept params)
   const {
-    teachers,
+    classes,
     pagination: apiPagination,
     isPending,
     error,
     refetch,
-  } = useGetAllTeachers({
+  } = useGetAllClasses({
     page: pagination.page,
     size: pagination.pageSize,
     search: searchTerm,
@@ -42,7 +42,7 @@ const TeachersGridPage = () => {
     sort_order: sortInfo.sortOrder,
   });
 
-  const deleteMutation = useDeleteTeacher();
+  const deleteMutation = useDeleteClass();
 
   // Event handlers
   const handlePageChange = (page: number) => {
@@ -71,48 +71,44 @@ const TeachersGridPage = () => {
   };
 
   const handleAddNew = () => {
-    setEditingTeacher(null);
+    setEditingClass(null);
     setIsFormModalOpen(true);
   };
 
-  const handleEdit = (teacher: Teacher) => {
-    setEditingTeacher(teacher);
+  const handleEdit = (classData: Class) => {
+    setEditingClass(classData);
     setIsFormModalOpen(true);
   };
 
-  const handleDelete = (teacher: Teacher) => {
-    setDeletingTeacher(teacher);
+  const handleDelete = (classData: Class) => {
+    setDeletingClass(classData);
     setIsDeleteModalOpen(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (deletingTeacher) {
-      await deleteMutation.mutateAsync(deletingTeacher.id);
+    if (deletingClass) {
+      await deleteMutation.mutateAsync(deletingClass.id);
       setIsDeleteModalOpen(false);
-      setDeletingTeacher(null);
+      setDeletingClass(null);
       refetch();
     }
   };
 
-  const columns: Column<Teacher>[] = [
+  const columns: Column<Class>[] = [
     { key: "id", title: "#", sortable: true },
     {
-      key: "full_name",
-      title: "الاسم",
+      key: "name",
+      title: "name",
       sortable: true,
     },
+
     {
-      key: "email",
-      title: "البريد الالكتروني",
-      sortable: true,
-    },
-    {
-      key: "phone",
-      title: "رقم الهاتف",
+      key: "schedule",
+      title: "مواعيد الحصص",
       sortable: true,
       render: (value: unknown) => (
         <span dir="ltr" className="text-left">
-          {String(value)}
+          {Object.keys(value as Record<string, string[]>).join(", ")}
         </span>
       ),
     },
@@ -136,10 +132,10 @@ const TeachersGridPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <DataGrid<Teacher>
-        title="ادارة المعلمين"
+      <DataGrid<Class>
+        title="ادارة الفصول"
         columns={columns}
-        data={teachers}
+        data={classes}
         loading={isPending}
         error={error?.message || null}
         pagination={{
@@ -156,38 +152,23 @@ const TeachersGridPage = () => {
         onAddNew={handleAddNew}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        addButtonText="اضافة معلم"
-        entityName="معلم"
-        searchPlaceholder="ابحث باسم المعلم..."
+        addButtonText="اضافة فصل"
+        entityName="فصل"
+        searchPlaceholder="ابحث باسم الفصل..."
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}
-        viewPermission={PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_VIEW}
-        addPermission={PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_ADD}
-        editPermission={PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_EDIT}
-        deletePermission={PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_DELETE}
+        viewPermission={PermissionKeys.ACADEMIC_CLASSES_VIEW}
+        addPermission={PermissionKeys.ACADEMIC_CLASSES_ADD}
+        editPermission={PermissionKeys.ACADEMIC_CLASSES_EDIT}
+        deletePermission={PermissionKeys.ACADEMIC_CLASSES_DELETE}
       />
 
       {isFormModalOpen && (
-        <TeacherFormModal
+        <ClassFormModal
           isOpen={isFormModalOpen}
           onClose={() => setIsFormModalOpen(false)}
-          initialValues={
-            editingTeacher
-              ? {
-                  id: editingTeacher.id,
-                  full_name: editingTeacher.full_name,
-                  email: editingTeacher.email,
-                  phone: editingTeacher.phone,
-                  branch_ids: editingTeacher.branch_ids.map((branch_id) =>
-                    String(branch_id),
-                  ),
-                  class_ids: editingTeacher.class_ids.map((class_id) =>
-                    String(class_id),
-                  ),
-                }
-              : null
-          }
+          initialValues={editingClass ? editingClass : null}
         />
       )}
 
@@ -196,12 +177,12 @@ const TeachersGridPage = () => {
           isOpen={isDeleteModalOpen}
           onClose={() => {
             setIsDeleteModalOpen(false);
-            setDeletingTeacher(null);
+            setDeletingClass(null);
           }}
           onConfirm={handleConfirmDelete}
-          title="ازالة معلم"
-          description="هل انت متاكد من ازالة المعلم, لا يمكنك الرجوع عن هذا الاجراء"
-          itemName={deletingTeacher?.full_name}
+          title="ازالة فصل"
+          description="هل انت متاكد من ازالة الفصل, لا يمكنك الرجوع عن هذا الاجراء"
+          itemName={deletingClass?.name}
           isDeleting={deleteMutation.isPending}
         />
       )}
@@ -209,4 +190,4 @@ const TeachersGridPage = () => {
   );
 };
 
-export default TeachersGridPage;
+export default ClassesGridPage;

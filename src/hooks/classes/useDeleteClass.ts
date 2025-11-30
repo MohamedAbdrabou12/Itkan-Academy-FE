@@ -1,19 +1,18 @@
 import apiReq from "@/services/apiReq";
-import type { TeacherFormData } from "@/validation/teacher";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-export const useCreateTeacher = () => {
+export const useDeleteClass = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: TeacherFormData) => {
-      const response = await apiReq("POST", "/teachers", data);
+    mutationFn: async (id: number) => {
+      const response = await apiReq("DELETE", `/classes/${id}`);
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["teachers"] });
-      toast.success("تم إضافة المعلم بنجاح");
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
+      toast.success("تم حذف الفصل بنجاح");
     },
     onError: (error) => {
       toast.error(error.message);

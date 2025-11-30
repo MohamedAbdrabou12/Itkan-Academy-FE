@@ -1,4 +1,3 @@
-import { useGetMe } from "@/hooks/auth/useGetMe";
 import { useAuthStore } from "@/stores/auth";
 import { Bell, BookOpen, LogOut, Menu, User, X } from "lucide-react";
 import { useState } from "react";
@@ -6,7 +5,6 @@ import { Link, useLocation } from "react-router";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { me } = useGetMe();
   const { logout } = useAuthStore();
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
@@ -85,7 +83,7 @@ export default function Navbar() {
                   className={`${isActive("/dashboard") ? "font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} flex items-center space-x-2 space-x-reverse transition`}
                 >
                   <User className="h-5 w-5" />
-                  <span>{me.name}</span>
+                  <span>{user.full_name}</span>
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -153,7 +151,7 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {me ? (
+            {user ? (
               <>
                 <Link
                   to="/dashboard"

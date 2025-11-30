@@ -138,10 +138,10 @@ const StudentsGridPage = () => {
         entityName="طالب"
         searchPlaceholder="ابحث باسم الطالب..."
         pageSizeOptions={PAGE_SIZE_OPTIONS}
-        addPermission={PermissionKeys.EVALUATION_STUDENT_ADD}
-        editPermission={PermissionKeys.EVALUATION_STUDENT_EDIT}
-        deletePermission={PermissionKeys.EVALUATION_STUDENT_DELETE}
-        viewPermission={PermissionKeys.EVALUATION_STUDENT_VIEW}
+        viewPermission={PermissionKeys.SYSTEM_STUDENTS_VIEW}
+        addPermission={PermissionKeys.SYSTEM_STUDENTS_ADD}
+        editPermission={PermissionKeys.SYSTEM_STUDENTS_EDIT}
+        deletePermission={PermissionKeys.SYSTEM_STUDENTS_DELETE}
         enableSearch
         enableFilters
       />
