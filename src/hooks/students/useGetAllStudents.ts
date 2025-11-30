@@ -27,7 +27,7 @@ export const useGetAllStudents = (params?: UseGetAllStudentsParams) => {
       if (params?.status) searchParams.append("status", params.status);
 
       const queryString = searchParams.toString();
-      const url = queryString ? `/students?${queryString}` : "/students";
+      const url = queryString ? `/students/?${queryString}` : "/students/";
       return await apiReq("GET", url);
     },
   });
