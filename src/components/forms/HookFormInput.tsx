@@ -3,7 +3,7 @@ import { useController, useFormContext } from "react-hook-form";
 interface HookFormInputProps {
   name: string;
   label: string;
-  type?: "text" | "email" | "password";
+  type?: "text" | "email" | "password" | "date";
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;

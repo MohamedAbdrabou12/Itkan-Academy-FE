@@ -1,20 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createStudent } from "@/services/students";
+import apiReq from "@/services/apiReq";
 import type { StudentFormData } from "@/validation/studentSchema";
 
 export const useCreateStudent = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: StudentFormData) =>
-      createStudent({
+    mutationFn: async (data: StudentFormData) => {
+      const payload = {
         ...data,
-        phone: data.phone === "" ? null : data.phone,
-        admission_date: data.admission_date || null,
+        phone: data.phone?.trim() || "",
+        admission_date: data.admission_date || new Date().toISOString().split("T")[0],
         branch_ids: data.branch_ids?.map(Number) || [],
-        class_ids: data.class_ids?.map(Number) || null,
-      }),
-
+        class_ids: data.class_ids?.map(Number) || [],
+        status: "pending",
+      };
+      const response = await apiReq("POST", "/students/", payload);
+      return response;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["students"] });
     },

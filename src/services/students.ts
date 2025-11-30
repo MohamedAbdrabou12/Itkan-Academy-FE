@@ -12,30 +12,30 @@ export const listStudents = async (
       ).toString()
     : "";
 
-  const url = query ? `/students/?${query}` : "/students/";
+  const url = query ? `/students/?${query}` : "/students/"; 
   return await apiReq("GET", url);
 };
 
 export const getStudent = async (id: number): Promise<StudentDetails> => {
-  return await apiReq("GET", `/students/${id}/`);
+  return await apiReq("GET", `/students/${id}`); 
 };
 
 export const createStudent = async (data: StudentFormData) => {
-  return await apiReq("POST", "/students/", data);
+  return await apiReq("POST", "/students/", data); 
 };
 
 export const updateStudent = async (id: number, data: StudentFormData) => {
-  return await apiReq("PUT", `/students/${id}/`, data);
+  return await apiReq("PUT", `/students/${id}`, data);
 };
 
 export const deleteStudent = async (id: number) => {
-  return await apiReq("DELETE", `/students/${id}/`);
+  return await apiReq("DELETE", `/students/${id}`);
 };
 
 export const approveStudent = async (id: number) => {
-  return await apiReq("POST", `/students/${id}/approve/`);
+  return await apiReq("POST", `/students/${id}/approve`); 
 };
 
 export const rejectStudent = async (id: number) => {
-  return await apiReq("POST", `/students/${id}/reject/`);
+  return await apiReq("POST", `/students/${id}/reject`); 
 };

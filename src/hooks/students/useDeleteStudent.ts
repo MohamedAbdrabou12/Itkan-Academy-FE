@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteStudent } from "@/services/students";
+import apiReq from "@/services/apiReq";
 import type { StudentDetails } from "@/types/Students";
 
 export const useDeleteStudent = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number) => {
-      const res = await deleteStudent(id);
+    mutationFn: async (student_id: number) => {
+      const res = await apiReq("DELETE", `/students/${student_id}`);
       return res as StudentDetails & { user: { status: string } };
     },
     onSuccess: async () => {
