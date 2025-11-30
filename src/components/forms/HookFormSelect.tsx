@@ -11,6 +11,7 @@ interface HookFormSelectProps {
   options: SelectOption[];
   placeholder?: string;
   icon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export default function HookFormSelect({
@@ -19,6 +20,7 @@ export default function HookFormSelect({
   required = false,
   options,
   placeholder,
+  disabled = false,
 }: HookFormSelectProps) {
   const { control, formState } = useFormContext();
   const {
@@ -49,9 +51,9 @@ export default function HookFormSelect({
         <select
           id={name}
           {...field}
-          className="w-full bg-transparent text-gray-800 outline-none"
+          disabled={disabled}
+          className="w-full bg-transparent text-gray-800 outline-none disabled:opacity-60"
         >
-          {/* Optional: Add a disabled/placeholder option for better UX */}
           <option value="" disabled>
             {placeholder || "اختر..."}
           </option>
