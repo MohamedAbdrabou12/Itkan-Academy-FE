@@ -8,7 +8,7 @@ import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
 import StudentsGridPage from "@/pages/general-manager/StudentsGridPage";
 import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
-import StaffRoleGridPage from "@/pages/general-manager/StaffRoleGridPage";
+import StaffRoleGridPage from "@/pages/general-manager/StaffGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
 import AboutPage from "@/pages/student/AboutPage";

@@ -12,7 +12,7 @@ export interface StaffDetails {
   last_login: string | null;
   created_at: string;
   updated_at: string;
-  status: "active" | "inactive";
+  status: "active" | "deactive";
   [key: string]: unknown; // index signature
 }
 

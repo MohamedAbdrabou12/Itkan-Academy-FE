@@ -1,10 +1,8 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
-import { UsersRoleModal } from "@/components/modals/UsersRoleModal";
+import { StaffFormModal } from "@/components/modals/StaffFormModal";
 import { PermissionKeys } from "@/constants/Permissions";
 import { useGetAllStaff } from "@/hooks/staff/useGetStaff";
-import { useUpdateUserRole } from "@/hooks/staff/useUpdateUserRole";
 import type { Column } from "@/types/dataGrid";
-import type { UpdateUserRoleData } from "@/types/Roles";
 import type { StaffDetails } from "@/types/users";
 import { useState } from "react";
 
@@ -22,7 +20,7 @@ const StaffRoleGridPage = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [isRolesModalOpen, setIsRolesModalOpen] = useState(false);
+  const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<StaffDetails | null>(null);
 
   const {
@@ -30,7 +28,6 @@ const StaffRoleGridPage = () => {
     pagination: apiPagination,
     isPending,
     error,
-    refetch,
   } = useGetAllStaff({
     page: pagination.page,
     size: pagination.pageSize,
@@ -38,8 +35,6 @@ const StaffRoleGridPage = () => {
     sort_by: sortInfo.sortBy,
     sort_order: sortInfo.sortOrder,
   });
-  const { updateUserRole, isPending: updateUserRoleIsPending } =
-    useUpdateUserRole();
 
   // Event handlers
   const handlePageChange = (page: number) => {
@@ -67,15 +62,14 @@ const StaffRoleGridPage = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
   };
 
-  const handleEditRoles = (user: StaffDetails) => {
+  const handleEditStaff = (user: StaffDetails) => {
     setEditingUser(user);
-    setIsRolesModalOpen(true);
+    setIsStaffModalOpen(true);
   };
 
-  const handleFormSubmit = async (data: UpdateUserRoleData) => {
-    console.log("Update user roles:", data);
-    updateUserRole(data);
-    refetch();
+  const handleAddStaff = () => {
+    setEditingUser(null);
+    setIsStaffModalOpen(true);
   };
 
   const columns: Column<StaffDetails>[] = [
@@ -89,6 +83,16 @@ const StaffRoleGridPage = () => {
       key: "email",
       title: "البريد الإلكتروني",
       sortable: true,
+    },
+    {
+      key: "phone",
+      title: "رقم الهاتف",
+      sortable: true,
+      render: (value: unknown) => (
+        <span dir="ltr" className="text-left">
+          {String(value)}
+        </span>
+      ),
     },
     {
       key: "role_name_ar",
@@ -126,12 +130,28 @@ const StaffRoleGridPage = () => {
         );
       },
     },
+    {
+      key: "status",
+      title: "الحالة",
+      sortable: true,
+      render: (value: unknown) => (
+        <span
+          className={`rounded-full px-2 py-1 text-xs font-medium ${
+            value === "active"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {value === "active" ? "نشط" : "غير نشط"}
+        </span>
+      ),
+    },
   ];
 
   return (
     <div className="container mx-auto px-4 py-8">
       <DataGrid<StaffDetails>
-        title="إدارة الموظفين"
+        title="إدارة المديرين"
         columns={columns}
         data={staff}
         loading={isPending}
@@ -147,26 +167,41 @@ const StaffRoleGridPage = () => {
         sortInfo={sortInfo}
         onSort={handleSort}
         onSearch={handleSearch}
-        onEdit={handleEditRoles}
+        onEdit={handleEditStaff}
+        onAddNew={handleAddStaff}
         searchPlaceholder="ابحث بالاسم أو البريد الإلكتروني..."
-        entityName="مستخدم"
+        entityName="مدير"
+        addButtonText="اضافة مدير"
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={true}
         viewPermission={PermissionKeys.SYSTEM_STAFF_VIEW}
         editPermission={PermissionKeys.SYSTEM_STAFF_EDIT}
+        addPermission={PermissionKeys.SYSTEM_STAFF_ADD}
       />
 
-      {isRolesModalOpen && editingUser && (
-        <UsersRoleModal
-          isOpen={isRolesModalOpen}
+      {isStaffModalOpen && (
+        <StaffFormModal
+          isOpen={isStaffModalOpen}
           onClose={() => {
-            setIsRolesModalOpen(false);
+            setIsStaffModalOpen(false);
             setEditingUser(null);
           }}
-          onSubmit={handleFormSubmit}
-          user={editingUser}
-          isSubmitting={updateUserRoleIsPending}
+          initialValues={
+            editingUser
+              ? {
+                  id: editingUser.id,
+                  full_name: editingUser.full_name,
+                  email: editingUser.email,
+                  phone: editingUser.phone,
+                  role_id: String(editingUser.role_id),
+                  branch_ids: editingUser.branches?.map((branch) =>
+                    String(branch.id),
+                  ),
+                  status: editingUser.status,
+                }
+              : null
+          }
         />
       )}
     </div>
