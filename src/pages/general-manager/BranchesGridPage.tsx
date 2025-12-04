@@ -7,7 +7,7 @@ import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useUpdateBranch } from "@/hooks/branches/useUpdateBranch";
 import type { BranchDetails } from "@/types/Branches";
 import type { Column } from "@/types/dataGrid";
-import { PermissionKeys } from "@/constants/Permissions";
+import { PermissionKeys } from "@/constants/permissions";
 import type { BranchFormData } from "@/validation/branchSchema";
 import { useState } from "react";
 

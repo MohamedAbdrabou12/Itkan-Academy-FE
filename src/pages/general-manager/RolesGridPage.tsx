@@ -8,7 +8,7 @@ import { useDeleteRole } from "@/hooks/roles/useDeleteRole";
 import { useGetRoles } from "@/hooks/roles/useGetRoles";
 import { useUpdateRole } from "@/hooks/roles/useUpdateRole";
 import type { Column } from "@/types/dataGrid";
-import { PermissionKeys } from "@/constants/Permissions";
+import { PermissionKeys } from "@/constants/permissions";
 import type { RoleDetails } from "@/types/Roles";
 import type { RoleFormData } from "@/validation/roleSchema";
 import { useState } from "react";

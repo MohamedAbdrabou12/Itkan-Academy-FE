@@ -1,4 +1,4 @@
-import { PermissionKeys } from "@/constants/Permissions";
+import { PermissionKeys } from "@/constants/permissions";
 import {
   BookA,
   BookmarkCheck,

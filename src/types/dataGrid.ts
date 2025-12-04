@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { PermissionKeys } from "@/constants/Permissions";
+import type { PermissionKeys } from "@/constants/permissions";
 
 export interface Column<T> {
   key: keyof T | string;
