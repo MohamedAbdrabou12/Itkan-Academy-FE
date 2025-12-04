@@ -1,6 +1,6 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
 import { UsersRoleModal } from "@/components/modals/UsersRoleModal";
-import { PermissionKeys } from "@/constants/Permissions";
+import { PermissionKeys } from "@/constants/permissions";
 import { useGetAllStaff } from "@/hooks/staff/useGetStaff";
 import { useUpdateUserRole } from "@/hooks/staff/useUpdateUserRole";
 import type { Column } from "@/types/dataGrid";

@@ -1,3 +1,4 @@
+import { dashboardRouting } from "@/constants/dashboardRouting";
 import { useAuthStore } from "@/stores/auth";
 import { UserRole } from "@/types/Roles";
 
@@ -37,5 +38,35 @@ export const usePermissionsGate = () => {
     return false;
   };
 
-  return { can };
+  const canAccessRoute = (path: string) => {
+    const requiredPermisssion = dashboardRouting.find(
+      (route) => route.route === path,
+    )?.permission;
+
+    const canAccess = requiredPermisssion ? can(requiredPermisssion) : true;
+    return canAccess;
+  };
+
+  const getDashboardRoute = (userPermissions: string[]) => {
+    for (const entry of dashboardRouting) {
+      const requiredPermisssion = entry.permission;
+      const splitedRequiredPermission = requiredPermisssion.split(".");
+      splitedRequiredPermission.splice(
+        splitedRequiredPermission.length - 1,
+        1,
+        "*",
+      );
+      const genericPermission = splitedRequiredPermission.join(".");
+
+      if (
+        userPermissions.includes(requiredPermisssion) ||
+        userPermissions.includes(genericPermission)
+      ) {
+        return entry.route;
+      }
+    }
+    return "/";
+  };
+
+  return { can, canAccessRoute, getDashboardRoute };
 };

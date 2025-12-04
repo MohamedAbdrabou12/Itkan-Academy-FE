@@ -22,6 +22,7 @@ import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
 import ClassesGridPage from "./pages/general-manager/ClassesGridPage";
+import PermissionBasedRoute from "./components/auth/PermissionBasedRoute";
 
 const App = () => {
   return (
@@ -37,46 +38,46 @@ const App = () => {
         {/* </Route> */}
 
         {/* STUDENT-only routes */}
-        {/* <Route element={<RoleBasedRoute allowedRoles={[UserRole.STUDENT]} />}> */}
-        <Route element={<StudentLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/branches" element={<BranchesPage />} />
-          <Route path="/news" element={<NewsPage />} />
-          <Route path="/programs" element={<ProgramsPage />} />
-        </Route>
-        {/* </Route> */}
+        <Route element={<PermissionBasedRoute />}>
+          <Route element={<StudentLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/branches" element={<BranchesPage />} />
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/programs" element={<ProgramsPage />} />
+          </Route>
 
-        <Route element={<ItkanDashboardLayout />}>
-          <Route path="/itkan-dashboard" element={<>Hello</>} />
-          <Route path="/itkan-dashboard/roles" element={<RolesGridPage />} />
-          <Route
-            path="/itkan-dashboard/branches"
-            element={<BranchesGridPage />}
-          />
-          <Route
-            path="/itkan-dashboard/staff"
-            element={<StaffRoleGridPage />}
-          />
-          <Route
-            path="/itkan-dashboard/attendance-and-evaluations"
-            element={<AttendanceEvaluationsPage />}
-          />
-          <Route
-            path="/itkan-dashboard/students"
-            element={<StudentsGridPage />}
-          />
+          <Route element={<ItkanDashboardLayout />}>
+            <Route path="/itkan-dashboard" element={<>Hello</>} />
+            <Route path="/itkan-dashboard/roles" element={<RolesGridPage />} />
+            <Route
+              path="/itkan-dashboard/branches"
+              element={<BranchesGridPage />}
+            />
+            <Route
+              path="/itkan-dashboard/staff"
+              element={<StaffRoleGridPage />}
+            />
+            <Route
+              path="/itkan-dashboard/attendance-and-evaluations"
+              element={<AttendanceEvaluationsPage />}
+            />
+            <Route
+              path="/itkan-dashboard/students"
+              element={<StudentsGridPage />}
+            />
 
-          <Route
-            path="/itkan-dashboard/teachers"
-            element={<TeachersGridPage />}
-          />
+            <Route
+              path="/itkan-dashboard/teachers"
+              element={<TeachersGridPage />}
+            />
 
-          <Route
-            path="/itkan-dashboard/classes"
-            element={<ClassesGridPage />}
-          />
+            <Route
+              path="/itkan-dashboard/classes"
+              element={<ClassesGridPage />}
+            />
+          </Route>
         </Route>
 
         {/* Unauthorized route */}
