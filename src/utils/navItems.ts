@@ -25,7 +25,7 @@ export const navLinks = [
   },
   {
     id: "staff",
-    title: "الموظفين",
+    title: "المديرين",
     icon: BriefcaseBusiness,
     url: "/itkan-dashboard/staff",
     permission: PermissionKeys.SYSTEM_STAFF_VIEW,

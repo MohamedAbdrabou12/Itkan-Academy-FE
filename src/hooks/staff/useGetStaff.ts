@@ -28,7 +28,7 @@ export const useGetAllStaff = (params?: UseGetAllStaffParams) => {
         searchParams.append("sort_order", params.sort_order);
 
       const queryString = searchParams.toString();
-      const url = queryString ? `/staff?${queryString}` : "/staff";
+      const url = queryString ? `/users/staff?${queryString}` : "/staff";
 
       return await apiReq("GET", url);
     },
