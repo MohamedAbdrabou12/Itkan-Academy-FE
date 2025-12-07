@@ -26,4 +26,8 @@ export const dashboardRouting = [
     route: "/itkan-dashboard/teachers",
     permission: PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_VIEW,
   },
+  {
+    route:"/itkan-dashboard/parents",
+    permission: PermissionKeys.PARENTS_VIEW,
+  },
 ];

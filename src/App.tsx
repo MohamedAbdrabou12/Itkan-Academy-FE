@@ -23,6 +23,7 @@ import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
 import ClassesGridPage from "./pages/general-manager/ClassesGridPage";
 import PermissionBasedRoute from "./components/auth/PermissionBasedRoute";
+import ParentsGridPage from "./pages/general-manager/ParentsGridPage";
 
 const App = () => {
   return (
@@ -77,6 +78,10 @@ const App = () => {
               path="/itkan-dashboard/classes"
               element={<ClassesGridPage />}
             />
+            <Route
+              path="/itkan-dashboard/parents"
+              element={<ParentsGridPage />}
+              />
           </Route>
         </Route>
 
