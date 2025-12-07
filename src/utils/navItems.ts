@@ -5,6 +5,7 @@ import {
   BriefcaseBusiness,
   LucideGraduationCap,
   UserRound,
+  Users,
   Warehouse,
 } from "lucide-react";
 
@@ -57,5 +58,12 @@ export const navLinks = [
     icon: BookmarkCheck,
     url: "/itkan-dashboard/attendance-and-evaluations",
     permission: PermissionKeys.EVALUATION_STUDENT_VIEW,
+  },
+  {
+    id: "parents",
+    title: "أولياء الأمور",
+    icon: Users,
+    url: "/itkan-dashboard/parents",
+    permission: PermissionKeys.PARENTS_VIEW,
   },
 ];

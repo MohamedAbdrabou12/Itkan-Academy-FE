@@ -1,3 +1,4 @@
+// src/validation/studentSchema.ts
 import { z } from "zod";
 export const studentSchema = z.object({
   full_name: z.string("اسم الطالب مطلوب").min(1, "اسم الطالب مطلوب"),
