@@ -106,8 +106,8 @@ export interface PaginationControlsProps {
 
 export interface EmptyStateProps {
   hasFilters: boolean;
-  onClearFilters: () => void;
   entityName: string;
+  children?: ReactNode;
 }
 
 export interface GridErrorProps {

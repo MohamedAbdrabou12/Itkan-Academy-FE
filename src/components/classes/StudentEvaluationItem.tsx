@@ -4,16 +4,9 @@ import {
   type ClassStudent,
   type StudentAttendanceStatus,
 } from "@/types/classes";
+import { attendanceStatusDisplayNames } from "@/utils/attendanceStatusDisplayNames";
 import { CircleSlash2, UserX } from "lucide-react";
 import { useCallback } from "react";
-
-// Map status to display names
-const STATUS_DISPLAY_NAMES = {
-  [AttendanceStatus.PRESENT]: "حاضر",
-  [AttendanceStatus.ABSENT]: "غائب",
-  [AttendanceStatus.LATE]: "متأخر",
-  [AttendanceStatus.EXCUSED]: "معتذر",
-};
 
 interface StudentEvaluationItemProps {
   student: ClassStudent;
@@ -137,7 +130,7 @@ const StudentEvaluationItem = ({
           >
             {Object.values(AttendanceStatus).map((status) => (
               <option key={status} value={status}>
-                {STATUS_DISPLAY_NAMES[status]}
+                {attendanceStatusDisplayNames[status]}
               </option>
             ))}
           </select>

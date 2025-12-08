@@ -3,6 +3,7 @@ import {
   BookA,
   BookmarkCheck,
   BriefcaseBusiness,
+  ListTodo,
   LucideGraduationCap,
   UserRound,
   Warehouse,
@@ -57,5 +58,12 @@ export const navLinks = [
     icon: BookmarkCheck,
     url: "/itkan-dashboard/attendance-and-evaluations",
     permission: PermissionKeys.EVALUATION_STUDENT_VIEW,
+  },
+  {
+    id: "reports",
+    title: "التقارير",
+    icon: ListTodo,
+    url: "/itkan-dashboard/reports",
+    permission: PermissionKeys.REPORTS_STUDENT_VIEW,
   },
 ];

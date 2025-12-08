@@ -83,7 +83,6 @@ const DataGrid = <T extends Record<string, unknown>>({
           {!loading && !error && data.length === 0 && (
             <EmptyState
               hasFilters={hasActiveFilters}
-              onClearFilters={handleClearFilters}
               entityName={entityName}
             />
           )}

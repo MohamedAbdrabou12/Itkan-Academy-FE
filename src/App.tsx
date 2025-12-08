@@ -21,7 +21,8 @@ import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import ClassesGridPage from "./pages/general-manager/ClassesGridPage";
+import ClassesGridPage from "@/pages/general-manager/ClassesGridPage";
+import ReportsPage from "@/pages/general-manager/ReportsPage";
 
 const App = () => {
   return (
@@ -63,6 +64,7 @@ const App = () => {
             path="/itkan-dashboard/attendance-and-evaluations"
             element={<AttendanceEvaluationsPage />}
           />
+          <Route path="/itkan-dashboard/reports" element={<ReportsPage />} />
           <Route
             path="/itkan-dashboard/students"
             element={<StudentsGridPage />}
