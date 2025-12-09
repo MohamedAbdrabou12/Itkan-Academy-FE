@@ -26,13 +26,14 @@ export const StaffFormModal = ({
   const createMutation = useCreateStaff();
   const updateMutation = useUpdateStaff();
   const { allRoles } = useGetAllRoles();
-
   const roleOptions = useMemo(
     () =>
       allRoles?.items
         ?.filter(
           (role) =>
-            role.name !== UserRole.STUDENT && role.name !== UserRole.TEACHER,
+            role.name !== UserRole.STUDENT &&
+            role.name !== UserRole.TEACHER &&
+            role.name !== UserRole.PARENT,
         )
         .map((role) => ({
           value: role.id.toString(),

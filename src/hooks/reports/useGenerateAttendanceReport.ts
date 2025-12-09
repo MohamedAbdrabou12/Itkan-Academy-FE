@@ -1,4 +1,5 @@
 import apiReq from "@/services/apiReq";
+import type { AttendanceStatus } from "@/types/classes";
 import type {
   StudentAttendanceReport,
   StudentEvaluationReport,
@@ -25,6 +26,7 @@ export interface ReportGenerateForm {
     branch_ids?: string[];
     class_ids?: string[];
     student_ids?: string[];
+    attendance_status?: AttendanceStatus[];
   };
 }
 
@@ -49,6 +51,9 @@ export const useGenerateReport = () => {
 
       for (const student_id of params.filters.student_ids ?? [])
         filterQuery.append("student_ids", student_id);
+
+      for (const status of params.filters.attendance_status ?? [])
+        filterQuery.append("attendance_status", status);
 
       return {
         type: params.type,

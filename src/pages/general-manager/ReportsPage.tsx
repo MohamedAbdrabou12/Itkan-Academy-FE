@@ -1,24 +1,24 @@
 import EmptyState from "@/components/dataGrid/EmptyState";
+import { ReportTable } from "@/components/dataGrid/ReportTable";
 import type { GenerateReportFormData } from "@/components/modals/GenerateReportFormModal";
 import GenerateReportFormModal from "@/components/modals/GenerateReportFormModal";
 import Spinner from "@/components/shared/Spinner";
 import {
   useGenerateReport,
-  type Report,
-  type ReportType,
+  type ReportGenerateForm,
 } from "@/hooks/reports/useGenerateAttendanceReport";
-import { attendanceStatusDisplayNames } from "@/utils/attendanceStatusDisplayNames";
-import { formatArabicDate } from "@/utils/formatDate";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 const ReportsPage = () => {
   const { report, generateReport, isPending } = useGenerateReport();
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [currentFilters, setCurrentFilters] =
+    useState<ReportGenerateForm | null>(null);
 
   const handleGenerateReportButtonClick = () => setIsFormModalOpen(true);
 
   const handleGenerateFormSubmit = (formData: GenerateReportFormData) => {
-    generateReport({
+    const filters: ReportGenerateForm = {
       type: formData.type,
       filters: {
         from: formData.from,
@@ -26,8 +26,12 @@ const ReportsPage = () => {
         branch_ids: formData.branch_ids,
         class_ids: formData.class_ids,
         student_ids: formData.student_ids,
+        attendance_status: formData.attendance_status,
       },
-    });
+    };
+
+    setCurrentFilters(filters);
+    generateReport(filters);
     setIsFormModalOpen(false);
   };
 
@@ -38,14 +42,48 @@ const ReportsPage = () => {
       <div className="mb-8 flex justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">التقارير</h1>
         {report && report.data.length != 0 && (
-          <GenerateReportButton onClick={handleGenerateReportButtonClick} />
+          <button
+            onClick={handleGenerateReportButtonClick}
+            className="btn-primary"
+          >
+            إنشاء تقرير
+          </button>
         )}
       </div>
       {report && report.data.length != 0 ? (
-        <ReportTable report={report} />
+        <div className="flex flex-col gap-4">
+          <ReportTable report={report} />
+          <div className="flex justify-end gap-4">
+            <button
+              // onClick={handleExportCSV}
+              className="btn-primary"
+            >
+              تحميل CSV
+              {/* Add CSV icon here */}
+            </button>
+            <button
+              // onClick={handleExportPDF}
+              className="btn-primary"
+            >
+              تحميل Excel
+              {/* Add PDF icon here */}
+            </button>
+            <button
+              onClick={handleGenerateReportButtonClick}
+              className="btn-primary"
+            >
+              تحميل PDF
+            </button>
+          </div>
+        </div>
       ) : (
         <EmptyState entityName="نتائج" hasFilters={report != undefined}>
-          <GenerateReportButton onClick={handleGenerateReportButtonClick} />
+          <button
+            onClick={handleGenerateReportButtonClick}
+            className="btn-primary"
+          >
+            إنشاء تقرير
+          </button>
         </EmptyState>
       )}
       {isFormModalOpen && (
@@ -55,80 +93,6 @@ const ReportsPage = () => {
           onSubmit={handleGenerateFormSubmit}
         />
       )}
-    </div>
-  );
-};
-
-const GenerateReportButton = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="flex cursor-pointer items-center space-x-2 rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
-    >
-      إنشاء تقرير
-    </button>
-  );
-};
-
-const ReportTable = ({ report }: { report: Report<ReportType> }) => {
-  const evaluationNames = useMemo(() => {
-    if (report?.type == "students/evaluations") {
-      const names = new Set<string>();
-      for (const item of report.data) {
-        if (item.type == "evaluation") {
-          for (const evaluation of item.evaluation_grades ?? []) {
-            names.add(evaluation.name);
-          }
-        }
-      }
-      return Array.from(names);
-    }
-
-    return [];
-  }, [report]);
-
-  return (
-    <div className="overflow-x-auto">
-      <table className="table-zebra table">
-        <thead>
-          <tr>
-            <th>اسم الفرع</th>
-            <th>اسم الفصل</th>
-            <th>اسم الطالب</th>
-            <th>اليوم</th>
-            {report.type == "students/attendance" ? (
-              <th>الحضور</th>
-            ) : (
-              evaluationNames.map((name) => <th>تقييم {name}</th>)
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {report.data.map((reportItem, index) => {
-            return (
-              <tr key={index}>
-                <td>{reportItem.branch_name}</td>
-                <td>{reportItem.class_name}</td>
-                <td>{reportItem.student_name}</td>
-                <td>{formatArabicDate(new Date(reportItem.date))}</td>
-                {reportItem.type == "attendance" ? (
-                  <td>{attendanceStatusDisplayNames[reportItem.status]}</td>
-                ) : (
-                  evaluationNames.map((mappedName) => {
-                    return (
-                      <td>
-                        {reportItem.evaluation_grades?.find(
-                          ({ name }) => name == mappedName,
-                        )?.grade ?? "-"}
-                      </td>
-                    );
-                  })
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
     </div>
   );
 };

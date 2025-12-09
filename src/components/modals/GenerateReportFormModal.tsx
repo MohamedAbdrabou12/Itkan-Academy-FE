@@ -1,13 +1,15 @@
+import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
+import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
+import type { ReportType } from "@/hooks/reports/useGenerateAttendanceReport";
+import { useGetStudentsByClasses } from "@/hooks/students/useGetStudentsByClasses";
+import { AttendanceStatus } from "@/types/classes";
+import { attendanceStatusDisplayNames } from "@/utils/attendanceStatusDisplayNames";
+import { useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
 import HookFormSelect from "../forms/HookFormSelect";
 import { Modal } from "../shared/Modal";
-import type { ReportType } from "@/hooks/reports/useGenerateAttendanceReport";
-import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
-import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
-import { useGetStudentsByClasses } from "@/hooks/students/useGetStudentsByClasses";
-import { useEffect } from "react";
 
 export interface GenerateReportFormData {
   type: ReportType;
@@ -16,6 +18,7 @@ export interface GenerateReportFormData {
   branch_ids: string[];
   class_ids: string[];
   student_ids: string[];
+  attendance_status: AttendanceStatus[];
 }
 
 export interface GenerateReportFormModalProps {
@@ -39,6 +42,11 @@ const GenerateReportFormModal = ({
     form.setValue("from", date.toISOString().split("T")[0]);
   }, [form]);
 
+  const selectedReportType = useWatch({
+    name: "type",
+    control: form.control,
+  }) as ReportType;
+
   const selectedBranches = useWatch({
     name: "branch_ids",
     control: form.control,
@@ -52,6 +60,11 @@ const GenerateReportFormModal = ({
   const { branches } = useGetAllBranches();
   const { classes } = useGetClassesByBranches(selectedBranches);
   const { students } = useGetStudentsByClasses(selectedClasses);
+
+  const reportTypeOptions = [
+    { label: "تقرير الحضور", value: "students/attendance" },
+    { label: "تقرير التقييمات", value: "students/evaluations" },
+  ];
 
   const branchesOptions = branches.map((branch) => ({
     value: branch.id.toString(),
@@ -69,51 +82,71 @@ const GenerateReportFormModal = ({
     label: student.name,
   }));
 
+  const attendanceStatusOptions = Object.values(AttendanceStatus).map(
+    (status) => ({
+      value: status,
+      label: attendanceStatusDisplayNames[status],
+    }),
+  );
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="grid grid-cols-1 gap-4">
-            <HookFormSelect
-              label="النوع"
-              name="type"
-              options={[
-                { label: "الحضور", value: "students/attendance" },
-                { label: "التقييمات", value: "students/evaluations" },
-              ]}
-              required
-            />
-            <HookFormInput type="date" label="من..." name="from" required />
-            <HookFormInput type="date" label="إلى..." name="to" required />
-            <HookFormMultiSelect
-              label="الفروع"
-              name="branch_ids"
-              required
-              options={branchesOptions}
-              placeholder="اختر الفروع"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <HookFormSelect
+                label="نوع التقرير"
+                name="type"
+                options={reportTypeOptions}
+                required
+              />
+              <HookFormInput type="date" label="من..." name="from" required />
+              <HookFormInput type="date" label="إلى..." name="to" required />
+            </div>
 
-            <HookFormMultiSelect
-              label="الفصول"
-              name="class_ids"
-              disabled={!selectedBranches?.length}
-              options={classesOptions}
-              placeholder="اختر الفصول"
-            />
-
-            <HookFormMultiSelect
-              label="الطلاب"
-              name="student_ids"
-              disabled={!selectedClasses?.length}
-              options={studentsOptions}
-              placeholder="اختر الطلاب"
-            />
+            <div>
+              {/* Attendance and Evaluations Options */}
+              {selectedReportType?.startsWith("students") && (
+                <>
+                  <HookFormMultiSelect
+                    label="الفروع"
+                    name="branch_ids"
+                    required
+                    options={branchesOptions}
+                    placeholder="اختر الفروع"
+                  />
+                  <HookFormMultiSelect
+                    label="الفصول"
+                    name="class_ids"
+                    disabled={!selectedBranches?.length}
+                    options={classesOptions}
+                    placeholder="اختر الفصول"
+                  />
+                  <HookFormMultiSelect
+                    label="الطلاب"
+                    name="student_ids"
+                    disabled={!selectedClasses?.length}
+                    options={studentsOptions}
+                    placeholder="اختر الطلاب"
+                  />
+                  {selectedReportType == "students/attendance" && (
+                    <HookFormMultiSelect
+                      label="حالة الحضور"
+                      name="attendance_status"
+                      options={attendanceStatusOptions}
+                      placeholder="اختر الحالة"
+                    />
+                  )}
+                </>
+              )}
+            </div>
 
             <button
               type="submit"
-              className="cursor-pointer items-center space-x-2 rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
+              className="col-span-full btn-primary"
             >
-              تكوين التقرير
+              إنشاء التقرير
             </button>
           </div>
         </form>
