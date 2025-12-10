@@ -1,8 +1,4 @@
-import type {
-  Report,
-  ReportType,
-} from "@/hooks/reports/useGenerateAttendanceReport";
-import { attendanceStatusDisplayNames } from "@/utils/attendanceStatusDisplayNames";
+import type { Report, ReportType } from "@/hooks/reports/useGenerateReport";
 import { formatArabicDate } from "@/utils/formatDate";
 import { useMemo } from "react";
 
@@ -45,7 +41,7 @@ export const ReportTable = ({ report }: { report: Report<ReportType> }) => {
         <tbody>
           {report.data.map((reportItem, index) => {
             return (
-              <tr key={index}>
+              <tr key={index} className="text-center">
                 {/* Attendance and Evaluations Rows */}
                 {report.type.startsWith("students") && (
                   <>
@@ -54,7 +50,7 @@ export const ReportTable = ({ report }: { report: Report<ReportType> }) => {
                     <td>{reportItem.student_name}</td>
                     <td>{formatArabicDate(new Date(reportItem.date))}</td>
                     {reportItem.type === "attendance" && (
-                      <td>{attendanceStatusDisplayNames[reportItem.status]}</td>
+                      <td>{reportItem.status}</td>
                     )}
                     {reportItem.type === "evaluation" &&
                       evaluationNames.map((mappedName) => {

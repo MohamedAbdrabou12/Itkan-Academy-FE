@@ -48,7 +48,31 @@ const apiReq = async (method: string, endpoint: string, body?: unknown) => {
   try {
     const res = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
-    // Attempt to parse JSON, gracefully handle non-JSON responses.
+    const contentDisposition = res.headers.get("content-disposition") || "";
+    const isFileDownload = contentDisposition.includes("attachment");
+
+    if (isFileDownload) {
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+
+      const filename = contentDisposition
+        .split("filename=")[1]
+        .replace(/['"]/g, "")
+        .trim();
+
+      link.download = filename;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      return;
+    }
+
     const data = await res.json();
 
     if (!res.ok) {

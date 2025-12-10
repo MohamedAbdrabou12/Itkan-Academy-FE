@@ -3,22 +3,24 @@ import { ReportTable } from "@/components/dataGrid/ReportTable";
 import type { GenerateReportFormData } from "@/components/modals/GenerateReportFormModal";
 import GenerateReportFormModal from "@/components/modals/GenerateReportFormModal";
 import Spinner from "@/components/shared/Spinner";
+import { useExportReport } from "@/hooks/reports/useExportReport";
 import {
   useGenerateReport,
-  type ReportGenerateForm,
-} from "@/hooks/reports/useGenerateAttendanceReport";
+  type ReportGenerateRequest,
+} from "@/hooks/reports/useGenerateReport";
 import { useState } from "react";
 
 const ReportsPage = () => {
   const { report, generateReport, isPending } = useGenerateReport();
+  const { exportReport } = useExportReport();
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [currentFilters, setCurrentFilters] =
-    useState<ReportGenerateForm | null>(null);
+    useState<ReportGenerateRequest | null>(null);
 
   const handleGenerateReportButtonClick = () => setIsFormModalOpen(true);
 
   const handleGenerateFormSubmit = (formData: GenerateReportFormData) => {
-    const filters: ReportGenerateForm = {
+    const filters: ReportGenerateRequest = {
       type: formData.type,
       filters: {
         from: formData.from,
@@ -33,6 +35,17 @@ const ReportsPage = () => {
     setCurrentFilters(filters);
     generateReport(filters);
     setIsFormModalOpen(false);
+  };
+
+  const handleExportCSV = () => {
+    if (currentFilters) exportReport({ ...currentFilters, export_type: "csv" });
+  };
+  const handleExportExcel = () => {
+    if (currentFilters)
+      exportReport({ ...currentFilters, export_type: "excel" });
+  };
+  const handleExportPDF = () => {
+    if (currentFilters) exportReport({ ...currentFilters, export_type: "pdf" });
   };
 
   if (isPending) return <Spinner />;
@@ -54,24 +67,14 @@ const ReportsPage = () => {
         <div className="flex flex-col gap-4">
           <ReportTable report={report} />
           <div className="flex justify-end gap-4">
-            <button
-              // onClick={handleExportCSV}
-              className="btn-primary"
-            >
+            <button onClick={handleExportCSV} className="btn-primary">
               تحميل CSV
-              {/* Add CSV icon here */}
             </button>
-            <button
-              // onClick={handleExportPDF}
-              className="btn-primary"
-            >
+            <button onClick={handleExportExcel} className="btn-primary">
               تحميل Excel
               {/* Add PDF icon here */}
             </button>
-            <button
-              onClick={handleGenerateReportButtonClick}
-              className="btn-primary"
-            >
+            <button onClick={handleExportPDF} className="btn-primary">
               تحميل PDF
             </button>
           </div>

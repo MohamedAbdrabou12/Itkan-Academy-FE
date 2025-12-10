@@ -1,6 +1,6 @@
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
-import type { ReportType } from "@/hooks/reports/useGenerateAttendanceReport";
+import type { ReportType } from "@/hooks/reports/useGenerateReport";
 import { useGetStudentsByClasses } from "@/hooks/students/useGetStudentsByClasses";
 import { AttendanceStatus } from "@/types/classes";
 import { attendanceStatusDisplayNames } from "@/utils/attendanceStatusDisplayNames";
@@ -142,10 +142,7 @@ const GenerateReportFormModal = ({
               )}
             </div>
 
-            <button
-              type="submit"
-              className="col-span-full btn-primary"
-            >
+            <button type="submit" className="btn-primary col-span-full">
               إنشاء التقرير
             </button>
           </div>

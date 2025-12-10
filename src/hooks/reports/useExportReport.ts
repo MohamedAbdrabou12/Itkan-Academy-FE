@@ -1,24 +1,11 @@
 import apiReq from "@/services/apiReq";
 import type { AttendanceStatus } from "@/types/classes";
-import type {
-  StudentAttendanceReport,
-  StudentEvaluationReport,
-} from "@/types/reports";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 export type ReportType = "students/attendance" | "students/evaluations";
 
-export type Report<T extends ReportType> = {
-  type: T;
-  data: (T extends "students/attendance"
-    ? StudentAttendanceReport
-    : T extends "students/evaluations"
-      ? StudentEvaluationReport
-      : unknown)[];
-};
-
-export interface ReportGenerateForm {
+export interface ReportExportRequest {
   type: ReportType;
   filters: {
     from: string;
@@ -28,17 +15,12 @@ export interface ReportGenerateForm {
     student_ids?: string[];
     attendance_status?: AttendanceStatus[];
   };
+  export_type: "csv" | "excel" | "pdf";
 }
 
-export const useGenerateReport = () => {
-  const {
-    data: report,
-    mutate: generateReport,
-    isPending,
-  } = useMutation({
-    mutationFn: async (
-      params: ReportGenerateForm,
-    ): Promise<Report<ReportType>> => {
+export const useExportReport = () => {
+  const { mutate: exportReport, isPending } = useMutation({
+    mutationFn: async (params: ReportExportRequest) => {
       const filterQuery = new URLSearchParams();
       filterQuery.append("from", params.filters.from);
       filterQuery.append("to", params.filters.to);
@@ -55,12 +37,16 @@ export const useGenerateReport = () => {
       for (const status of params.filters.attendance_status ?? [])
         filterQuery.append("attendance_status", status);
 
+      if (params.export_type)
+        filterQuery.append("export_type", params.export_type);
+
       return {
         type: params.type,
         data: await apiReq("GET", `/reports/${params.type}?${filterQuery}`),
       };
     },
     onSuccess: (res) => {
+      console.log({ res });
       return res;
     },
     onError: (err) => {
@@ -68,5 +54,5 @@ export const useGenerateReport = () => {
     },
   });
 
-  return { report, generateReport, isPending };
+  return { exportReport, isPending };
 };
