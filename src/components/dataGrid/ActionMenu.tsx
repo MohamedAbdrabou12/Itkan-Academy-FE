@@ -54,10 +54,14 @@ const ActionMenu = <T extends Record<string, unknown>>({
             {actions.map((action, index) => (
               <PermissionGate
                 key={index}
-                permission={
+                permissions={
                   action.destructive
-                    ? deletePermission || ""
-                    : editPermission || ""
+                    ? deletePermission
+                      ? [deletePermission]
+                      : []
+                    : editPermission
+                      ? [editPermission]
+                      : []
                 }
               >
                 <button

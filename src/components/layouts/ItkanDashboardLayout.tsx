@@ -72,7 +72,7 @@ export default function ItkanDashboardLayout() {
 
         <ul className="mt-6 flex w-full flex-col">
           {navLinks.map((link) => (
-            <PermissionGate permission={link.permission} key={link.id}>
+            <PermissionGate permissions={link.permissions} key={link.id}>
               <li>
                 <a
                   href={link.url}

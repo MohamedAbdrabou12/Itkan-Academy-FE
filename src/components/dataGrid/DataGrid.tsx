@@ -1,4 +1,4 @@
-import type { DataGridProps, FilterValue } from "@/types/dataGrid";
+import type { DataGridProps } from "@/types/dataGrid";
 import { useState } from "react";
 import PermissionGate from "../auth/PermissionGate";
 import Spinner from "../shared/Spinner";
@@ -37,22 +37,13 @@ const DataGrid = <T extends Record<string, unknown>>({
   enableFilters = true,
 }: DataGridProps<T>) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [localFilters, setLocalFilters] = useState<Record<string, FilterValue>>(
-    {},
-  );
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
     onSearch?.(term);
   };
 
-  const handleClearFilters = () => {
-    setLocalFilters({});
-    setSearchTerm("");
-    onSearch?.("");
-  };
-
-  const hasActiveFilters = !!searchTerm || Object.keys(localFilters).length > 0;
+  const hasActiveFilters = !!searchTerm;
 
   return (
     <div className="relative rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -64,7 +55,7 @@ const DataGrid = <T extends Record<string, unknown>>({
         addPermission={addPermission}
       />
 
-      <PermissionGate permission={viewPermission || ""}>
+      <PermissionGate permissions={[viewPermission]}>
         {/* Search & Filter Bar */}
         {(enableSearch || enableFilters) && (
           <SearchFilterBar
@@ -81,10 +72,7 @@ const DataGrid = <T extends Record<string, unknown>>({
           {error && <GridError message={error} />}
 
           {!loading && !error && data.length === 0 && (
-            <EmptyState
-              hasFilters={hasActiveFilters}
-              entityName={entityName}
-            />
+            <EmptyState hasFilters={hasActiveFilters} entityName={entityName} />
           )}
 
           {!loading && !error && data.length > 0 && (

@@ -143,7 +143,7 @@ const RolesGridPage = () => {
         <div className="text-cneter flex justify-center gap-2">
           <span>{(value as number) || 0} صلاحيات</span>
           <PermissionGate
-            permission={PermissionKeys.SYSTEM_ROLE_PERMISSIONS_MANAGE}
+            permissions={[PermissionKeys.SYSTEM_ROLE_PERMISSIONS_MANAGE]}
           >
             <button
               onClick={() => handleManagePermissions(row)}

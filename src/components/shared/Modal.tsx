@@ -5,6 +5,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   closeOnBackdropClick?: boolean;
+  modalStyle?: string;
   children: ReactNode;
 }
 
@@ -12,6 +13,7 @@ export const Modal = ({
   isOpen,
   onClose,
   closeOnBackdropClick = true,
+  modalStyle,
   children,
 }: ModalProps) => {
   const ModalRef = useRef<HTMLDivElement>(null);
@@ -35,7 +37,7 @@ export const Modal = ({
         {/* Modal */}
         <div
           ref={ModalRef}
-          className="relative transform rounded-lg bg-white px-4 pb-4 pt-5 text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+          className={`relative transform rounded-lg bg-white px-4 pb-4 pt-5 text-right shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 ${modalStyle}`}
         >
           {children}
         </div>

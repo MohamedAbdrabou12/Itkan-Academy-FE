@@ -1,3 +1,5 @@
+import { PermissionKeys } from "@/constants/Permissions";
+import { usePermissionsGate } from "@/hooks/auth/usePermissionGate";
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
 import type { ReportType } from "@/hooks/reports/useGenerateReport";
@@ -32,10 +34,11 @@ const GenerateReportFormModal = ({
   onClose,
   onSubmit,
 }: GenerateReportFormModalProps) => {
+  const { can } = usePermissionsGate();
   const form = useForm<GenerateReportFormData>();
 
   useEffect(() => {
-    form.setValue("type", "students/attendance");
+    form.setValue("type", "students/evaluations");
     const date = new Date();
     form.setValue("to", date.toISOString().split("T")[0]);
     date.setMonth(date.getMonth() - 1);
@@ -62,9 +65,36 @@ const GenerateReportFormModal = ({
   const { students } = useGetStudentsByClasses(selectedClasses);
 
   const reportTypeOptions = [
-    { label: "تقرير الحضور", value: "students/attendance" },
-    { label: "تقرير التقييمات", value: "students/evaluations" },
+    {
+      label: "تقرير التقييمات",
+      value: "students/evaluations",
+      permission: PermissionKeys.REPORTS_EVALUATIONS_VIEW,
+    },
+    {
+      label: "تقرير الحضور",
+      value: "students/attendance",
+      permission: PermissionKeys.REPORTS_ATTENDANCE_VIEW,
+    },
+    {
+      label: "تقرير المالية",
+      value: "finance",
+      permission: PermissionKeys.REPORTS_FINANCE_VIEW,
+    },
+    {
+      label: "تقرير المعلمين",
+      value: "teachers",
+      permission: PermissionKeys.REPORTS_TEACHERS_VIEW,
+    },
+    {
+      label: "تقرير الموظفين",
+      value: "staff",
+      permission: PermissionKeys.REPORTS_STAFF_VIEW,
+    },
   ];
+
+  const filteredOptions = reportTypeOptions.filter((option) =>
+    can([option.permission]),
+  );
 
   const branchesOptions = branches.map((branch) => ({
     value: branch.id.toString(),
@@ -90,7 +120,7 @@ const GenerateReportFormModal = ({
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} modalStyle="min-w-[40%]">
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-2 gap-4">
@@ -98,7 +128,7 @@ const GenerateReportFormModal = ({
               <HookFormSelect
                 label="نوع التقرير"
                 name="type"
-                options={reportTypeOptions}
+                options={filteredOptions}
                 required
               />
               <HookFormInput type="date" label="من..." name="from" required />
@@ -112,7 +142,6 @@ const GenerateReportFormModal = ({
                   <HookFormMultiSelect
                     label="الفروع"
                     name="branch_ids"
-                    required
                     options={branchesOptions}
                     placeholder="اختر الفروع"
                   />
