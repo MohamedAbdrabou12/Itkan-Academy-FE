@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { usePermissionsGate } from "./usePermissionGate";
 
 interface LoginFormData {
-  email: string;
+  identifier: string; // could be national_id or email
   password: string;
 }
 
@@ -20,18 +20,30 @@ export function useLogin() {
 
   const { mutate: login, isPending } = useMutation({
     mutationFn: async (values: LoginFormData) => {
-      return await apiReq("POST", "/auth/login", values);
-    },
-    onSuccess: (res: LoginResponse) => {
-      loginUser(res);
-      queryClient.setQueryData(["me"], res.user);
-      navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), {
-        replace: true,
+      return await apiReq("POST", "/auth/login", {
+        identifier: values.identifier,
+        password: values.password,
       });
     },
-    onError: (err) => {
-      console.log("Error in Login: ", err);
-      toast(err.message, { type: "error" });
+      onSuccess: (res: LoginResponse) => {
+      loginUser(res);
+      queryClient.setQueryData(["me"], res.user);
+      if (res.user.role_name === "Student") {
+        navigate("/", { replace: true }); 
+      } else {
+        navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), { replace: true });
+      }
+    },
+    // onSuccess: (res: LoginResponse) => {
+    //   loginUser(res);
+    //   queryClient.setQueryData(["me"], res.user);
+    //   navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), {
+    //     replace: true,
+    //   });
+    // },
+    onError: (err: Error & { message?: string }) => {
+      console.error("Error in Login: ", err);
+      toast(err.message || "Login failed", { type: "error" });
     },
   });
 

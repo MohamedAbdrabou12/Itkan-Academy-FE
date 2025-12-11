@@ -12,7 +12,7 @@ const GridTable = <T extends Record<string, unknown>>({
   editPermission,
   deletePermission,
 }: GridTableProps<T>) => {
-  const hasActions = !!(onEdit || onDelete || onView);
+  const hasActions = Boolean(onEdit || onDelete || onView);
 
   const renderCell = (column: Column<T>, row: T) => {
     if (column.render) {
@@ -32,26 +32,19 @@ const GridTable = <T extends Record<string, unknown>>({
     direction: "asc" | "desc";
   }) => (
     <svg
-      className={`h-4 w-4 transition-transform duration-200 ${
-        isActive
-          ? "text-emerald-600"
-          : "text-gray-400 group-hover:text-gray-600"
+      className={`h-4 w-4 transition-all duration-200 ${
+        isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-gray-600"
       } ${direction === "desc" ? "rotate-180" : ""}`}
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M7 11l5-5m0 0l5 5m-5-5v12"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
     </svg>
   );
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-lg border border-gray-100">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -62,45 +55,44 @@ const GridTable = <T extends Record<string, unknown>>({
               return (
                 <th
                   key={String(column.key)}
-                  className="bg-gray-100 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700"
+                  className="bg-gray-100 px-6 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-700"
                   style={{ width: column.width }}
                 >
                   {isSortable ? (
                     <button
                       onClick={() => onSort(String(column.key))}
-                      className="group flex w-full items-center justify-center space-x-2 text-center hover:text-gray-900"
+                      className="group flex w-full items-center justify-center gap-1 hover:text-gray-900"
                     >
-                      <span className="font-semibold">{column.title}</span>
-                      <div className="flex items-center">
-                        <SortArrow
-                          isActive={isSorted}
-                          direction={isSorted ? sortInfo.sortOrder : "asc"}
-                        />
-                        {isSorted && (
-                          <span className="ml-1 text-xs font-normal text-emerald-600">
-                            {sortInfo.sortOrder === "asc" ? "A-Z" : "Z-A"}
-                          </span>
-                        )}
-                      </div>
+                      <span className="font-medium">{column.title}</span>
+                      <SortArrow isActive={isSorted} direction={isSorted ? sortInfo.sortOrder : "asc"} />
+
+                      {isSorted && (
+                        <span className="text-[10px] font-medium text-emerald-600">
+                          {sortInfo.sortOrder === "asc" ? "A-Z" : "Z-A"}
+                        </span>
+                      )}
                     </button>
                   ) : (
-                    <span className="block w-full text-center font-semibold text-gray-600">
-                      {column.title}
-                    </span>
+                    <span className="font-medium text-gray-700">{column.title}</span>
                   )}
                 </th>
               );
             })}
+
             {hasActions && (
-              <th className="bg-gray-100 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-700">
-                <span className="font-semibold text-gray-600">الاجراءات</span>
+              <th className="bg-gray-100 px-6 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-700">
+                الاجراءات
               </th>
             )}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
+
+        <tbody className="divide-y divide-gray-100 bg-white">
           {data.map((row, index) => (
-            <tr key={index} className="transition-colors hover:bg-gray-50">
+            <tr
+              key={index}
+              className="transition-colors hover:bg-gray-50 even:bg-gray-50/40"
+            >
               {columns.map((column) => (
                 <td
                   key={String(column.key)}
@@ -113,8 +105,9 @@ const GridTable = <T extends Record<string, unknown>>({
                   {renderCell(column, row)}
                 </td>
               ))}
+
               {hasActions && (
-                <td className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                <td className="whitespace-nowrap px-6 py-4 text-center text-sm">
                   <ActionMenu
                     item={row}
                     onEdit={onEdit}

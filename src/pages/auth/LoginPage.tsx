@@ -3,9 +3,10 @@ import { BookOpen, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface LoginFormData {
-  email: string;
+  identifier: string;
   password: string;
   rememberMe: boolean;
 }
@@ -20,82 +21,84 @@ export default function LoginPage() {
   const { login, isPending } = useLogin();
 
   const onSubmit = async (data: LoginFormData) => {
-    login({ email: data.email, password: data.password });
+    login({
+      identifier: data.identifier,
+      password: data.password,
+    });
   };
 
+  const InputClass =
+    "w-full rounded-lg border border-gray-300 py-3 px-6 shadow-sm focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600 transition-all";
+
+  const PasswordInputClass =
+    "w-full rounded-lg border border-gray-300 py-3 px-6 shadow-sm focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600 transition-all";
+
   return (
-    <div className="bg-linear-to-br flex min-h-screen items-center justify-center from-emerald-50 to-teal-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
-        <div className="rounded-2xl bg-white p-8 shadow-xl">
-          <div className="mb-8 text-center">
-            <div className="mb-4 flex items-center justify-center gap-2">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-50 to-teal-50 px-4 py-12 sm:py-20 relative overflow-hidden">
+      <div className="absolute top-10 left-10 w-20 h-20 bg-emerald-200/30 clip-hex animate-bounce-slow"></div>
+      <div className="absolute bottom-20 right-16 w-28 h-28 bg-teal-300/30 clip-hex animate-bounce-slower"></div>
+      <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-emerald-300/20 clip-hex animate-bounce-slow"></div>
+      <div className="absolute bottom-10 left-20 w-24 h-24 bg-teal-200/20 clip-hex animate-bounce-slower"></div>
+
+      <AnimatePresence>
+        <motion.section
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.8 }}
+          className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 sm:p-10 lg:p-12 relative z-10"
+        >
+          <div className="text-center mb-10">
+            <div className="flex items-center justify-center gap-3 mb-2">
               <BookOpen className="h-10 w-10 text-emerald-600" />
-              <span className="text-2xl font-bold text-gray-900">
-                مدرسة الإتقان
-              </span>
+              <span className="text-2xl font-extrabold text-gray-900">مدرسة الإتقان</span>
             </div>
-            <h2 className="mb-2 text-3xl font-bold text-gray-900">
-              تسجيل الدخول
-            </h2>
-            <p className="text-gray-600">مرحباً بك مجدداً</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">تسجيل الدخول</h2>
+            <p className="text-gray-500 text-sm">مرحباً بك مجدداً</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <label className="mb-2 block font-semibold text-gray-700">
-                البريد الإلكتروني
-              </label>
-              <div className="relative">
-                <Mail className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
-                <input
-                  type="email"
-                  {...register("email", {
-                    required: "البريد الإلكتروني مطلوب",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "البريد الإلكتروني غير صالح",
-                    },
-                  })}
-                  className="w-full rounded-lg border border-gray-300 py-3 pl-4 pr-10 focus:border-transparent focus:ring-2 focus:ring-emerald-600"
-                  placeholder="example@email.com"
-                />
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 mb-1">
+                <Mail className="h-5 w-5 text-emerald-600" />
+                <label className="text-sm font-medium text-gray-700">البريد الإلكتروني أو الرقم القومي *</label>
               </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.email.message}
-                </p>
-              )}
+              <input
+                type="text"
+                {...register("identifier", {
+                  required: "البريد الإلكتروني أو الرقم القومي مطلوب",
+                })}
+                className={InputClass}
+                placeholder="ادخل البريد الإلكتروني أو الرقم القومي"
+              />
+              <p className="mt-1 text-xs text-red-600 min-h-5">
+                {errors.identifier?.message || " "}
+              </p>
             </div>
 
-            <div>
-              <label className="mb-2 block font-semibold text-gray-700">
-                كلمة المرور
-              </label>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 mb-1">
+                <Lock className="h-5 w-5 text-emerald-600" />
+                <label className="text-sm font-medium text-gray-700">كلمة المرور *</label>
+              </div>
               <div className="relative">
-                <Lock className="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  {...register("password")}
-                  className="w-full rounded-lg border border-gray-300 py-3 pl-12 pr-10 focus:border-transparent focus:ring-2 focus:ring-emerald-600"
-                  placeholder="••••••••"
+                  {...register("password", { required: "كلمة المرور مطلوبة" })}
+                  className={PasswordInputClass}
+                  placeholder="ادخل كلمة المرور"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 hover:text-gray-600"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-emerald-600 transition"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
+                  {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                 </button>
               </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.password.message}
-                </p>
-              )}
+              <p className="mt-1 text-xs text-red-600 min-h-5">
+                {errors.password?.message || " "}
+              </p>
             </div>
 
             <div className="flex items-center justify-between">
@@ -115,19 +118,19 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <button
+            <motion.button
               type="submit"
               disabled={isSubmitting || isPending}
-              className="w-full rounded-lg bg-emerald-600 py-3 text-lg font-bold text-white transition hover:bg-emerald-700 disabled:opacity-50"
+              whileHover={{ scale: 1.01 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              className="w-full rounded-lg bg-emerald-600 py-3 text-base font-bold text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition-transform cursor-pointer disabled:opacity-50"
             >
-              {isSubmitting || isPending
-                ? "جاري تسجيل الدخول..."
-                : "تسجيل الدخول"}
-            </button>
+              {isSubmitting || isPending ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+            </motion.button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600">
+            <p className="text-sm text-gray-500">
               ليس لديك حساب؟{" "}
               <Link
                 to="/register"
@@ -137,8 +140,26 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
-        </div>
-      </div>
+        </motion.section>
+      </AnimatePresence>
+
+      <style>
+        {`
+          .clip-hex {
+            clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+          }
+          @keyframes bounce-slow {
+            0%,100%{transform:translateY(0);}
+            50%{transform:translateY(-10px);}
+          }
+          @keyframes bounce-slower {
+            0%,100%{transform:translateY(0);}
+            50%{transform:translateY(-6px);}
+          }
+          .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
+          .animate-bounce-slower { animation: bounce-slower 5s ease-in-out infinite; }
+        `}
+      </style>
     </div>
   );
 }

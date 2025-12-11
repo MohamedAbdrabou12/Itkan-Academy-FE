@@ -5,9 +5,10 @@ import { toast } from "react-toastify";
 
 interface RegisterFormData {
   full_name: string;
-  email: string;
+  email?: string;
   phone: string;
   password: string;
+  national_id: string;
 }
 
 export function useRegister() {
@@ -18,7 +19,6 @@ export function useRegister() {
       return await apiReq("POST", "/auth/register", values);
     },
     onSuccess: () => {
-      // After successful registration, navigate to the register-pending page
       navigate("/register-pending", { replace: true });
     },
     onError: (err) => {

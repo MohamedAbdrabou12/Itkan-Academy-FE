@@ -15,18 +15,19 @@ const GridHeader = ({
   addButtonText,
   addPermission,
 }: GridHeaderProps) => (
-  <div className="border-b border-gray-200 px-6 py-4">
+  <div className="border-b border-gray-200 bg-white px-6 py-5 shadow-sm">
     <div className="flex items-center justify-between">
-      <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+        {title}
+      </h1>
+
       {onAddNew && (
         <PermissionGate permission={addPermission || ""}>
           <button
             onClick={onAddNew}
-            className="flex cursor-pointer items-center space-x-2 rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
+            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-emerald-700 hover:shadow-lg active:scale-95"
           >
-            <span>
-              <Plus />
-            </span>
+            <Plus className="h-4 w-4" />
             <span>{addButtonText}</span>
           </button>
         </PermissionGate>
