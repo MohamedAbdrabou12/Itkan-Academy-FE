@@ -60,6 +60,7 @@ export interface DataGridProps<T> {
   pageSizeOptions?: number[];
   enableSearch?: boolean;
   enableFilters?: boolean;
+  checkReservedRoles?: boolean;
   viewPermission: PERMISSION_VALUE;
   addPermission?: PERMISSION_VALUE;
   editPermission?: PERMISSION_VALUE;
@@ -80,6 +81,7 @@ export interface GridTableProps<T> {
   data: T[];
   columns: Column<T>[];
   sortInfo: SortInfo;
+  checkReservedRoles: boolean;
   onSort: (sortBy: string) => void;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
@@ -90,6 +92,7 @@ export interface GridTableProps<T> {
 
 export interface ActionMenuProps<T> {
   item: T;
+  checkReservedRoles: boolean;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   onView?: (item: T) => void;

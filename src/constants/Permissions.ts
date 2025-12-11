@@ -115,7 +115,6 @@ export const PermissionKeys = {
   SYSTEM_ROLES_VIEW: "system.roles.view",
   SYSTEM_ROLES_ADD: "system.roles.add",
   SYSTEM_ROLES_EDIT: "system.roles.edit",
-  SYSTEM_ROLES_DELETE: "system.roles.delete",
 
   // System Role Permissions
   SYSTEM_ROLE_PERMISSIONS_ALL: "system.role_permissions.*",

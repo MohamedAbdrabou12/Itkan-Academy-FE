@@ -6,6 +6,7 @@ import PermissionGate from "../auth/PermissionGate";
 
 const ActionMenu = <T extends Record<string, unknown>>({
   item,
+  checkReservedRoles,
   onEdit,
   onDelete,
   onView,
@@ -14,6 +15,10 @@ const ActionMenu = <T extends Record<string, unknown>>({
 }: ActionMenuProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const disableEditing =
+    checkReservedRoles &&
+    !["Student", "Teacher", "Parent"].includes(item.name as string);
 
   const actions = [
     ...(onView
@@ -40,13 +45,15 @@ const ActionMenu = <T extends Record<string, unknown>>({
 
   return (
     <div ref={menuRef} className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="rounded-lg p-2 transition-colors hover:bg-gray-100"
-        aria-label="Actions"
-      >
-        <EllipsisVertical />
-      </button>
+      {!disableEditing && (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="rounded-lg transition-colors hover:bg-gray-100"
+          aria-label="Actions"
+        >
+          <EllipsisVertical />
+        </button>
+      )}
 
       {isOpen && (
         <div className="absolute left-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-gray-50 shadow-lg">

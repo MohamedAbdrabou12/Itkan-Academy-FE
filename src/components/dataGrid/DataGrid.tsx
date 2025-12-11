@@ -24,7 +24,7 @@ const DataGrid = <T extends Record<string, unknown>>({
   onAddNew,
   onEdit,
   onDelete,
-  onView, // added support for view
+  onView,
   searchPlaceholder,
   viewPermission,
   addPermission,
@@ -35,6 +35,7 @@ const DataGrid = <T extends Record<string, unknown>>({
   pageSizeOptions = [10, 25, 50, 100],
   enableSearch = true,
   enableFilters = true,
+  checkReservedRoles = false,
 }: DataGridProps<T>) => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -84,6 +85,7 @@ const DataGrid = <T extends Record<string, unknown>>({
               onEdit={onEdit}
               onDelete={onDelete}
               onView={onView}
+              checkReservedRoles={checkReservedRoles}
               editPermission={editPermission}
               deletePermission={deletePermission}
             />
