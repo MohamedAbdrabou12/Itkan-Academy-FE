@@ -24,7 +24,7 @@ const DataGrid = <T extends Record<string, unknown>>({
   onAddNew,
   onEdit,
   onDelete,
-  onView, // added support for view
+  onView,
   searchPlaceholder,
   viewPermission,
   addPermission,
@@ -38,7 +38,7 @@ const DataGrid = <T extends Record<string, unknown>>({
 }: DataGridProps<T>) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [localFilters, setLocalFilters] = useState<Record<string, FilterValue>>(
-    {},
+    {}
   );
 
   const handleSearch = (term: string) => {
@@ -52,11 +52,10 @@ const DataGrid = <T extends Record<string, unknown>>({
     onSearch?.("");
   };
 
-  const hasActiveFilters = !!searchTerm || Object.keys(localFilters).length > 0;
+  const hasActiveFilters = Boolean(searchTerm) || Object.keys(localFilters).length > 0;
 
   return (
-    <div className="relative rounded-lg border border-gray-200 bg-white shadow-sm">
-      {/* Header */}
+    <div className="relative rounded-xl border border-gray-200 bg-white shadow-sm">
       <GridHeader
         title={title}
         onAddNew={onAddNew}
@@ -64,8 +63,7 @@ const DataGrid = <T extends Record<string, unknown>>({
         addPermission={addPermission}
       />
 
-      <PermissionGate permission={viewPermission || ""}>
-        {/* Search & Filter Bar */}
+      <PermissionGate permission={viewPermission ?? ""}>
         {(enableSearch || enableFilters) && (
           <SearchFilterBar
             onSearch={handleSearch}
@@ -74,8 +72,7 @@ const DataGrid = <T extends Record<string, unknown>>({
           />
         )}
 
-        {/* Data Grid Content */}
-        <div>
+        <div className="px-2 sm:px-3">
           {loading && <Spinner />}
 
           {error && <GridError message={error} />}

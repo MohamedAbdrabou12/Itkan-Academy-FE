@@ -24,6 +24,7 @@ import { ToastContainer } from "react-toastify";
 import ClassesGridPage from "./pages/general-manager/ClassesGridPage";
 import PermissionBasedRoute from "./components/auth/PermissionBasedRoute";
 import ParentsGridPage from "./pages/general-manager/ParentsGridPage";
+import PasswordResetSentPage from "./hooks/auth/PasswordResetSentPage";
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/register-pending" element={<RegisterPendingPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/password-reset-sent" element={<PasswordResetSentPage />} />
         <Route path="/login" element={<LoginPage />} />
         {/* </Route> */}
 
