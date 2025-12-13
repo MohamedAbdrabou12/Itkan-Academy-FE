@@ -1,4 +1,4 @@
-import { PermissionKeys } from "@/constants/Permissions";
+import { PermissionKeys } from "@/constants/permissions";
 import { usePermissionsGate } from "@/hooks/auth/usePermissionGate";
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
@@ -6,7 +6,7 @@ import type { ReportType } from "@/hooks/reports/useGenerateReport";
 import { useGetStudentsByClasses } from "@/hooks/students/useGetStudentsByClasses";
 import { AttendanceStatus } from "@/types/classes";
 import { attendanceStatusDisplayNames } from "@/utils/attendanceStatusDisplayNames";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
@@ -37,14 +37,6 @@ const GenerateReportFormModal = ({
   const { can } = usePermissionsGate();
   const form = useForm<GenerateReportFormData>();
 
-  useEffect(() => {
-    form.setValue("type", "students/evaluations");
-    const date = new Date();
-    form.setValue("to", date.toISOString().split("T")[0]);
-    date.setMonth(date.getMonth() - 1);
-    form.setValue("from", date.toISOString().split("T")[0]);
-  }, [form]);
-
   const selectedReportType = useWatch({
     name: "type",
     control: form.control,
@@ -64,35 +56,37 @@ const GenerateReportFormModal = ({
   const { classes } = useGetClassesByBranches(selectedBranches);
   const { students } = useGetStudentsByClasses(selectedClasses);
 
-  const reportTypeOptions = [
-    {
-      label: "تقرير التقييمات",
-      value: "students/evaluations",
-      permission: PermissionKeys.REPORTS_EVALUATIONS_VIEW,
-    },
-    {
-      label: "تقرير الحضور",
-      value: "students/attendance",
-      permission: PermissionKeys.REPORTS_ATTENDANCE_VIEW,
-    },
-    {
-      label: "تقرير المالية",
-      value: "finance",
-      permission: PermissionKeys.REPORTS_FINANCE_VIEW,
-    },
-    {
-      label: "تقرير المعلمين",
-      value: "teachers",
-      permission: PermissionKeys.REPORTS_TEACHERS_VIEW,
-    },
-    {
-      label: "تقرير الموظفين",
-      value: "staff",
-      permission: PermissionKeys.REPORTS_STAFF_VIEW,
-    },
-  ];
+  const reportTypeOptions = useMemo(() => {
+    return [
+      {
+        label: "تقرير التقييمات",
+        value: "students/evaluations",
+        permission: PermissionKeys.REPORTS_EVALUATIONS_VIEW,
+      },
+      {
+        label: "تقرير الحضور",
+        value: "students/attendance",
+        permission: PermissionKeys.REPORTS_ATTENDANCE_VIEW,
+      },
+      {
+        label: "تقرير المالية",
+        value: "finance",
+        permission: PermissionKeys.REPORTS_FINANCE_VIEW,
+      },
+      {
+        label: "تقرير المعلمين",
+        value: "teachers",
+        permission: PermissionKeys.REPORTS_TEACHERS_VIEW,
+      },
+      {
+        label: "تقرير الموظفين",
+        value: "staff",
+        permission: PermissionKeys.REPORTS_STAFF_VIEW,
+      },
+    ];
+  }, []);
 
-  const filteredOptions = reportTypeOptions.filter((option) =>
+  const allowedReportOptions = reportTypeOptions.filter((option) =>
     can([option.permission]),
   );
 
@@ -119,6 +113,14 @@ const GenerateReportFormModal = ({
     }),
   );
 
+  useEffect(() => {
+    form.setValue("type", reportTypeOptions[0]?.value as ReportType);
+    const date = new Date();
+    form.setValue("to", date.toISOString().split("T")[0]);
+    date.setMonth(date.getMonth() - 1);
+    form.setValue("from", date.toISOString().split("T")[0]);
+  }, [form, reportTypeOptions]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} modalStyle="min-w-[40%]">
       <FormProvider {...form}>
@@ -128,7 +130,7 @@ const GenerateReportFormModal = ({
               <HookFormSelect
                 label="نوع التقرير"
                 name="type"
-                options={filteredOptions}
+                options={allowedReportOptions}
                 required
               />
               <HookFormInput type="date" label="من..." name="from" required />

@@ -1,4 +1,4 @@
-import type { PermissionKeys } from "@/constants/Permissions";
+import type { PermissionKeys } from "@/constants/permissions";
 
 export interface Permission {
   id: number;
