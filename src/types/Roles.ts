@@ -10,6 +10,7 @@ export enum UserRole {
   STAFF_AFFAIRS_MANAGER = "Staff Affairs Manager",
   STUDENT_AFFAIRS_MANAGER = "Student Affairs Manager",
   FINANCIAL_AFFAIRS_MANAGER = "Financial Affairs Manager",
+  PARENT = "Parent",
   ADMIN = "admin",
 }
 

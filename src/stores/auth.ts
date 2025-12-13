@@ -72,7 +72,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
       },
     }),
     {
-      name: "auth-serivce",
+      name: "auth-service",
     },
   ),
 );

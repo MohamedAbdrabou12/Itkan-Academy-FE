@@ -1,14 +1,12 @@
 import PermissionGate from "@/components/auth/PermissionGate";
 import DataGrid from "@/components/dataGrid/DataGrid";
-import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
 import { RoleFormModal } from "@/components/modals/RoleFormModal";
 import RolePermissionsModal from "@/components/modals/RolePermissionsModal";
+import { PermissionKeys } from "@/constants/permissions";
 import { useCreateRole } from "@/hooks/roles/useCreateRole";
-import { useDeleteRole } from "@/hooks/roles/useDeleteRole";
 import { useGetRoles } from "@/hooks/roles/useGetRoles";
 import { useUpdateRole } from "@/hooks/roles/useUpdateRole";
 import type { Column } from "@/types/dataGrid";
-import { PermissionKeys } from "@/constants/permissions";
 import type { RoleDetails } from "@/types/Roles";
 import type { RoleFormData } from "@/validation/roleSchema";
 import { useState } from "react";
@@ -31,8 +29,6 @@ const RolesGridPage = () => {
   const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<RoleDetails | null>(null);
   const [editingRole, setEditingRole] = useState<RoleDetails | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deletingRole, setDeletingRole] = useState<RoleDetails | null>(null);
 
   // Use the hook with parameters
   const {
@@ -50,7 +46,6 @@ const RolesGridPage = () => {
   });
   const createMutation = useCreateRole();
   const updateMutation = useUpdateRole();
-  const deleteMutation = useDeleteRole();
 
   // Event handlers
   const handlePageChange = (page: number) => {
@@ -108,19 +103,6 @@ const RolesGridPage = () => {
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
-  const handleDelete = (role: RoleDetails) => {
-    setDeletingRole(role);
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (deletingRole) {
-      await deleteMutation.mutateAsync(deletingRole.id);
-      setIsDeleteModalOpen(false);
-      setDeletingRole(null);
-    }
-  };
-
   // Define columns for the DataGrid
   const columns: Column<RoleDetails>[] = [
     { key: "id", title: "#", sortable: true },
@@ -143,7 +125,7 @@ const RolesGridPage = () => {
         <div className="text-cneter flex justify-center gap-2">
           <span>{(value as number) || 0} صلاحيات</span>
           <PermissionGate
-            permission={PermissionKeys.SYSTEM_ROLE_PERMISSIONS_MANAGE}
+            permissions={[PermissionKeys.SYSTEM_ROLE_PERMISSIONS_MANAGE]}
           >
             <button
               onClick={() => handleManagePermissions(row)}
@@ -178,17 +160,16 @@ const RolesGridPage = () => {
         onSearch={handleSearch}
         onAddNew={handleAddNew}
         onEdit={handleEdit}
-        onDelete={handleDelete}
         addButtonText="اضافة دور"
         entityName="دور"
         searchPlaceholder="ابحث باسم الدور..."
         pageSizeOptions={PAGE_SIZE_OPTIONS}
         enableSearch={true}
         enableFilters={false}
+        checkReservedRoles={true}
         viewPermission={PermissionKeys.SYSTEM_ROLES_VIEW}
         addPermission={PermissionKeys.SYSTEM_ROLES_ADD}
         editPermission={PermissionKeys.SYSTEM_ROLES_EDIT}
-        deletePermission={PermissionKeys.SYSTEM_ROLES_DELETE}
       />
 
       {/* Role Form Modal */}
@@ -222,22 +203,6 @@ const RolesGridPage = () => {
           }}
           role={selectedRole}
           onPermissionsUpdated={refetch}
-        />
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <DeleteConfirmationModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => {
-            setIsDeleteModalOpen(false);
-            setDeletingRole(null);
-          }}
-          onConfirm={handleConfirmDelete}
-          title="حذف الدور"
-          description="هل أنت متأكد من أنك تريد حذف هذا الدور؟ لا يمكن التراجع عن هذا الإجراء."
-          itemName={deletingRole?.name_ar}
-          isDeleting={deleteMutation.isPending}
         />
       )}
     </div>

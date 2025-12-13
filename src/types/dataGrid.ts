@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { PermissionKeys } from "@/constants/permissions";
+import type { PERMISSION_VALUE } from "./permissions";
 
 export interface Column<T> {
   key: keyof T | string;
@@ -60,10 +60,11 @@ export interface DataGridProps<T> {
   pageSizeOptions?: number[];
   enableSearch?: boolean;
   enableFilters?: boolean;
-  viewPermission: (typeof PermissionKeys)[keyof typeof PermissionKeys];
-  addPermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
-  editPermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
-  deletePermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
+  checkReservedRoles?: boolean;
+  viewPermission: PERMISSION_VALUE;
+  addPermission?: PERMISSION_VALUE;
+  editPermission?: PERMISSION_VALUE;
+  deletePermission?: PERMISSION_VALUE;
 }
 
 // Generic response interface for API calls
@@ -80,21 +81,23 @@ export interface GridTableProps<T> {
   data: T[];
   columns: Column<T>[];
   sortInfo: SortInfo;
+  checkReservedRoles: boolean;
   onSort: (sortBy: string) => void;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   onView?: (item: T) => void;
-  editPermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
-  deletePermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
+  editPermission?: PERMISSION_VALUE;
+  deletePermission?: PERMISSION_VALUE;
 }
 
 export interface ActionMenuProps<T> {
   item: T;
+  checkReservedRoles: boolean;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
   onView?: (item: T) => void;
-  editPermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
-  deletePermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
+  editPermission?: PERMISSION_VALUE;
+  deletePermission?: PERMISSION_VALUE;
 }
 
 export interface PaginationControlsProps {
@@ -106,8 +109,8 @@ export interface PaginationControlsProps {
 
 export interface EmptyStateProps {
   hasFilters: boolean;
-  onClearFilters: () => void;
   entityName: string;
+  children?: ReactNode;
 }
 
 export interface GridErrorProps {

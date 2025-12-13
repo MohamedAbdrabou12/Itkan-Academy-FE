@@ -1,4 +1,4 @@
-import type { PermissionKeys } from "@/constants/permissions";
+import type { PERMISSION_VALUE } from "@/types/permissions";
 import { Plus } from "lucide-react";
 import PermissionGate from "../auth/PermissionGate";
 
@@ -6,7 +6,7 @@ interface GridHeaderProps {
   title: string;
   onAddNew?: () => void;
   addButtonText: string;
-  addPermission?: (typeof PermissionKeys)[keyof typeof PermissionKeys];
+  addPermission?: PERMISSION_VALUE;
 }
 
 const GridHeader = ({
@@ -22,7 +22,7 @@ const GridHeader = ({
       </h1>
 
       {onAddNew && (
-        <PermissionGate permission={addPermission || ""}>
+        <PermissionGate permissions={addPermission ? [addPermission] : []}>
           <button
             onClick={onAddNew}
             className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-emerald-700 hover:shadow-lg active:scale-95"

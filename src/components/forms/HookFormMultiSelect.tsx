@@ -88,7 +88,6 @@ export default function HookFormMultiSelect({
         setIsOpen(false);
         onBlur(); // Call onBlur from useController
       }
-      console.log("Rendered from ");
     },
     [onBlur],
   );

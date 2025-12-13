@@ -6,6 +6,7 @@ import PermissionGate from "../auth/PermissionGate";
 
 const ActionMenu = <T extends Record<string, unknown>>({
   item,
+  checkReservedRoles,
   onEdit,
   onDelete,
   onView,
@@ -14,6 +15,10 @@ const ActionMenu = <T extends Record<string, unknown>>({
 }: ActionMenuProps<T>) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const disableEditing =
+    checkReservedRoles &&
+    !["Student", "Teacher", "Parent"].includes(item.name as string);
 
   const actions = [
     ...(onView
@@ -54,25 +59,31 @@ const ActionMenu = <T extends Record<string, unknown>>({
 
   return (
     <div ref={menuRef} className="relative">
-      <button
-        onClick={() => setIsOpen((prev) => !prev)}
-        aria-label="Actions"
-        className="rounded-xl p-2 transition-all hover:bg-emerald-50 hover:text-emerald-600"
-      >
-        <EllipsisVertical className="h-5 w-5" />
-      </button>
+      {!disableEditing && (
+        <button
+          onClick={() => setIsOpen((prev) => !prev)}
+          aria-label="Actions"
+          className="rounded-xl p-2 transition-all hover:bg-emerald-50 hover:text-emerald-600"
+        >
+          <EllipsisVertical className="h-5 w-5" />
+        </button>
+      )}
 
       {isOpen && (
         <div
-          className="absolute left-0 z-50 mt-2 w-48 overflow-hidden rounded-xl border border-gray-200
-                     bg-white shadow-xl ring-1 ring-gray-100 animate-fadeIn"
+          className="animate-fadeIn absolute left-0 z-50 mt-2 w-48 overflow-hidden rounded-xl border
+                     border-gray-200 bg-white shadow-xl ring-1 ring-gray-100"
         >
           <div className="py-1">
             {actions.map((action, index) => {
-              const permission =
+              const permissions =
                 action.type === "delete"
-                  ? deletePermission ?? ""
-                  : editPermission ?? "";
+                  ? deletePermission
+                    ? [deletePermission]
+                    : []
+                  : editPermission
+                    ? [editPermission]
+                    : [];
 
               const baseClasses =
                 "flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors";
@@ -85,11 +96,11 @@ const ActionMenu = <T extends Record<string, unknown>>({
                 action.type === "view"
                   ? viewClasses
                   : action.type === "edit"
-                  ? editClasses
-                  : deleteClasses;
+                    ? editClasses
+                    : deleteClasses;
 
               return (
-                <PermissionGate key={index} permission={permission}>
+                <PermissionGate key={index} permissions={permissions}>
                   <button
                     onClick={() => {
                       action.action(item);

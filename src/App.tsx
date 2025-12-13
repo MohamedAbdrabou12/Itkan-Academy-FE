@@ -1,14 +1,19 @@
+import PermissionBasedRoute from "@/components/auth/PermissionBasedRoute";
 import ItkanDashboardLayout from "@/components/layouts/ItkanDashboardLayout";
 import StudentLayout from "@/components/layouts/StudentLayout";
+import PasswordResetSentPage from "@/hooks/auth/PasswordResetSentPage";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
+import ClassesGridPage from "@/pages/general-manager/ClassesGridPage";
+import ParentsGridPage from "@/pages/general-manager/ParentsGridPage";
+import ReportsPage from "@/pages/general-manager/ReportsPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
+import StaffRoleGridPage from "@/pages/general-manager/StaffGridPage";
 import StudentsGridPage from "@/pages/general-manager/StudentsGridPage";
 import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
-import StaffRoleGridPage from "@/pages/general-manager/StaffGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
 import AboutPage from "@/pages/student/AboutPage";
@@ -21,10 +26,6 @@ import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import ClassesGridPage from "./pages/general-manager/ClassesGridPage";
-import PermissionBasedRoute from "./components/auth/PermissionBasedRoute";
-import ParentsGridPage from "./pages/general-manager/ParentsGridPage";
-import PasswordResetSentPage from "./hooks/auth/PasswordResetSentPage";
 
 const App = () => {
   return (
@@ -36,7 +37,10 @@ const App = () => {
         <Route path="/register-pending" element={<RegisterPendingPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/password-reset-sent" element={<PasswordResetSentPage />} />
+        <Route
+          path="/password-reset-sent"
+          element={<PasswordResetSentPage />}
+        />
         <Route path="/login" element={<LoginPage />} />
         {/* </Route> */}
 
@@ -66,16 +70,15 @@ const App = () => {
               path="/itkan-dashboard/attendance-and-evaluations"
               element={<AttendanceEvaluationsPage />}
             />
+            <Route path="/itkan-dashboard/reports" element={<ReportsPage />} />
             <Route
               path="/itkan-dashboard/students"
               element={<StudentsGridPage />}
             />
-
             <Route
               path="/itkan-dashboard/teachers"
               element={<TeachersGridPage />}
             />
-
             <Route
               path="/itkan-dashboard/classes"
               element={<ClassesGridPage />}
@@ -83,7 +86,7 @@ const App = () => {
             <Route
               path="/itkan-dashboard/parents"
               element={<ParentsGridPage />}
-              />
+            />
           </Route>
         </Route>
 
