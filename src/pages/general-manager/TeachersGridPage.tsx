@@ -1,7 +1,7 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
 import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
 import { TeacherFormModal } from "@/components/modals/TeacherFormModal";
-import { PermissionKeys } from "@/constants/Permissions";
+import { PermissionKeys } from "@/constants/permissions";
 import { useDeleteTeacher } from "@/hooks/teachers/useDeleteTeacher";
 import { useGetAllTeachers } from "@/hooks/teachers/useGetAllTeachers";
 import type { Column } from "@/types/dataGrid";

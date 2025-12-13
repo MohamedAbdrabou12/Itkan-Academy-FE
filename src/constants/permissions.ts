@@ -204,4 +204,13 @@ export const PermissionKeys = {
   ACTIVITIES_PARTIES_ADD: "activities.parties.add",
   ACTIVITIES_PARTIES_EDIT: "activities.parties.edit",
   ACTIVITIES_PARTIES_DELETE: "activities.parties.delete",
+
+  // Parents
+  PARENTS_ALL: "parents.*",
+  PARENTS_VIEW: "parents.view",
+  PARENTS_ADD: "parents.add",
+  PARENTS_EDIT: "parents.edit",
+  PARENTS_DELETE: "parents.delete",
+
+  
 } as const;

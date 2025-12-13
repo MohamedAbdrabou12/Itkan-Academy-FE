@@ -5,11 +5,14 @@ export function useForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function forgotPassword(email: string) {
+  async function forgotPassword(identifier: string) {
     setLoading(true);
     setError(null);
+
     try {
-      const data = await apiReq("POST", "/auth/forgot-password", { email });
+      const data = await apiReq("POST", "/auth/forgot-password", {
+        identifier,
+      });
       setLoading(false);
       return data;
     } catch (err: unknown) {
@@ -18,7 +21,10 @@ export function useForgotPassword() {
         setError(err.message);
         throw err;
       } else {
-        const msg = typeof err === "string" ? err : "حدث خطأ أثناء طلب إعادة تعيين كلمة المرور";
+        const msg =
+          typeof err === "string"
+            ? err
+            : "An error occurred while sending the reset request";
         setError(msg);
         throw new Error(msg);
       }

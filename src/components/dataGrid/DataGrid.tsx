@@ -47,8 +47,7 @@ const DataGrid = <T extends Record<string, unknown>>({
   const hasActiveFilters = !!searchTerm;
 
   return (
-    <div className="relative rounded-lg border border-gray-200 bg-white shadow-sm">
-      {/* Header */}
+    <div className="relative rounded-xl border border-gray-200 bg-white shadow-sm">
       <GridHeader
         title={title}
         onAddNew={onAddNew}
@@ -66,8 +65,7 @@ const DataGrid = <T extends Record<string, unknown>>({
           />
         )}
 
-        {/* Data Grid Content */}
-        <div>
+        <div className="px-2 sm:px-3">
           {loading && <Spinner />}
 
           {error && <GridError message={error} />}

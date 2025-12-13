@@ -1,6 +1,6 @@
 import DataGrid from "@/components/dataGrid/DataGrid";
 import { StaffFormModal } from "@/components/modals/StaffFormModal";
-import { PermissionKeys } from "@/constants/Permissions";
+import { PermissionKeys } from "@/constants/permissions";
 import { useGetAllStaff } from "@/hooks/staff/useGetStaff";
 import type { Column } from "@/types/dataGrid";
 import type { StaffDetails } from "@/types/users";

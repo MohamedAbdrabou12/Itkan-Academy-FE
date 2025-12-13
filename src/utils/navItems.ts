@@ -1,4 +1,4 @@
-import { PermissionKeys } from "@/constants/Permissions";
+import { PermissionKeys } from "@/constants/permissions";
 import {
   BookA,
   BookmarkCheck,
@@ -6,6 +6,7 @@ import {
   ListTodo,
   LucideGraduationCap,
   UserRound,
+  Users,
   Warehouse,
 } from "lucide-react";
 
@@ -37,6 +38,13 @@ export const navLinks = [
     icon: LucideGraduationCap,
     url: "/itkan-dashboard/students",
     permissions: [PermissionKeys.SYSTEM_STUDENTS_VIEW],
+  },
+  {
+    id: "parents",
+    title: "أولياء الأمور",
+    icon: Users,
+    url: "/itkan-dashboard/parents",
+    permission: PermissionKeys.PARENTS_VIEW,
   },
   {
     id: "classes",

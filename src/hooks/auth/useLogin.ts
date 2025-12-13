@@ -1,13 +1,14 @@
+import { PermissionKeys } from "@/constants/permissions";
 import apiReq from "@/services/apiReq";
 import { useAuthStore } from "@/stores/auth";
 import type { LoginResponse } from "@/types/auth";
-import { getHomePath } from "@/utils/getHomePath";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { usePermissionsGate } from "./usePermissionGate";
 
 interface LoginFormData {
-  email: string;
+  identifier: string; // could be national_id or email
   password: string;
 }
 
@@ -15,19 +16,34 @@ export function useLogin() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { login: loginUser } = useAuthStore();
+  const { getDashboardRoute } = usePermissionsGate();
 
   const { mutate: login, isPending } = useMutation({
     mutationFn: async (values: LoginFormData) => {
-      return await apiReq("POST", "/auth/login", values);
+      return await apiReq("POST", "/auth/login", {
+        identifier: values.identifier,
+        password: values.password,
+      });
     },
-    onSuccess: (res: LoginResponse) => {
+      onSuccess: (res: LoginResponse) => {
       loginUser(res);
       queryClient.setQueryData(["me"], res.user);
-      navigate(getHomePath(res.user.role_name), { replace: true });
+      if (res.user.role_name === "Student") {
+        navigate("/", { replace: true }); 
+      } else {
+        navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), { replace: true });
+      }
     },
-    onError: (err) => {
-      console.log("Error in Login: ", err);
-      toast(err.message, { type: "error" });
+    // onSuccess: (res: LoginResponse) => {
+    //   loginUser(res);
+    //   queryClient.setQueryData(["me"], res.user);
+    //   navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), {
+    //     replace: true,
+    //   });
+    // },
+    onError: (err: Error & { message?: string }) => {
+      console.error("Error in Login: ", err);
+      toast(err.message || "Login failed", { type: "error" });
     },
   });
 

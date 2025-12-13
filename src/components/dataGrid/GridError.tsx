@@ -1,27 +1,23 @@
 import type { GridErrorProps } from "@/types/dataGrid";
+import { AlertTriangle } from "lucide-react";
 
 const GridError = ({ message, onRetry }: GridErrorProps) => (
-  <div className="p-8 text-center">
-    <div className="inline-block rounded-lg border border-red-200 bg-red-50 p-4 text-red-600">
-      <svg
-        className="mx-auto mb-2 h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-      <p className="font-medium">خطأ في تحميل البيانات</p>
-      <p className="mt-1 text-sm">{message}</p>
+  <div className="flex items-center justify-center px-6 py-12 text-center">
+    <div className="w-full max-w-md rounded-2xl border border-red-200 bg-red-50/60 p-6 shadow-sm backdrop-blur-sm">
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-inner">
+        <AlertTriangle className="h-8 w-8" />
+      </div>
+
+      <h3 className="text-lg font-semibold text-red-700">
+        خطأ في تحميل البيانات
+      </h3>
+
+      <p className="mt-2 text-sm text-red-600/90 leading-relaxed">{message}</p>
+
       {onRetry && (
         <button
           onClick={onRetry}
-          className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+          className="mt-5 inline-flex items-center rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white shadow transition-all hover:bg-red-700 hover:shadow-md active:scale-95"
         >
           حاول مرة أخرى
         </button>
