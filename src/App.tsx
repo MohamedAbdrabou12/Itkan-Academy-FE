@@ -25,6 +25,8 @@ import ClassesGridPage from "./pages/general-manager/ClassesGridPage";
 import PermissionBasedRoute from "./components/auth/PermissionBasedRoute";
 import ParentsGridPage from "./pages/general-manager/ParentsGridPage";
 import PasswordResetSentPage from "./hooks/auth/PasswordResetSentPage";
+import QuestionBankPage from "./pages/staff/QuestionBankPage";
+import ExamPage from "./pages/staff/ExamPage";
 
 const App = () => {
   return (
@@ -36,7 +38,10 @@ const App = () => {
         <Route path="/register-pending" element={<RegisterPendingPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/password-reset-sent" element={<PasswordResetSentPage />} />
+        <Route
+          path="/password-reset-sent"
+          element={<PasswordResetSentPage />}
+        />
         <Route path="/login" element={<LoginPage />} />
         {/* </Route> */}
 
@@ -83,7 +88,17 @@ const App = () => {
             <Route
               path="/itkan-dashboard/parents"
               element={<ParentsGridPage />}
-              />
+            />
+
+            <Route
+              path="/itkan-dashboard/question_bank"
+              element={<QuestionBankPage />}
+            />
+
+            <Route
+              path="/itkan-dashboard/exam_dashboard"
+              element={<ExamPage />}
+            />
           </Route>
         </Route>
 

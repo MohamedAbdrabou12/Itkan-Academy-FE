@@ -1,4 +1,5 @@
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
+import clsx from "clsx";
 import { useRef, type ReactNode } from "react";
 
 interface ModalProps {
@@ -6,6 +7,7 @@ interface ModalProps {
   onClose: () => void;
   closeOnBackdropClick?: boolean;
   children: ReactNode;
+  containerClassName?: string;
 }
 
 export const Modal = ({
@@ -13,6 +15,7 @@ export const Modal = ({
   onClose,
   closeOnBackdropClick = true,
   children,
+  containerClassName,
 }: ModalProps) => {
   const ModalRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +31,12 @@ export const Modal = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+      <div
+        className={clsx(
+          "flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0",
+          containerClassName,
+        )}
+      >
         {/* Backdrop */}
         <div className="fixed inset-0 bg-gray-500/75 transition-opacity" />
 

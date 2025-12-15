@@ -34,11 +34,11 @@ export default function LoginPage() {
     "w-full rounded-lg border border-gray-300 py-3 px-6 shadow-sm focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600 transition-all";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-emerald-50 to-teal-50 px-4 py-12 sm:py-20 relative overflow-hidden">
-      <div className="absolute top-10 left-10 w-20 h-20 bg-emerald-200/30 clip-hex animate-bounce-slow"></div>
-      <div className="absolute bottom-20 right-16 w-28 h-28 bg-teal-300/30 clip-hex animate-bounce-slower"></div>
-      <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-emerald-300/20 clip-hex animate-bounce-slow"></div>
-      <div className="absolute bottom-10 left-20 w-24 h-24 bg-teal-200/20 clip-hex animate-bounce-slower"></div>
+    <div className="bg-linear-to-br relative flex min-h-screen items-center justify-center overflow-hidden from-emerald-50 to-teal-50 px-4 py-12 sm:py-20">
+      <div className="clip-hex animate-bounce-slow absolute left-10 top-10 h-20 w-20 bg-emerald-200/30"></div>
+      <div className="clip-hex animate-bounce-slower absolute bottom-20 right-16 h-28 w-28 bg-teal-300/30"></div>
+      <div className="clip-hex animate-bounce-slow absolute left-1/3 top-1/2 h-16 w-16 bg-emerald-300/20"></div>
+      <div className="clip-hex animate-bounce-slower absolute bottom-10 left-20 h-24 w-24 bg-teal-200/20"></div>
 
       <AnimatePresence>
         <motion.section
@@ -46,22 +46,28 @@ export default function LoginPage() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.8 }}
-          className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 sm:p-10 lg:p-12 relative z-10"
+          className="relative z-10 w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl sm:p-10 lg:p-12"
         >
-          <div className="text-center mb-10">
-            <div className="flex items-center justify-center gap-3 mb-2">
+          <div className="mb-10 text-center">
+            <div className="mb-2 flex items-center justify-center gap-3">
               <BookOpen className="h-10 w-10 text-emerald-600" />
-              <span className="text-2xl font-extrabold text-gray-900">مدرسة الإتقان</span>
+              <span className="text-2xl font-extrabold text-gray-900">
+                مدرسة الإتقان
+              </span>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">تسجيل الدخول</h2>
-            <p className="text-gray-500 text-sm">مرحباً بك مجدداً</p>
+            <h2 className="mb-2 text-3xl font-bold text-gray-900">
+              تسجيل الدخول
+            </h2>
+            <p className="text-sm text-gray-500">مرحباً بك مجدداً</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex flex-col">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="mb-1 flex items-center gap-2">
                 <Mail className="h-5 w-5 text-emerald-600" />
-                <label className="text-sm font-medium text-gray-700">البريد الإلكتروني أو الرقم القومي *</label>
+                <label className="text-sm font-medium text-gray-700">
+                  البريد الإلكتروني أو الرقم القومي *
+                </label>
               </div>
               <input
                 type="text"
@@ -71,15 +77,17 @@ export default function LoginPage() {
                 className={InputClass}
                 placeholder="ادخل البريد الإلكتروني أو الرقم القومي"
               />
-              <p className="mt-1 text-xs text-red-600 min-h-5">
+              <p className="mt-1 min-h-5 text-xs text-red-600">
                 {errors.identifier?.message || " "}
               </p>
             </div>
 
             <div className="flex flex-col">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="mb-1 flex items-center gap-2">
                 <Lock className="h-5 w-5 text-emerald-600" />
-                <label className="text-sm font-medium text-gray-700">كلمة المرور *</label>
+                <label className="text-sm font-medium text-gray-700">
+                  كلمة المرور *
+                </label>
               </div>
               <div className="relative">
                 <input
@@ -91,12 +99,16 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-emerald-600 transition"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-500 transition hover:text-emerald-600"
                 >
-                  {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                  {showPassword ? (
+                    <Eye className="h-5 w-5" />
+                  ) : (
+                    <EyeOff className="h-5 w-5" />
+                  )}
                 </button>
               </div>
-              <p className="mt-1 text-xs text-red-600 min-h-5">
+              <p className="mt-1 min-h-5 text-xs text-red-600">
                 {errors.password?.message || " "}
               </p>
             </div>
@@ -123,9 +135,11 @@ export default function LoginPage() {
               disabled={isSubmitting || isPending}
               whileHover={{ scale: 1.01 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="w-full rounded-lg bg-emerald-600 py-3 text-base font-bold text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition-transform cursor-pointer disabled:opacity-50"
+              className="w-full cursor-pointer rounded-lg bg-emerald-600 py-3 text-base font-bold text-white shadow-md transition-transform hover:bg-emerald-700 hover:shadow-lg disabled:opacity-50"
             >
-              {isSubmitting || isPending ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
+              {isSubmitting || isPending
+                ? "جاري تسجيل الدخول..."
+                : "تسجيل الدخول"}
             </motion.button>
           </form>
 

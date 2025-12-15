@@ -2,8 +2,10 @@ import { PermissionKeys } from "@/constants/permissions";
 import {
   BookA,
   BookmarkCheck,
+  BookOpenCheck,
   BriefcaseBusiness,
   LucideGraduationCap,
+  Newspaper,
   UserRound,
   Users,
   Warehouse,
@@ -65,5 +67,19 @@ export const navLinks = [
     icon: BookmarkCheck,
     url: "/itkan-dashboard/attendance-and-evaluations",
     permission: PermissionKeys.EVALUATION_STUDENT_VIEW,
+  },
+  {
+    id: "question_bank",
+    title: "بنك الأسئلة",
+    icon: BookOpenCheck,
+    url: "/itkan-dashboard/question_bank",
+    permission: PermissionKeys.ACADEMIC_QUESTION_BANK_VIEW,
+  },
+  {
+    id: "exam_dashboard",
+    title: "إدارة الامتحانات",
+    icon: Newspaper,
+    url: "/itkan-dashboard/exam_dashboard",
+    permission: PermissionKeys.ACADEMIC_EXAMS_VIEW,
   },
 ];
