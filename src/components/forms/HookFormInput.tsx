@@ -1,14 +1,16 @@
+import clsx from "clsx";
 import { useController, useFormContext } from "react-hook-form";
 
 interface HookFormInputProps {
   name: string;
-  label: string;
-  type?: "text" | "email" | "password" | "date" | "time";
+  label?: string;
+  type?: "text" | "email" | "password" | "date" | "time" | "number";
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
   icon?: React.ReactNode;
   customInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  containerClassName?: string;
 }
 
 export default function HookFormInput({
@@ -20,6 +22,7 @@ export default function HookFormInput({
   disabled = false,
   icon,
   customInputProps,
+  containerClassName,
 }: HookFormInputProps) {
   const { control } = useFormContext();
   const { field, fieldState } = useController({
@@ -29,16 +32,17 @@ export default function HookFormInput({
   const finalError = fieldState.error?.message;
 
   return (
-    <div className="mb-4 w-full">
-      <label
-        htmlFor={name}
-        className="mb-1 block text-sm font-medium text-gray-700"
-      >
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-
+    <div className={clsx("mb-4 w-full", containerClassName)}>
+      {label && (
+        <label
+          htmlFor={name}
+          className="mb-1 block text-sm font-medium text-gray-700"
+        >
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
+      )}
       <div
-        className={`flex items-center gap-2 rounded-xl border bg-gray-50 px-3 py-3 
+        className={`flex items-center gap-2 rounded-xl border bg-gray-50 px-3 py-2 
         ${finalError ? "border-red-400" : "border-gray-300"}
         transition focus-within:border-emerald-600 focus-within:ring-2
         focus-within:ring-emerald-300`}

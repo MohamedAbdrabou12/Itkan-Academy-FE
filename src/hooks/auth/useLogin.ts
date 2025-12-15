@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { usePermissionsGate } from "./usePermissionGate";
 
 interface LoginFormData {
-  identifier: string; // could be national_id or email
+  identifier: string;
   password: string;
 }
 
@@ -25,13 +25,15 @@ export function useLogin() {
         password: values.password,
       });
     },
-      onSuccess: (res: LoginResponse) => {
+    onSuccess: (res: LoginResponse) => {
       loginUser(res);
       queryClient.setQueryData(["me"], res.user);
       if (res.user.role_name === "Student") {
-        navigate("/", { replace: true }); 
+        navigate("/", { replace: true });
       } else {
-        navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), { replace: true });
+        navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), {
+          replace: true,
+        });
       }
     },
     // onSuccess: (res: LoginResponse) => {
