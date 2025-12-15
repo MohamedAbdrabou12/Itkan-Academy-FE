@@ -32,7 +32,7 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   branches: "الفروع",
   permissions: "الصلاحيات",
   assignments: "التعيينات",
-  teacher_permissions: "صلاحيات المعلمين",
+  teachers: "المعلمين",
   administrative: "إداري",
   financial_expenses: "المصروفات المالية",
   subscriptions: "الاشتراكات",

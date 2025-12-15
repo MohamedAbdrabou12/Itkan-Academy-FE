@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiReq from "@/services/apiReq";
 import type { ClassRead } from "@/types/classes";
 
-export const useGetClassesByBranchs = (branch_ids?: string[]) => {
+export const useGetClassesByBranches = (branch_ids?: string[]) => {
   const { data, isFetching, error, refetch } = useQuery<ClassRead[]>({
     queryKey: ["classes_by_branches", branch_ids],
     queryFn: async () => {

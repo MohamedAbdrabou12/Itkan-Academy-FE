@@ -11,6 +11,7 @@ const GridTable = <T extends Record<string, unknown>>({
   onView,
   editPermission,
   deletePermission,
+  checkReservedRoles,
 }: GridTableProps<T>) => {
   const hasActions = Boolean(onEdit || onDelete || onView);
 
@@ -100,16 +101,17 @@ const GridTable = <T extends Record<string, unknown>>({
                     maxWidth: column.width || "200px",
                     width: column.width,
                   }}
-                  className="truncate whitespace-nowrap px-6 py-4 text-center text-sm text-gray-900"
+                  className="truncate whitespace-nowrap p-6 text-center text-sm text-gray-900"
                 >
                   {renderCell(column, row)}
                 </td>
               ))}
 
               {hasActions && (
-                <td className="whitespace-nowrap px-6 py-4 text-center text-sm">
+                <td className="whitespace-nowrap p-6 text-center text-sm font-medium">
                   <ActionMenu
                     item={row}
+                    checkReservedRoles={checkReservedRoles}
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onView={onView}

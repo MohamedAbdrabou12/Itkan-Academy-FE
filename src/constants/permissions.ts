@@ -111,39 +111,17 @@ export const PermissionKeys = {
   TRAINING_TEACHER_DELETE: "training.teacher.delete",
 
   // Reports
-  REPORTS_ALL: "reports.*",
-  REPORTS_ACADEMIC_VIEW: "reports.academic.view",
+  REPORTS_ATTENDANCE_VIEW: "reports.attendance.view",
+  REPORTS_EVALUATIONS_VIEW: "reports.evaluations.view",
+  REPORTS_FINANCE_VIEW: "reports.finance.view",
+  REPORTS_TEACHERS_VIEW: "reports.teachers.view",
   REPORTS_STAFF_VIEW: "reports.staff.view",
-  REPORTS_FINANCIAL_VIEW: "reports.financial.view",
-  REPORTS_FINANCIAL_ADD: "reports.financial.add",
-
-  // Reports Branches
-  REPORTS_BRANCHES_ALL: "reports.branches.*",
-  REPORTS_BRANCHES_VIEW: "reports.branches.view",
-
-  // Reports Teacher
-  REPORTS_TEACHER_ALL: "reports.teacher.*",
-  REPORTS_TEACHER_VIEW: "reports.teacher.view",
-
-  // Reports Student
-  REPORTS_STUDENT_ALL: "reports.student.*",
-  REPORTS_STUDENT_VIEW: "reports.student.view",
-
-  // Reports Administrative
-  REPORTS_ADMINISTRATIVE_ALL: "reports.administrative.*",
-  REPORTS_ADMINISTRATIVE_VIEW: "reports.administrative.view",
-  REPORTS_ADMINISTRATIVE_APPROVE: "reports.administrative.approve",
-
-  // Reports Financial Expenses
-  REPORTS_FINANCIAL_EXPENSES_ALL: "reports.financial_expenses.*",
-  REPORTS_FINANCIAL_EXPENSES_APPROVE: "reports.financial_expenses.approve",
 
   // System Roles
   SYSTEM_ROLES_ALL: "system.roles.*",
   SYSTEM_ROLES_VIEW: "system.roles.view",
   SYSTEM_ROLES_ADD: "system.roles.add",
   SYSTEM_ROLES_EDIT: "system.roles.edit",
-  SYSTEM_ROLES_DELETE: "system.roles.delete",
 
   // System Role Permissions
   SYSTEM_ROLE_PERMISSIONS_ALL: "system.role_permissions.*",
@@ -169,11 +147,11 @@ export const PermissionKeys = {
   SYSTEM_ASSIGNMENTS_DELETE: "system.assignments.delete",
 
   // System Teacher Permissions
-  SYSTEM_TEACHER_PERMISSIONS_ALL: "system.teacher_permissions.*",
-  SYSTEM_TEACHER_PERMISSIONS_VIEW: "system.teacher_permissions.view",
-  SYSTEM_TEACHER_PERMISSIONS_ADD: "system.teacher_permissions.add",
-  SYSTEM_TEACHER_PERMISSIONS_EDIT: "system.teacher_permissions.edit",
-  SYSTEM_TEACHER_PERMISSIONS_DELETE: "system.teacher_permissions.delete",
+  SYSTEM_TEACHERS_ALL: "system.teachers.*",
+  SYSTEM_TEACHERS_VIEW: "system.teachers.view",
+  SYSTEM_TEACHERS_ADD: "system.teachers.add",
+  SYSTEM_TEACHERS_EDIT: "system.teachers.edit",
+  SYSTEM_TEACHERS_DELETE: "system.teachers.delete",
 
   // System Student Permissions
   SYSTEM_STUDENTS_ALL: "system.students.*",

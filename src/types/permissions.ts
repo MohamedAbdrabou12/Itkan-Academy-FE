@@ -1,3 +1,5 @@
+import type { PermissionKeys } from "@/constants/permissions";
+
 export interface Permission {
   id: number;
   code: string;
@@ -13,3 +15,5 @@ export interface RolePermission {
   permission_id: number;
   permission?: Permission;
 }
+
+export type PERMISSION_VALUE = (typeof PermissionKeys)[keyof typeof PermissionKeys]

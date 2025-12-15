@@ -4,8 +4,8 @@ export const evaluationConfigOptions = [
     label: "حفظ",
   },
   {
-    value: "متابعة",
-    label: "متابعة",
+    value: "مراجعة",
+    label: "مراجعة",
   },
   {
     value: "سلوك",

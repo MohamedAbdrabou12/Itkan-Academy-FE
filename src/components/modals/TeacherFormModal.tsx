@@ -8,8 +8,7 @@ import {
   type Resolver,
 } from "react-hook-form";
 import { Modal } from "../shared/Modal";
-
-import { useGetClassesByBranchs } from "@/hooks/classes/useGetClassesByBranchs";
+import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
 import { teacherSchema, type TeacherFormData } from "@/validation/teacher";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
@@ -46,13 +45,13 @@ export const TeacherFormModal = ({
 
   console.log("rerebded");
 
-  const selectedBranchs = useWatch({
+  const selectedBranches = useWatch({
     name: "branch_ids",
     control: form.control,
   }) as string[];
 
   const { branches } = useGetAllBranches();
-  const { classes } = useGetClassesByBranchs(selectedBranchs);
+  const { classes } = useGetClassesByBranches(selectedBranches);
 
   const branchesOptions = branches.map((branch) => ({
     value: `${branch.id}`,
@@ -137,7 +136,7 @@ export const TeacherFormModal = ({
             <HookFormMultiSelect
               label="الفصول"
               name="class_ids"
-              disabled={!selectedBranchs.length}
+              disabled={!selectedBranches.length}
               options={classesOptions}
               placeholder="اختر الفصل"
             />

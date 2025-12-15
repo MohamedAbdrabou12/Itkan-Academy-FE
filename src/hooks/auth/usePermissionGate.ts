@@ -1,5 +1,6 @@
 import { dashboardRouting } from "@/constants/dashboardRouting";
 import { useAuthStore } from "@/stores/auth";
+import type { PERMISSION_VALUE } from "@/types/permissions";
 import { UserRole } from "@/types/Roles";
 
 export const usePermissionsGate = () => {
@@ -14,27 +15,30 @@ export const usePermissionsGate = () => {
     return false;
   };
 
-  const can = (requiredPermission: string): boolean => {
+  const can = (requiredPermissions?: PERMISSION_VALUE[]): boolean => {
     if (isAdmin()) return true;
-    if (!user || !userPermissions) return false;
+    if (!user || !userPermissions || !requiredPermissions) return false;
 
-    const splitedRequiredPermission = requiredPermission.split(".");
-    splitedRequiredPermission.splice(
-      splitedRequiredPermission.length - 1,
-      1,
-      "*",
-    );
+    for (const requiredPermission of requiredPermissions) {
+      const splitedRequiredPermission = requiredPermission?.split(".");
+      splitedRequiredPermission?.splice(
+        splitedRequiredPermission.length - 1,
+        1,
+        "*",
+      );
 
-    // generic permission
-    const genericPermission = splitedRequiredPermission.join(".");
+      // generic permission
+      const genericPermission = splitedRequiredPermission?.join(".");
 
-    for (const permission of userPermissions) {
-      if (
-        permission.code == genericPermission ||
-        permission.code == requiredPermission
-      )
-        return true;
+      for (const permission of userPermissions) {
+        if (
+          permission.code === genericPermission ||
+          permission.code === requiredPermission
+        )
+          return true;
+      }
     }
+
     return false;
   };
 

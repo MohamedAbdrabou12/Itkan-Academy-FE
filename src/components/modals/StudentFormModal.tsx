@@ -9,8 +9,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Modal } from "../shared/Modal";
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
-import { useGetClassesByBranchs } from "@/hooks/classes/useGetClassesByBranchs";
-import { studentSchema, type StudentFormData } from "@/validation/studentSchema";
+import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
+import {
+  studentSchema,
+  type StudentFormData,
+} from "@/validation/studentSchema";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
 import HookFormSelect from "../forms/HookFormSelect";
@@ -60,12 +63,19 @@ export const StudentFormModal = ({
     },
   });
 
-  const selectedBranchs = useWatch({ name: "branch_ids", control: form.control });
+  const selectedBranchs = useWatch({
+    name: "branch_ids",
+    control: form.control,
+  });
   const { branches } = useGetAllBranches();
-  const { classes } = useGetClassesByBranchs(selectedBranchs);
+  const { classes } = useGetClassesByBranches(selectedBranchs);
 
-  const branchesOptions = branches.map((branch) => ({ value: `${branch.id}`, label: branch.name }));
-  const classesOptions = classes?.map((cls) => ({ value: `${cls.id}`, label: cls.name })) || [];
+  const branchesOptions = branches.map((branch) => ({
+    value: `${branch.id}`,
+    label: branch.name,
+  }));
+  const classesOptions =
+    classes?.map((cls) => ({ value: `${cls.id}`, label: cls.name })) || [];
   const statusOptions = [
     { value: "pending", label: "معلق" },
     { value: "active", label: "نشط" },
@@ -102,7 +112,11 @@ export const StudentFormModal = ({
 
     if (initialData) {
       const safeStatus = initialData.status
-        ? (initialData.status.toLowerCase() as "pending" | "active" | "rejected" | "deactive")
+        ? (initialData.status.toLowerCase() as
+            | "pending"
+            | "active"
+            | "rejected"
+            | "deactive")
         : "pending";
 
       form.reset({
@@ -134,24 +148,72 @@ export const StudentFormModal = ({
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmitHandler)}>
           <div className="grid grid-cols-1 gap-4">
-            <HookFormInput label="الاسم الكامل" name="full_name" placeholder="ادخل اسم الطالب" required />
-            <HookFormInput label="البريد الإلكتروني" name="email" type="email" placeholder="example@domain.com" required />
-            <HookFormInput label="رقم الهاتف" name="phone" placeholder="رقم الهاتف" required />
+            <HookFormInput
+              label="الاسم الكامل"
+              name="full_name"
+              placeholder="ادخل اسم الطالب"
+              required
+            />
+            <HookFormInput
+              label="البريد الإلكتروني"
+              name="email"
+              type="email"
+              placeholder="example@domain.com"
+              required
+            />
+            <HookFormInput
+              label="رقم الهاتف"
+              name="phone"
+              placeholder="رقم الهاتف"
+              required
+            />
 
-            <HookFormMultiSelect label="الفرع" name="branch_ids" required options={branchesOptions} placeholder="اختر فرع واحد فقط" />
-            <HookFormMultiSelect label="الفصول" name="class_ids" disabled={!selectedBranchs?.length} options={classesOptions} placeholder="اختر الفصول" />
+            <HookFormMultiSelect
+              label="الفرع"
+              name="branch_ids"
+              required
+              options={branchesOptions}
+              placeholder="اختر فرع واحد فقط"
+            />
+            <HookFormMultiSelect
+              label="الفصول"
+              name="class_ids"
+              disabled={!selectedBranchs?.length}
+              options={classesOptions}
+              placeholder="اختر الفصول"
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <HookFormInput label="تاريخ القبول" name="admission_date" type="date" required disabled={isCreateMode} />
-              <HookFormSelect label="الحالة" name="status" options={statusOptions} placeholder="اختر الحالة" disabled={isCreateMode} />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <HookFormInput
+                label="تاريخ القبول"
+                name="admission_date"
+                type="date"
+                required
+                disabled={isCreateMode}
+              />
+              <HookFormSelect
+                label="الحالة"
+                name="status"
+                options={statusOptions}
+                placeholder="اختر الحالة"
+                disabled={isCreateMode}
+              />
             </div>
           </div>
 
           <div className="mt-6 flex justify-end gap-3">
-            <button type="button" onClick={onCloseHandler} className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+            <button
+              type="button"
+              onClick={onCloseHandler}
+              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+            >
               إلغاء
             </button>
-            <button type="submit" disabled={isSubmitting} className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50"
+            >
               {isSubmitting ? "جاري الحفظ..." : isEditing ? "تحديث" : "إضافة"}
             </button>
           </div>
