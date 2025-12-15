@@ -13,5 +13,7 @@ export default function PermissionGate({
   children,
 }: PermissionGateProps) {
   const { can } = usePermissionsGate();
+  console.log("permisis", permissions);
+
   return can(permissions) ? children : fallback;
 }

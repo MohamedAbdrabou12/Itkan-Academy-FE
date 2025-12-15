@@ -87,13 +87,13 @@ export const navLinks = [
     title: "بنك الأسئلة",
     icon: BookOpenCheck,
     url: "/itkan-dashboard/question_bank",
-    permission: PermissionKeys.ACADEMIC_QUESTION_BANK_VIEW,
+    permissions: [PermissionKeys.ACADEMIC_QUESTION_BANK_VIEW],
   },
   {
     id: "exam_dashboard",
     title: "إدارة الامتحانات",
     icon: Newspaper,
     url: "/itkan-dashboard/exam_dashboard",
-    permission: PermissionKeys.ACADEMIC_EXAMS_VIEW,
+    permissions: [PermissionKeys.ACADEMIC_EXAMS_VIEW],
   },
 ];

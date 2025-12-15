@@ -4,6 +4,14 @@ export const dashboardRouting = [
   // student permissions
 
   // teacher permissions
+  {
+    route: "/itkan-dashboard/question_bank",
+    permission: PermissionKeys.ACADEMIC_QUESTION_BANK_VIEW,
+  },
+  {
+    route: "/itkan-dashboard/exam_dashboard",
+    permission: PermissionKeys.ACADEMIC_EXAMS_VIEW,
+  },
 
   // staff permissions
   {
@@ -24,10 +32,10 @@ export const dashboardRouting = [
   },
   {
     route: "/itkan-dashboard/teachers",
-    permission: PermissionKeys.SYSTEM_TEACHER_PERMISSIONS_VIEW,
+    permission: PermissionKeys.SYSTEM_TEACHERS_VIEW,
   },
   {
-    route:"/itkan-dashboard/parents",
+    route: "/itkan-dashboard/parents",
     permission: PermissionKeys.PARENTS_VIEW,
   },
 ];

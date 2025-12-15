@@ -9,7 +9,6 @@ import {
 import HookFormInput from "../forms/HookFormInput";
 import HookFormSelect from "../forms/HookFormSelect";
 import { Plus } from "lucide-react";
-import { useGetClassesByBranchs } from "@/hooks/classes/useGetClassesByBranchs";
 import { ExamStatus, type ExamCreate } from "@/types/exams";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { examSchema } from "@/validation/examSchema";
@@ -34,6 +33,7 @@ import {
 
 import { SortableQuestionItem } from "./SortableQuestionItem";
 import { useCreateExam } from "@/hooks/Exams/useCreateExam";
+import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
 
 type FormData = z.infer<typeof examSchema>;
 
@@ -98,7 +98,7 @@ export default function CreateExam({
   }
 
   const activeBranch = useAuthStore((state) => state.activeBranch);
-  const { classes } = useGetClassesByBranchs([activeBranch?.id || ""]);
+  const { classes } = useGetClassesByBranches([activeBranch?.id || ""]);
 
   const classesOptions =
     classes?.map((cls) => ({

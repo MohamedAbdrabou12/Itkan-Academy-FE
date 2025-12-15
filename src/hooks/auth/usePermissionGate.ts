@@ -47,7 +47,7 @@ export const usePermissionsGate = () => {
       (route) => route.route === path,
     )?.permission;
 
-    const canAccess = requiredPermisssion ? can(requiredPermisssion) : true;
+    const canAccess = requiredPermisssion ? can([requiredPermisssion]) : true;
     return canAccess;
   };
 
