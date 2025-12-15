@@ -13,9 +13,9 @@ export const PermissionKeys = {
   // Academic Exams
   ACADEMIC_EXAMS_ALL: "academic.exams.*",
   ACADEMIC_EXAMS_VIEW: "academic.exams.view",
-  ACADEMIC_EXAMS_PERFORM: "academic.exams.perform",
-  ACADEMIC_EXAMS_SUPERVISE: "academic.exams.supervise",
-  ACADEMIC_EXAMS_COORDINATE: "academic.exams.coordinate",
+  ACADEMIC_EXAMS_ADD: "academic.exams.add",
+  ACADEMIC_EXAMS_EDIT: "academic.exams.edit",
+  ACADEMIC_EXAMS_DELETE: "academic.exams.delete",
 
   // Academic Classes
   ACADEMIC_CLASSES_ALL: "academic.classes.*",
@@ -23,6 +23,13 @@ export const PermissionKeys = {
   ACADEMIC_CLASSES_ADD: "academic.classes.add",
   ACADEMIC_CLASSES_EDIT: "academic.classes.edit",
   ACADEMIC_CLASSES_DELETE: "academic.classes.delete",
+
+  // Academic Question Bank
+  ACADEMIC_QUESTION_BANK_ALL: "academic.question_bank.*",
+  ACADEMIC_QUESTION_BANK_VIEW: "academic.question_bank.view",
+  ACADEMIC_QUESTION_BANK_ADD: "academic.question_bank.add",
+  ACADEMIC_QUESTION_BANK_EDIT: "academic.question_bank.edit",
+  ACADEMIC_QUESTION_BANK_DELETE: "academic.question_bank.delete",
 
   // Financial Invoices
   FINANCIAL_INVOICES_ALL: "financial.invoices.*",
@@ -211,6 +218,4 @@ export const PermissionKeys = {
   PARENTS_ADD: "parents.add",
   PARENTS_EDIT: "parents.edit",
   PARENTS_DELETE: "parents.delete",
-
-  
 } as const;
