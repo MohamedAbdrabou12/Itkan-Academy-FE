@@ -121,6 +121,8 @@ const GenerateReportFormModal = ({
     form.setValue("from", date.toISOString().split("T")[0]);
   }, [form, reportTypeOptions]);
 
+  const todayISODate = new Date().toISOString().split("T")[0];
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} modalStyle="min-w-[40%]">
       <FormProvider {...form}>
@@ -133,8 +135,20 @@ const GenerateReportFormModal = ({
                 options={allowedReportOptions}
                 required
               />
-              <HookFormInput type="date" label="من..." name="from" required />
-              <HookFormInput type="date" label="إلى..." name="to" required />
+              <HookFormInput
+                type="date"
+                label="من..."
+                name="from"
+                required
+                customInputProps={{ max: todayISODate }}
+              />
+              <HookFormInput
+                type="date"
+                label="إلى..."
+                name="to"
+                required
+                customInputProps={{ max: todayISODate }}
+              />
             </div>
 
             <div>
