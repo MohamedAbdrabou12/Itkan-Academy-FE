@@ -9,6 +9,7 @@ interface HookFormInputProps {
   placeholder?: string;
   disabled?: boolean;
   icon?: React.ReactNode;
+  customInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   containerClassName?: string;
 }
 
@@ -20,6 +21,7 @@ export default function HookFormInput({
   placeholder,
   disabled = false,
   icon,
+  customInputProps,
   containerClassName,
 }: HookFormInputProps) {
   const { control } = useFormContext();
@@ -49,6 +51,7 @@ export default function HookFormInput({
 
         <input
           {...field}
+          {...customInputProps}
           type={type}
           id={name}
           placeholder={placeholder}
