@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "../useDebounce";
 import apiReq from "@/services/apiReq";
 import type { ParentsResponse } from "@/types/Parents";
@@ -15,16 +15,11 @@ export const useGetAllParents = (params?: UseGetAllParentsParams) => {
   const debouncedSearch = useDebounce(params?.search, 300);
 
   const { data, isPending, error, refetch } = useQuery<ParentsResponse>({
-    queryKey: [
-      "parents",
-      {
-        ...params,
-        search: debouncedSearch,
-      },
-    ],
+    queryKey: ["parents", { ...params, search: debouncedSearch }],
+    placeholderData: keepPreviousData,
+    staleTime: 5000,
     queryFn: async () => {
       const searchParams = new URLSearchParams();
-
       if (params?.page) searchParams.append("page", String(params.page));
       if (params?.size) searchParams.append("size", String(params.size));
       if (debouncedSearch) searchParams.append("search", debouncedSearch);

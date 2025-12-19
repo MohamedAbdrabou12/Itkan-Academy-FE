@@ -1,42 +1,79 @@
-import { useEffect } from "react";
-import {
-  useForm,
-  useWatch,
-  FormProvider,
-  type SubmitHandler,
-  type Resolver,
-} from "react-hook-form";
+import { useEffect, useState, useMemo, type ReactNode } from "react";
+import { useForm, useWatch, FormProvider, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Modal } from "../shared/Modal";
-import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
-import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
-import {
-  studentSchema,
-  type StudentFormData,
-} from "@/validation/studentSchema";
-import HookFormInput from "../forms/HookFormInput";
-import HookFormMultiSelect from "../forms/HookFormMultiSelect";
-import HookFormSelect from "../forms/HookFormSelect";
 import { z } from "zod";
 
-const studentUiSchema = studentSchema.extend({
-  branch_ids: z.array(z.string()).min(1).max(1),
-  class_ids: z.array(z.string()).optional().default([]),
-  phone: z.string().min(1, "رقم الهاتف مطلوب"),
+import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
+import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
+import { 
+  type StudentCreateFormData, 
+  type StudentUpdateFormData 
+} from "@/validation/studentSchema";
+import { type StudentDetails } from "@/types/Students";
+import HookFormInput from "../forms/HookFormInput";
+import HookFormSelect from "../forms/HookFormSelect";
+import HookFormMultiSelect from "../forms/HookFormMultiSelect";
+import { Eye, EyeOff, User, Mail, Phone, CreditCard, Calendar, AlertCircle, Lock } from "lucide-react";
+
+interface ApiErrorResponse {
+  response?: {
+    data?: {
+      message?: string | string[];
+    };
+  };
+}
+
+const formSchema = z.object({
+  full_name: z.string().min(1, "اسم الطالب مطلوب"),
+  national_id: z.string().regex(/^\d{14}$/, "الرقم القومي يجب أن يكون 14 رقم"),
+  email: z.string().optional().nullable().refine((val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
+    message: "البريد الإلكتروني غير صحيح",
+  }),
+  phone: z.string().regex(/^01[0125]\d{8}$/, "رقم الهاتف غير صحيح، يجب أن يكون 11 رقم ويبدأ بـ 01"),
+  branch_ids: z.string().min(1, "يجب اختيار فرع واحد"),
+  class_ids: z.array(z.string()).min(1, "يجب اختيار فصل واحد على الأقل"),
   status: z.enum(["pending", "active", "rejected", "deactive"]),
+  admission_date: z.string().optional(),
+  password: z.string().optional(),
+  confirm_password: z.string().optional(),
+}).refine((data) => {
+  if (data.password && data.password !== data.confirm_password) {
+    return false;
+  }
+  return true;
+}, {
+  message: "كلمتا المرور غير متطابقتين",
+  path: ["confirm_password"],
 });
 
-type StudentFormUiData = z.infer<typeof studentUiSchema>;
+type StudentFormUiData = z.infer<typeof formSchema>;
 
 interface StudentFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: StudentFormData & { student_id?: number }) => Promise<void>;
-  initialData?: StudentFormData & { student_id?: number };
+  onSubmit: (data: (StudentCreateFormData | StudentUpdateFormData) & { student_id?: number }) => Promise<void>;
+  initialData?: StudentDetails | null;
   isSubmitting?: boolean;
   isEditing?: boolean;
   refetchStudents?: () => void;
+  apiError?: string | null;
 }
+
+const ICONS: Record<string, ReactNode> = {
+  full_name: <User size={16} className="text-emerald-600" />,
+  email: <Mail size={16} className="text-emerald-600" />,
+  phone: <Phone size={16} className="text-emerald-600" />,
+  national_id: <CreditCard size={16} className="text-emerald-600" />,
+  date: <Calendar size={16} className="text-emerald-600" />,
+  lock: <Lock size={16} className="text-emerald-600" />,
+};
+
+const statusOptions = [
+  { value: "pending", label: "معلق" },
+  { value: "active", label: "نشط" },
+  { value: "rejected", label: "مرفوض" },
+  { value: "deactive", label: "غير نشط" },
+];
 
 export const StudentFormModal = ({
   isOpen,
@@ -46,179 +83,291 @@ export const StudentFormModal = ({
   isSubmitting = false,
   isEditing = false,
   refetchStudents,
+  apiError = null,
 }: StudentFormModalProps) => {
   const isCreateMode = !isEditing;
+  const [showPassword, setShowPassword] = useState(false);
+  const [localApiError, setLocalApiError] = useState<string | null>(apiError || null);
 
   const form = useForm<StudentFormUiData>({
-    resolver: zodResolver(studentUiSchema) as Resolver<StudentFormUiData>,
+    resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
       full_name: "",
+      national_id: "",
       email: "",
       phone: "",
-      branch_ids: [],
+      branch_ids: "",
       class_ids: [],
+      status: "active",
       admission_date: new Date().toISOString().split("T")[0],
-      status: "pending",
+      password: "",
+      confirm_password: "",
     },
   });
 
-  const selectedBranchs = useWatch({
+  const selectedBranch = useWatch({
     name: "branch_ids",
     control: form.control,
   });
-  const { branches } = useGetAllBranches();
-  const { classes } = useGetClassesByBranches(selectedBranchs);
 
-  const branchesOptions = branches.map((branch) => ({
-    value: `${branch.id}`,
-    label: branch.name,
-  }));
-  const classesOptions =
-    classes?.map((cls) => ({ value: `${cls.id}`, label: cls.name })) || [];
-  const statusOptions = [
-    { value: "pending", label: "معلق" },
-    { value: "active", label: "نشط" },
-    { value: "rejected", label: "مرفوض" },
-    { value: "deactive", label: "غير نشط" },
-  ];
+  const { branches } = useGetAllBranches();
+  const { classes } = useGetClassesByBranches(selectedBranch ? [selectedBranch] : []);
+
+  const branchesOptions = useMemo(() => 
+    branches.map((b) => ({ value: String(b.id), label: b.name })), 
+  [branches]);
+
+  const classesOptions = useMemo(() => 
+    classes?.map((c) => ({ value: String(c.id), label: c.name })) || [], 
+  [classes]);
 
   const onCloseHandler = () => {
     form.reset();
+    setLocalApiError(null);
     onClose();
   };
 
-  const onSubmitHandler: SubmitHandler<StudentFormUiData> = async (data) => {
-    const apiData: StudentFormData & { student_id?: number } = {
-      ...data,
-      phone: data.phone?.trim() || "",
-      branch_ids: data.branch_ids.map(Number),
-      class_ids: data.class_ids?.map(Number) || [],
-      admission_date: data.admission_date,
-      status: data.status,
-      student_id: initialData?.student_id,
-    };
-
-    await onSubmit(apiData);
-    refetchStudents?.();
-    onCloseHandler();
-  };
-
   useEffect(() => {
-    if (!isOpen) {
-      form.reset();
+    if (isOpen) {
+      setLocalApiError(apiError || null);
+      if (initialData) {
+        form.reset({
+          full_name: initialData.full_name,
+          national_id: initialData.national_id,
+          email: initialData.email || "",
+          phone: initialData.phone ?? "",
+          branch_ids: initialData.branch_ids?.length ? String(initialData.branch_ids[0]) : "",
+          class_ids: initialData.class_ids?.map(String) || [],
+          status: initialData.status as StudentFormUiData["status"],
+          admission_date: initialData.admission_date?.split("T")[0] || "",
+          password: "",
+          confirm_password: "",
+        });
+      } else {
+        form.reset({
+          full_name: "",
+          national_id: "",
+          email: "",
+          phone: "",
+          branch_ids: "",
+          class_ids: [],
+          status: "active",
+          admission_date: new Date().toISOString().split("T")[0],
+          password: "",
+          confirm_password: "",
+        });
+      }
+    }
+  }, [initialData, isOpen, form, apiError]);
+
+  const onSubmitHandler: SubmitHandler<StudentFormUiData> = async (data) => {
+    setLocalApiError(null);
+    
+    if (isCreateMode && !data.password) {
+      form.setError("password", { type: "manual", message: "كلمة المرور مطلوبة عند إضافة طالب جديد" });
       return;
     }
 
-    if (initialData) {
-      const safeStatus = initialData.status
-        ? (initialData.status.toLowerCase() as
-            | "pending"
-            | "active"
-            | "rejected"
-            | "deactive")
-        : "pending";
+    const basePayload = {
+      ...data,
+      email: !data.email || data.email.trim() === "" ? null : data.email,
+      branch_ids: [Number(data.branch_ids)],
+      class_ids: data.class_ids.map(Number),
+      student_id: initialData?.student_id,
+    };
 
-      form.reset({
-        full_name: initialData.full_name,
-        email: initialData.email,
-        phone: initialData.phone || "",
-        branch_ids: initialData.branch_ids.map(String),
-        class_ids: initialData.class_ids?.map(String) || [],
-        admission_date: initialData.admission_date
-          ? new Date(initialData.admission_date).toISOString().split("T")[0]
-          : new Date().toISOString().split("T")[0],
-        status: safeStatus,
-      });
-    } else {
-      form.reset({
-        full_name: "",
-        email: "",
-        phone: "",
-        branch_ids: [],
-        class_ids: [],
-        admission_date: new Date().toISOString().split("T")[0],
-        status: "pending",
-      });
+    try {
+      await onSubmit(basePayload as unknown as StudentCreateFormData);
+      refetchStudents?.();
+      onCloseHandler();
+    } catch (error: unknown) {
+      const apiErr = error as ApiErrorResponse;
+      const rawMessage = apiErr.response?.data?.message || "";
+      const errorMessage = Array.isArray(rawMessage) ? rawMessage.join(" ") : String(rawMessage);
+
+      if (errorMessage.includes("national_id")) {
+        form.setError("national_id", { type: "manual", message: "هذا الرقم القومي مسجل مسبقاً" });
+      } else if (errorMessage.includes("email")) {
+        form.setError("email", { type: "manual", message: "هذا البريد الإلكتروني مستخدم من قبل" });
+      } else {
+        setLocalApiError(errorMessage || "الرقم القومي او البريد الالكتروني موجود مسبقا, يرجى المحاولة مرة أخرى");
+      }
     }
-  }, [initialData, isOpen, form]);
+  };
+
+  if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onCloseHandler}>
-      <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(onSubmitHandler)}>
-          <div className="grid grid-cols-1 gap-4">
-            <HookFormInput
-              label="الاسم الكامل"
-              name="full_name"
-              placeholder="ادخل اسم الطالب"
-              required
-            />
-            <HookFormInput
-              label="البريد الإلكتروني"
-              name="email"
-              type="email"
-              placeholder="example@domain.com"
-              required
-            />
-            <HookFormInput
-              label="رقم الهاتف"
-              name="phone"
-              placeholder="رقم الهاتف"
-              required
-            />
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 px-4">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+        <h3 className="text-xl font-semibold text-emerald-700 mb-6 text-right">
+          {isEditing ? "تعديل بيانات الطالب" : "إضافة طالب جديد"}
+        </h3>
 
-            <HookFormMultiSelect
-              label="الفرع"
-              name="branch_ids"
-              required
-              options={branchesOptions}
-              placeholder="اختر فرع واحد فقط"
-            />
-            <HookFormMultiSelect
-              label="الفصول"
-              name="class_ids"
-              disabled={!selectedBranchs?.length}
-              options={classesOptions}
-              placeholder="اختر الفصول"
-            />
+        <FormProvider {...form}>
+          <form onSubmit={form.handleSubmit(onSubmitHandler)} autoComplete="off" className="text-right">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              {localApiError && (
+                <div className="md:col-span-2 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                  <AlertCircle size={18} />
+                  <span className="text-sm font-medium">{localApiError}</span>
+                </div>
+              )}
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <HookFormInput
+                label="الاسم الكامل"
+                name="full_name"
+                placeholder="اسم الطالب الرباعي"
+                required
+                icon={ICONS.full_name}
+              />
+
+              <HookFormInput
+                label="الرقم القومي"
+                name="national_id"
+                placeholder="ادخل الـ 14 رقم"
+                required
+                icon={ICONS.national_id}
+              />
+
+              <HookFormInput
+                label="البريد الإلكتروني (اختياري)"
+                name="email"
+                type="email"
+                placeholder="example@domain.com"
+                icon={ICONS.email}
+              />
+
+              <HookFormInput
+                label="رقم الهاتف"
+                name="phone"
+                placeholder="ادخل رقم الهاتف"
+                required
+                icon={ICONS.phone}
+              />
+
+              {isCreateMode && (
+                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      كلمة المرور <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative group">
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                        {ICONS.lock}
+                      </div>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        {...form.register("password")}
+                        className={`w-full rounded-md border ${form.formState.errors.password ? 'border-red-500' : 'border-gray-300'} shadow-sm p-2 pr-10 pl-10 outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all`}
+                        placeholder="ادخل كلمة المرور"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-600 transition-colors"
+                      >
+                        {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                      </button>
+                    </div>
+                    {form.formState.errors.password && (
+                      <p className="text-red-500 text-xs mt-1">{form.formState.errors.password.message}</p>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">تأكيد كلمة المرور <span className="text-red-500">*</span></label>
+                    <div className="relative group">
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                        {ICONS.lock}
+                      </div>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        {...form.register("confirm_password")}
+                        className={`w-full rounded-md border ${form.formState.errors.confirm_password ? 'border-red-500' : 'border-gray-300'} shadow-sm p-2 pr-10 pl-10 outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all`}
+                        placeholder="تأكيد كلمة المرور"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-600 transition-colors"
+                      >
+                        {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                      </button>
+                    </div>
+                    {form.formState.errors.confirm_password && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {String(form.formState.errors.confirm_password.message)}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="md:col-span-2">
+                <HookFormSelect
+                  label="الفرع"
+                  name="branch_ids"
+                  required
+                  options={branchesOptions}
+                  placeholder="اختر الفرع"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <HookFormMultiSelect
+                  label="الفصول"
+                  name="class_ids"
+                  required
+                  disabled={!selectedBranch}
+                  options={classesOptions}
+                  placeholder="اختر الفصول الدراسية"
+                />
+              </div>
+
               <HookFormInput
                 label="تاريخ القبول"
                 name="admission_date"
                 type="date"
                 required
-                disabled={isCreateMode}
+                disabled
+                icon={ICONS.date}
               />
+
               <HookFormSelect
                 label="الحالة"
                 name="status"
                 options={statusOptions}
+                required
                 placeholder="اختر الحالة"
-                disabled={isCreateMode}
               />
             </div>
-          </div>
 
-          <div className="mt-6 flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onCloseHandler}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-            >
-              إلغاء
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {isSubmitting ? "جاري الحفظ..." : isEditing ? "تحديث" : "إضافة"}
-            </button>
-          </div>
-        </form>
-      </FormProvider>
-    </Modal>
+            <div className="mt-8 flex justify-end gap-3 border-t border-emerald-600 pt-6">
+              <button
+                type="button"
+                onClick={onCloseHandler}
+                className="rounded-md border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
+                disabled={isSubmitting}
+              >
+                إلغاء
+              </button>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="rounded-md border border-transparent bg-emerald-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 transition"
+              >
+                {isSubmitting ? "جاري الحفظ..." : isEditing ? "تحديث" : "إضافة الطالب"}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
+      </div>
+    </div>
   );
 };
+
+export default StudentFormModal;

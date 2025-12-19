@@ -7,7 +7,7 @@ export const useGetStudentsByClasses = (class_ids?: string[]) => {
   >({
     queryKey: ["students_by_classes", class_ids],
     queryFn: async () => {
-      if (!class_ids) return [];
+      if (!class_ids?.length) return [];
       return await apiReq("POST", `/students/by-classes`, {
         class_ids,
       });
