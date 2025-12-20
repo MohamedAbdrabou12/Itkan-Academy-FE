@@ -6,6 +6,7 @@ export const useGetParent = (parentId?: number | null) => {
   const { data, isPending, error, refetch } = useQuery<ParentDetails>({
     queryKey: ["parent", parentId],
     enabled: !!parentId,
+    staleTime: 10000,
     queryFn: async () => {
       return await apiReq("GET", `/parents/${parentId}`);
     },

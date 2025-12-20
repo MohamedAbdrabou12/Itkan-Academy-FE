@@ -12,9 +12,8 @@ import { RelationshipType, ParentStatus } from "@/types/Parents";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormSelect from "../forms/HookFormSelect";
 import apiReq from "@/services/apiReq";
-import { Eye, EyeOff, User, Mail, Phone, Briefcase, MapPin } from "lucide-react";
+import { User, Mail, Phone, Briefcase, MapPin } from "lucide-react";
 
-// Define the Form Data by extending the base schemas to include children_ids (Frontend requirement)
 const parentBaseFormSchema = z.object({
   children_ids: z.array(z.number()).optional().nullable(),
 });
@@ -24,7 +23,6 @@ const ParentUpdateFormSchema = parentUpdateSchema.merge(parentBaseFormSchema.par
 
 type ParentFormBaseData = z.infer<typeof ParentCreateFormSchema>;
 
-// Define the submission data type
 type ParentFormSubmitData =
   | (ParentCreateForm & { children_ids: number[] })
   | (ParentUpdateForm & { parent_id: number; children_ids: number[] });
@@ -92,7 +90,6 @@ export const ParentFormModal = ({
       occupation: "",
       address: "",
       relationship_type: RelationshipType.FATHER,
-      password: "",
       status: ParentStatus.PENDING,
       children_ids: [],
     } as ParentFormBaseData as FormData,
@@ -102,7 +99,6 @@ export const ParentFormModal = ({
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<StudentOption[]>([]);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
   const onCloseHandler = useMemo(() => {
     return () => {
@@ -127,8 +123,8 @@ export const ParentFormModal = ({
         occupation: initialData.occupation ?? "",
         address: initialData.address ?? "",
         relationship_type: initialData.relationship_type,
-        password: "",
         status: statusValue,
+        children_ids: initialData.children?.map((c) => c.student_id) ?? [],
       } as FormData);
 
       setSelectedStudents(
@@ -146,8 +142,8 @@ export const ParentFormModal = ({
         occupation: "",
         address: "",
         relationship_type: RelationshipType.FATHER,
-        password: "",
         status: ParentStatus.PENDING,
+        children_ids: [],
       } as FormData);
     }
   }, [initialData, isOpen, form, onCloseHandler]); 
@@ -200,10 +196,6 @@ export const ParentFormModal = ({
       ])
     ) as FormData;
 
-    if (isEditing && initialData && cleanedData.password === null) {
-        delete cleanedData.password;
-    }
-    
     const childrenIds = selectedStudents.map((s) => s.student_id);
 
     let payload: ParentFormSubmitData;
@@ -215,18 +207,14 @@ export const ParentFormModal = ({
         children_ids: childrenIds,
       };
     } else {
-      if (!cleanedData.full_name || !cleanedData.email || !cleanedData.relationship_type) {
-         return; 
-      }
+      if (!cleanedData.full_name || !cleanedData.email || !cleanedData.relationship_type) return;
       payload = {
         ...(cleanedData as ParentCreateForm),
         children_ids: childrenIds,
       };
     }
 
-    onSubmit(payload)
-        .then(() => {})
-        .catch(() => {});
+    onSubmit(payload).then(() => {}).catch(() => {});
   };
 
   if (!isOpen) return null;
@@ -293,36 +281,13 @@ export const ParentFormModal = ({
                 required
               />
               
-              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">كلمة المرور (اختياري)</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      {...form.register("password")}
-                      placeholder={isEditing ? "اترك فارغاً لعدم التغيير" : "كلمة مرور مؤقتة"}
-                      className="w-full rounded-md border-gray-300 shadow-sm p-2 pl-10 focus:border-emerald-500 focus:ring-emerald-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((s) => !s)}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-emerald-600 transition"
-                      title={showPassword ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-
-                <HookFormSelect
-                  label="الحالة"
-                  name="status"
-                  options={statusOptions}
-                  placeholder="اختر الحالة"
-                  required
-                />
-              </div>
+              <HookFormSelect
+                label="الحالة"
+                name="status"
+                options={statusOptions}
+                placeholder="اختر الحالة"
+                required
+              />
 
               <div className="md:col-span-2 relative z-10">
                 <label className="block text-sm font-medium text-gray-700 mb-1">إضافة / إزالة الأبناء المرتبطين</label>

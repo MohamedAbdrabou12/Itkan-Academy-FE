@@ -156,11 +156,9 @@ const ParentsGridPage = () => {
       let existingChildrenIds: number[] = [];
       const childrenIds = data.children_ids ?? [];
 
-      // 1. Submit Parent Data (Create or Update)
       if ("parent_id" in data && data.parent_id) {
         const updatePayload: ParentUpdateForm & { parent_id: number } = data;
         parentResult = await updateMutation.mutateAsync(updatePayload);
-
         existingChildrenIds = editingParent?.children?.map((c) => c.student_id) ?? [];
       } else {
         const createPayload: ParentCreateForm = {
@@ -171,7 +169,6 @@ const ParentsGridPage = () => {
           phone: data.phone ?? null,
           occupation: data.occupation ?? null,
           address: data.address ?? null,
-          password: data.password ?? null,
         };
         parentResult = await createMutation.mutateAsync(createPayload);
       }
@@ -180,7 +177,6 @@ const ParentsGridPage = () => {
 
       const parentId = parentResult.id;
 
-      // 2. Success Feedback and Close Modal
       toast.success(
         isEditing
           ? `تم تحديث ولي الأمر ${parentResult.user.full_name} بنجاح.`
@@ -190,7 +186,6 @@ const ParentsGridPage = () => {
       setIsFormOpen(false);
       setEditingParent(null);
 
-      // 3. Process Children Link/Unlink in the background (NO AWAIT)
       if (isEditing) {
           const childrenToUnlink = existingChildrenIds.filter((id) => !childrenIds.includes(id));
           const childrenToLink = childrenIds.filter((id) => !existingChildrenIds.includes(id));
@@ -203,13 +198,10 @@ const ParentsGridPage = () => {
             linkMutation.mutateAsync({ parent_id: parentId, student_id })
           );
           
-          // Execute link/unlink operations in the background.
           Promise.allSettled([...unlinkPromises, ...linkPromises]).catch((e) => {
               console.error("Background link/unlink failed:", e);
           });
-      }
-      // If it's a creation, linking only happens after creation
-      else if (childrenIds.length > 0) {
+      } else if (childrenIds.length > 0) {
           const linkPromises = childrenIds.map((student_id) =>
             linkMutation.mutateAsync({ parent_id: parentId, student_id })
           );
@@ -223,7 +215,6 @@ const ParentsGridPage = () => {
       const errorMessage = getErrorMessage(err);
       setApiFormError(errorMessage);
       toast.error(errorMessage);
-      // Re-throw to prevent ParentFormModal from executing its success path
       throw err; 
     }
   };
@@ -255,7 +246,7 @@ const ParentsGridPage = () => {
     }
   };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending; // MODIFIED: Exclude link/unlink to speed up form closing
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   const columns: Column<ParentDetails>[] = [
     { key: "id", title: "#", sortable: true },
@@ -287,7 +278,6 @@ const ParentsGridPage = () => {
       title: "الحالة",
       sortable: true,
       render: (_, r) => { 
-        // FIX: Use user.status if available, otherwise fallback to top-level status
         const rawStatus = (r.user?.status || r.status) as ParentStatus | undefined;
         const statusValue = String(rawStatus ?? ParentStatus.PENDING).toLowerCase(); 
         let classes = "bg-gray-100 text-gray-800";
@@ -346,7 +336,6 @@ const ParentsGridPage = () => {
     occupation: p.occupation ?? null,
     address: p.address ?? null,
     relationship_type: p.relationship_type,
-    // FIX: Use user.status as the primary status source if available, otherwise fallback
     status: ((p.user?.status || p.status)?.toLowerCase() as ParentStatus) || ParentStatus.PENDING,
     user: {
       full_name: p.user.full_name || "",

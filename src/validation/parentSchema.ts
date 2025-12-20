@@ -1,4 +1,3 @@
-// src/validation/parentSchema.ts
 import { z } from "zod";
 import { RelationshipType, ParentStatus } from "@/types/Parents";
 
@@ -19,7 +18,6 @@ export const parentCreateSchema = z.object({
   occupation: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
   relationship_type: z.nativeEnum(RelationshipType),
-  password: z.string().optional().nullable(),
   status: z
     .nativeEnum(ParentStatus)
     .optional()
