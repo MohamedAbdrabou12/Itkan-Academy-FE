@@ -74,8 +74,8 @@ export default function ItkanDashboardLayout() {
           {navLinks.map((link) => (
             <PermissionGate permissions={link.permissions} key={link.id}>
               <li>
-                <a
-                  href={link.url}
+                <Link
+                  to={link.url}
                   className={clsx(
                     "group relative flex items-center gap-3 rounded px-4 py-2 transition hover:bg-emerald-50",
                     isOpen ? "justify-start" : "justify-center",
@@ -85,7 +85,7 @@ export default function ItkanDashboardLayout() {
                 >
                   <link.icon className="shrink-0 text-emerald-600" />
                   {isOpen && <span className="truncate">{link.title}</span>}
-                </a>
+                </Link>
               </li>
             </PermissionGate>
           ))}

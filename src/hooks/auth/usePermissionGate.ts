@@ -1,12 +1,12 @@
 import { dashboardRouting } from "@/constants/dashboardRouting";
-import { useAuthStore } from "@/stores/auth";
 import type { PERMISSION_VALUE } from "@/types/permissions";
 import { UserRole } from "@/types/Roles";
+import { useGetMe } from "./useGetMe";
 
 export const usePermissionsGate = () => {
-  const { getUserPermission } = useAuthStore();
-  const userPermissions = getUserPermission();
-  const user = useAuthStore((state) => state.user);
+  const { me } = useGetMe();
+  const user = me;
+  const userPermissions = user?.permissions;
 
   const isAdmin = () => {
     if (!user) return false;
