@@ -12,6 +12,19 @@ export interface User {
   email: string;
   role_name: UserRole;
   status: string;
+  permissions: Permission[];
+  branches: Branch[];
+}
+
+export interface Permission {
+  id: number;
+  code: string;
+  description: string;
+}
+
+export interface Branch {
+  id: number;
+  name: string;
 }
 
 export interface JWTTokenDecodedContent {

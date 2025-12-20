@@ -1,4 +1,3 @@
-import { PermissionKeys } from "@/constants/permissions";
 import apiReq from "@/services/apiReq";
 import { useAuthStore } from "@/stores/auth";
 import type { LoginResponse } from "@/types/auth";
@@ -31,7 +30,7 @@ export function useLogin() {
       if (res.user.role_name === "Student") {
         navigate("/", { replace: true });
       } else {
-        navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), {
+        navigate(getDashboardRoute(res.user.permissions.map((p) => p.code)), {
           replace: true,
         });
       }
