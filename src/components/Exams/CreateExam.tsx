@@ -77,7 +77,10 @@ export default function CreateExam({
       order: index,
     }));
     createExamMutation.mutate(examData, {
-      onSuccess: () => {},
+      onSuccess: () => {
+        setActiveMood("view");
+        form.reset();
+      },
     });
   };
   const sensors = useSensors(
