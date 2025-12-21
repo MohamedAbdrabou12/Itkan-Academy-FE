@@ -1,16 +1,16 @@
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
+import { useGetAllRoles } from "@/hooks/roles/useGetAllRoles";
 import { useCreateStaff } from "@/hooks/staff/useCreateStaff";
 import { useUpdateStaff } from "@/hooks/staff/useUpdateStaff";
+import { UserRole } from "@/types/Roles";
 import { staffSchema, type StaffFormData } from "@/validation/staffSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo } from "react";
 import { FormProvider, useForm, type Resolver } from "react-hook-form";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
-import { Modal } from "../shared/Modal";
 import HookFormSelect from "../forms/HookFormSelect";
-import { useGetAllRoles } from "@/hooks/roles/useGetAllRoles";
-import { UserRole } from "@/types/Roles";
+import { Modal } from "../shared/Modal";
 
 interface StaffFormModalProps {
   isOpen: boolean;
@@ -55,8 +55,6 @@ export const StaffFormModal = ({
     },
   });
 
-  console.log("rerebded");
-
   const { branches } = useGetAllBranches();
 
   const branchesOptions = branches.map((branch) => ({
@@ -99,7 +97,6 @@ export const StaffFormModal = ({
       form.setValue("status", "active");
       form.setValue("branch_ids", []);
     }
-    console.log("reset");
   }, [form, initialValues, roleOptions]);
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
@@ -138,7 +135,6 @@ export const StaffFormModal = ({
             <HookFormMultiSelect
               label="الفروع"
               name="branch_ids"
-              required
               options={branchesOptions}
               placeholder="اختر الفرع"
             />
@@ -166,7 +162,7 @@ export const StaffFormModal = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-primary"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">

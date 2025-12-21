@@ -27,21 +27,10 @@ export function useLogin() {
     onSuccess: (res: LoginResponse) => {
       loginUser(res);
       queryClient.setQueryData(["me"], res.user);
-      if (res.user.role_name === "Student") {
-        navigate("/", { replace: true });
-      } else {
-        navigate(getDashboardRoute(res.user.permissions.map((p) => p.code)), {
-          replace: true,
-        });
-      }
+      navigate(getDashboardRoute(res.user.permissions.map((p) => p.code)), {
+        replace: true,
+      });
     },
-    // onSuccess: (res: LoginResponse) => {
-    //   loginUser(res);
-    //   queryClient.setQueryData(["me"], res.user);
-    //   navigate(getDashboardRoute([PermissionKeys.SYSTEM_ROLES_ALL]), {
-    //     replace: true,
-    //   });
-    // },
     onError: (err: Error & { message?: string }) => {
       console.error("Error in Login: ", err);
       toast(err.message || "Login failed", { type: "error" });

@@ -158,7 +158,6 @@ export const PermissionKeys = {
   SYSTEM_STUDENTS_VIEW: "system.students.view",
   SYSTEM_STUDENTS_ADD: "system.students.add",
   SYSTEM_STUDENTS_EDIT: "system.students.edit",
-  SYSTEM_STUDENTS_DELETE: "system.students.delete",
 
   // Penalty Staff
   PENALTY_STAFF_ALL: "penalty.staff.*",
@@ -213,9 +212,10 @@ export const PermissionKeys = {
   ACTIVITIES_PARTIES_DELETE: "activities.parties.delete",
 
   // Parents
-  PARENTS_ALL: "parents.*",
-  PARENTS_VIEW: "parents.view",
-  PARENTS_ADD: "parents.add",
-  PARENTS_EDIT: "parents.edit",
-  PARENTS_DELETE: "parents.delete",
+  PARENTS_MANAGEMENT_ALL: "parent.management.*",
+  PARENTS_MANAGEMENT_VIEW: "parent.management.view",
+  PARENTS_MANAGEMENT_ADD: "parent.management.add",
+  PARENTS_MANAGEMENT_EDIT: "parent.management.edit",
+  PARENTS_LINK_CHILD: "parent.link_child",
+  PARENTS_UNLINK_CHILD: "parent.unlink_child",
 } as const;

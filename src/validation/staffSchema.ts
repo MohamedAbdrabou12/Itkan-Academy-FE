@@ -30,7 +30,7 @@ export const staffSchema = z.object({
   role_id: z.string(),
   branch_ids: z
     .array(z.string(), "الفرع مطلوب")
-    .min(1, "الفرع مطلوب")
+    .optional()
     .default([])
     .optional(),
   status: z

@@ -1,25 +1,32 @@
-import { useEffect, useState, useMemo, type ReactNode } from "react";
-import { useForm, FormProvider, type SubmitHandler, type Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import apiReq from "@/services/apiReq";
+import { ParentStatus, RelationshipType } from "@/types/Parents";
 import {
   parentCreateSchema,
   parentUpdateSchema,
   type ParentCreateForm,
   type ParentUpdateForm,
 } from "@/validation/parentSchema";
-import { RelationshipType, ParentStatus } from "@/types/Parents";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Briefcase, Mail, MapPin, Phone, User } from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  FormProvider,
+  useForm,
+  type Resolver,
+  type SubmitHandler,
+} from "react-hook-form";
+import { z } from "zod";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormSelect from "../forms/HookFormSelect";
-import apiReq from "@/services/apiReq";
-import { User, Mail, Phone, Briefcase, MapPin } from "lucide-react";
 
 const parentBaseFormSchema = z.object({
   children_ids: z.array(z.number()).optional().nullable(),
 });
 
 const ParentCreateFormSchema = parentCreateSchema.merge(parentBaseFormSchema);
-const ParentUpdateFormSchema = parentUpdateSchema.merge(parentBaseFormSchema.partial());
+const ParentUpdateFormSchema = parentUpdateSchema.merge(
+  parentBaseFormSchema.partial(),
+);
 
 type ParentFormBaseData = z.infer<typeof ParentCreateFormSchema>;
 
@@ -37,15 +44,23 @@ type ParentFormModalProps = {
     address?: string | null;
     relationship_type: RelationshipType;
     user: { full_name: string; email: string; phone?: string | null };
-    children?: { student_id: number; full_name?: string; email?: string | null }[];
+    children?: {
+      student_id: number;
+      full_name?: string;
+      email?: string | null;
+    }[];
     status?: ParentStatus;
   };
   isEditing?: boolean;
   isSubmitting?: boolean;
-  apiError?: string | null; 
+  apiError?: string | null;
 };
 
-type StudentOption = { student_id: number; full_name: string; email?: string | null };
+type StudentOption = {
+  student_id: number;
+  full_name: string;
+  email?: string | null;
+};
 
 const ICONS: Record<string, ReactNode> = {
   full_name: <User size={16} className="text-emerald-600" />,
@@ -63,8 +78,8 @@ const relationshipOptions = [
 
 const statusOptions = [
   { value: ParentStatus.ACTIVE, label: "نشط" },
-  { value: ParentStatus.PENDING, label: "معلق" }, 
-  { value: ParentStatus.REJECTED, label: "مرفوض" }, 
+  { value: ParentStatus.PENDING, label: "معلق" },
+  { value: ParentStatus.REJECTED, label: "مرفوض" },
   { value: ParentStatus.DEACTIVE, label: "مغلق" },
 ];
 
@@ -75,7 +90,7 @@ export const ParentFormModal = ({
   initialData,
   isEditing = false,
   isSubmitting = false,
-  apiError = null, 
+  apiError = null,
 }: ParentFormModalProps) => {
   const schema = isEditing ? ParentUpdateFormSchema : ParentCreateFormSchema;
   type FormData = z.infer<typeof schema>;
@@ -132,7 +147,7 @@ export const ParentFormModal = ({
           student_id: c.student_id,
           full_name: c.full_name ?? `ID ${c.student_id}`,
           email: c.email ?? null,
-        })) ?? []
+        })) ?? [],
       );
     } else {
       form.reset({
@@ -146,7 +161,7 @@ export const ParentFormModal = ({
         children_ids: [],
       } as FormData);
     }
-  }, [initialData, isOpen, form, onCloseHandler]); 
+  }, [initialData, isOpen, form, onCloseHandler]);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -158,11 +173,19 @@ export const ParentFormModal = ({
     const timer = setTimeout(async () => {
       setLoadingSuggestions(true);
       try {
-        const res = (await apiReq("GET", `/students/?search=${encodeURIComponent(query)}&size=10`)) as {
+        const res = (await apiReq(
+          "GET",
+          `/students/?search=${encodeURIComponent(query)}&size=10`,
+        )) as {
           items: StudentOption[];
         };
         if (!cancelled)
-          setSuggestions(res.items.filter((it) => !selectedStudents.some((s) => s.student_id === it.student_id)));
+          setSuggestions(
+            res.items.filter(
+              (it) =>
+                !selectedStudents.some((s) => s.student_id === it.student_id),
+            ),
+          );
       } catch {
         if (!cancelled) setSuggestions([]);
       } finally {
@@ -176,7 +199,10 @@ export const ParentFormModal = ({
     };
   }, [query, selectedStudents]);
 
-  const suggestionsList = useMemo(() => suggestions.slice(0, 10), [suggestions]);
+  const suggestionsList = useMemo(
+    () => suggestions.slice(0, 10),
+    [suggestions],
+  );
 
   const addStudent = (s: StudentOption) => {
     setSelectedStudents((prev) => [...prev, s]);
@@ -193,7 +219,7 @@ export const ParentFormModal = ({
       Object.entries(data).map(([key, value]) => [
         key,
         value === "" ? null : value,
-      ])
+      ]),
     ) as FormData;
 
     const childrenIds = selectedStudents.map((s) => s.student_id);
@@ -207,33 +233,45 @@ export const ParentFormModal = ({
         children_ids: childrenIds,
       };
     } else {
-      if (!cleanedData.full_name || !cleanedData.email || !cleanedData.relationship_type) return;
+      if (
+        !cleanedData.full_name ||
+        !cleanedData.email ||
+        !cleanedData.relationship_type
+      )
+        return;
       payload = {
         ...(cleanedData as ParentCreateForm),
         children_ids: childrenIds,
       };
     }
 
-    onSubmit(payload).then(() => {}).catch(() => {});
+    onSubmit(payload)
+      .then(() => {})
+      .catch(() => {});
   };
 
   if (!isOpen) return null;
 
-  const isSubmittingOrClosing = isSubmitting; 
+  const isSubmittingOrClosing = isSubmitting;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 px-4">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-        <h3 className="text-xl font-semibold text-emerald-700 mb-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
+        <h3 className="mb-6 text-xl font-semibold text-emerald-700">
           {isEditing ? "تعديل ولي الأمر" : "إضافة ولي أمر جديد"}
         </h3>
 
         <FormProvider {...form}>
-          <form onSubmit={form.handleSubmit(onSubmitHandler)} autoComplete="off">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+          <form
+            onSubmit={form.handleSubmit(onSubmitHandler)}
+            autoComplete="off"
+          >
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {apiError && (
-                <div className="md:col-span-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <div
+                  className="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700 md:col-span-2"
+                  role="alert"
+                >
                   <strong className="font-bold">خطأ: </strong>
                   <span className="block sm:inline">{apiError}</span>
                 </div>
@@ -272,7 +310,7 @@ export const ParentFormModal = ({
                 placeholder="ادخل العنوان"
                 icon={ICONS.address}
               />
-              
+
               <HookFormSelect
                 label="نوع العلاقة"
                 name="relationship_type"
@@ -280,7 +318,7 @@ export const ParentFormModal = ({
                 placeholder="اختر نوع العلاقة"
                 required
               />
-              
+
               <HookFormSelect
                 label="الحالة"
                 name="status"
@@ -289,45 +327,55 @@ export const ParentFormModal = ({
                 required
               />
 
-              <div className="md:col-span-2 relative z-10">
-                <label className="block text-sm font-medium text-gray-700 mb-1">إضافة / إزالة الأبناء المرتبطين</label>
-                
-                <div className="flex flex-wrap gap-2 mb-2 p-2 border border-gray-300 rounded-md min-h-10">
+              <div className="relative z-10 md:col-span-2">
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  إضافة / إزالة الأبناء المرتبطين
+                </label>
+
+                <div className="mb-2 flex min-h-10 flex-wrap gap-2 rounded-md border border-gray-300 p-2">
                   {selectedStudents.map((s) => (
                     <div
                       key={s.student_id}
-                      className="flex items-center gap-2 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300"
+                      className="flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-100 px-3 py-1 text-emerald-800"
                     >
                       <span className="text-sm font-medium">{s.full_name}</span>
                       <button
                         type="button"
                         onClick={() => removeStudent(s.student_id)}
-                        className="text-sm text-emerald-600 hover:text-red-700 transition"
+                        className="text-sm text-emerald-600 transition hover:text-red-700"
                         title="إزالة الطالب"
                       >
                         ×
                       </button>
                     </div>
                   ))}
-                  {selectedStudents.length === 0 && <span className="text-sm text-gray-500">لا يوجد أبناء مرتبطين حالياً.</span>}
+                  {selectedStudents.length === 0 && (
+                    <span className="text-sm text-gray-500">
+                      لا يوجد أبناء مرتبطين حالياً.
+                    </span>
+                  )}
                 </div>
-                
+
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm p-2 mt-2 focus:border-emerald-500 focus:ring-emerald-500"
+                  className="mt-2 w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
                   placeholder="ابحث عن طالب بالاسم أو البريد وأضفه..."
                 />
 
-                {loadingSuggestions && <div className="text-sm text-gray-500 mt-1 p-2">جارٍ البحث عن الطلاب...</div>}
+                {loadingSuggestions && (
+                  <div className="mt-1 p-2 text-sm text-gray-500">
+                    جارٍ البحث عن الطلاب...
+                  </div>
+                )}
                 {!loadingSuggestions && query && suggestionsList.length > 0 && (
-                  <div className="absolute right-0 mt-1 max-h-48 overflow-y-auto rounded-md border bg-white shadow-lg w-full z-20">
+                  <div className="absolute right-0 z-20 mt-1 max-h-48 w-full overflow-y-auto rounded-md border bg-white shadow-lg">
                     {suggestionsList.map((s) => (
                       <button
                         key={s.student_id}
                         type="button"
                         onClick={() => addStudent(s)}
-                        className="w-full text-right px-3 py-2 hover:bg-gray-50 border-b last:border-b-0"
+                        className="w-full border-b px-3 py-2 text-right last:border-b-0 hover:bg-gray-50"
                       >
                         <div className="text-sm font-medium">{s.full_name}</div>
                         <div className="text-xs text-gray-500">{s.email}</div>
@@ -335,9 +383,13 @@ export const ParentFormModal = ({
                     ))}
                   </div>
                 )}
-                {!loadingSuggestions && query && suggestionsList.length === 0 && (
-                     <div className="text-sm text-gray-500 mt-1 p-2">لا توجد نتائج مطابقة.</div>
-                )}
+                {!loadingSuggestions &&
+                  query &&
+                  suggestionsList.length === 0 && (
+                    <div className="mt-1 p-2 text-sm text-gray-500">
+                      لا توجد نتائج مطابقة.
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -353,9 +405,13 @@ export const ParentFormModal = ({
               <button
                 type="submit"
                 disabled={isSubmittingOrClosing}
-                className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 transition"
+                className="btn-primary"
               >
-                {isSubmittingOrClosing ? "جاري الحفظ..." : isEditing ? "تحديث" : "إضافة"}
+                {isSubmittingOrClosing
+                  ? "جاري الحفظ..."
+                  : isEditing
+                    ? "تحديث"
+                    : "إضافة"}
               </button>
             </div>
           </form>

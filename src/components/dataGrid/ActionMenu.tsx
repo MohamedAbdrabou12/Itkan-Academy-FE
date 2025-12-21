@@ -18,7 +18,7 @@ const ActionMenu = <T extends Record<string, unknown>>({
 
   const disableEditing =
     checkReservedRoles &&
-    !["Student", "Teacher", "Parent"].includes(item.name as string);
+    ["Student", "Teacher", "Parent"].includes(item.name as string);
 
   const actions = [
     ...(onView
@@ -58,7 +58,7 @@ const ActionMenu = <T extends Record<string, unknown>>({
   if (!actions.length) return null;
 
   return (
-    <div ref={menuRef} className="relative">
+    <div ref={menuRef}>
       {!disableEditing && (
         <button
           onClick={() => setIsOpen((prev) => !prev)}

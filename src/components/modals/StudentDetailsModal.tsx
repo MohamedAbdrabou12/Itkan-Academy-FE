@@ -1,8 +1,20 @@
-import type { StudentDetails } from "@/types/Students";
-import type { ReactNode } from "react";
-import { User, Mail, Phone, MapPin, BookOpen, CheckCircle, Calendar, CalendarCheck, Clock, Hash, CreditCard } from "lucide-react";
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
+import type { StudentDetails } from "@/types/Students";
+import {
+  BookOpen,
+  Calendar,
+  CalendarCheck,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  Hash,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+} from "lucide-react";
+import type { ReactNode } from "react";
 
 interface StudentDetailsModalProps {
   isOpen: boolean;
@@ -11,18 +23,54 @@ interface StudentDetailsModalProps {
 }
 
 const fieldsWithIcons: Record<string, { label: string; icon: ReactNode }> = {
-  id: { label: "رقم الطالب", icon: <Hash className="w-4 h-4 text-emerald-600" /> },
-  student_id: { label: "معرف الطالب", icon: <Hash className="w-4 h-4 text-emerald-600" /> },
-  full_name: { label: "الاسم الكامل", icon: <User className="w-4 h-4 text-emerald-600" /> },
-  national_id: { label: "الرقم القومي", icon: <CreditCard className="w-4 h-4 text-emerald-600" /> },
-  email: { label: "البريد الإلكتروني", icon: <Mail className="w-4 h-4 text-emerald-600" /> },
-  phone: { label: "الهاتف", icon: <Phone className="w-4 h-4 text-emerald-600" /> },
-  branches: { label: "الفروع", icon: <MapPin className="w-4 h-4 text-emerald-600" /> },
-  classes: { label: "الفصول", icon: <BookOpen className="w-4 h-4 text-emerald-600" /> },
-  admission_date: { label: "تاريخ القبول", icon: <CalendarCheck className="w-4 h-4 text-emerald-600" /> },
-  status: { label: "الحالة", icon: <CheckCircle className="w-4 h-4 text-emerald-600" /> },
-  created_at: { label: "تاريخ الإنشاء", icon: <Calendar className="w-4 h-4 text-emerald-600" /> },
-  updated_at: { label: "آخر تحديث", icon: <Clock className="w-4 h-4 text-emerald-600" /> },
+  id: {
+    label: "رقم الطالب",
+    icon: <Hash className="h-4 w-4 text-emerald-600" />,
+  },
+  student_id: {
+    label: "معرف الطالب",
+    icon: <Hash className="h-4 w-4 text-emerald-600" />,
+  },
+  full_name: {
+    label: "الاسم الكامل",
+    icon: <User className="h-4 w-4 text-emerald-600" />,
+  },
+  national_id: {
+    label: "الرقم القومي",
+    icon: <CreditCard className="h-4 w-4 text-emerald-600" />,
+  },
+  email: {
+    label: "البريد الإلكتروني",
+    icon: <Mail className="h-4 w-4 text-emerald-600" />,
+  },
+  phone: {
+    label: "الهاتف",
+    icon: <Phone className="h-4 w-4 text-emerald-600" />,
+  },
+  branches: {
+    label: "الفروع",
+    icon: <MapPin className="h-4 w-4 text-emerald-600" />,
+  },
+  classes: {
+    label: "الفصول",
+    icon: <BookOpen className="h-4 w-4 text-emerald-600" />,
+  },
+  admission_date: {
+    label: "تاريخ القبول",
+    icon: <CalendarCheck className="h-4 w-4 text-emerald-600" />,
+  },
+  status: {
+    label: "الحالة",
+    icon: <CheckCircle className="h-4 w-4 text-emerald-600" />,
+  },
+  created_at: {
+    label: "تاريخ الإنشاء",
+    icon: <Calendar className="h-4 w-4 text-emerald-600" />,
+  },
+  updated_at: {
+    label: "آخر تحديث",
+    icon: <Clock className="h-4 w-4 text-emerald-600" />,
+  },
 };
 
 const statusArabic: Record<string, string> = {
@@ -32,7 +80,11 @@ const statusArabic: Record<string, string> = {
   deactive: "غير نشط",
 };
 
-export const StudentDetailsModal = ({ isOpen, onClose, student }: StudentDetailsModalProps) => {
+export const StudentDetailsModal = ({
+  isOpen,
+  onClose,
+  student,
+}: StudentDetailsModalProps) => {
   const { branches } = useGetAllBranches();
   const { classes } = useGetClassesByBranches(student.branch_ids?.map(String));
 
@@ -58,7 +110,12 @@ export const StudentDetailsModal = ({ isOpen, onClose, student }: StudentDetails
     }
 
     if (Array.isArray(value)) {
-      if (value.length > 0 && typeof value[0] === "object" && value[0] !== null && "name" in (value[0] as Record<string, unknown>)) {
+      if (
+        value.length > 0 &&
+        typeof value[0] === "object" &&
+        value[0] !== null &&
+        "name" in (value[0] as Record<string, unknown>)
+      ) {
         return value.map((v) => (v as { name: string }).name).join("، ");
       }
       return value.join("، ");
@@ -70,15 +127,17 @@ export const StudentDetailsModal = ({ isOpen, onClose, student }: StudentDetails
   const allowedFields = Object.keys(fieldsWithIcons);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 px-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-8 overflow-y-auto max-h-[85vh]">
-        <div className="flex items-center mb-6">
-          <User className="w-7 h-7 text-emerald-600 mr-3" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div className="max-h-[85vh] w-full max-w-4xl overflow-y-auto rounded-3xl bg-white p-8 shadow-2xl">
+        <div className="mb-6 flex items-center">
+          <User className="mr-3 h-7 w-7 text-emerald-600" />
           <h2 className="text-3xl font-bold text-emerald-700">تفاصيل الطالب</h2>
         </div>
-        <p className="text-gray-900 mb-8 text-sm">عرض معلومات الطالب الأساسية</p>
+        <p className="mb-8 text-sm text-gray-900">
+          عرض معلومات الطالب الأساسية
+        </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {allowedFields.map((key) => {
             if (key === "curriculum_progress") return null;
             const field = fieldsWithIcons[key];
@@ -86,12 +145,16 @@ export const StudentDetailsModal = ({ isOpen, onClose, student }: StudentDetails
             return (
               <div
                 key={key}
-                className="flex items-start gap-3 bg-white p-4 rounded-xl border border-gray-200 shadow hover:shadow-lg transition duration-200"
+                className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow transition duration-200 hover:shadow-lg"
               >
                 <div className="mt-1">{field.icon}</div>
                 <div className="flex flex-col">
-                  <span className="font-semibold text-emerald-600 text-sm">{field.label}</span>
-                  <span className="text-black text-sm mt-1">{renderValue(key, value)}</span>
+                  <span className="text-sm font-semibold text-emerald-600">
+                    {field.label}
+                  </span>
+                  <span className="mt-1 text-sm text-black">
+                    {renderValue(key, value)}
+                  </span>
                 </div>
               </div>
             );
@@ -101,7 +164,7 @@ export const StudentDetailsModal = ({ isOpen, onClose, student }: StudentDetails
         <div className="mt-10 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-md"
+            className="rounded-lg bg-emerald-600 px-6 py-2.5 text-white shadow-md transition hover:bg-emerald-700"
           >
             إغلاق
           </button>

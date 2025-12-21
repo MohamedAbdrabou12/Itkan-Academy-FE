@@ -1,20 +1,20 @@
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
+import { useCreateTeacher } from "@/hooks/teachers/useCreateTeacher";
+import { useUpdateTeacher } from "@/hooks/teachers/useUpdateTeacher";
+import { teacherSchema, type TeacherFormData } from "@/validation/teacher";
+import { useEffect } from "react";
 import {
   FormProvider,
   useForm,
   useWatch,
   type Resolver,
 } from "react-hook-form";
-import { Modal } from "../shared/Modal";
-import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
-import { teacherSchema, type TeacherFormData } from "@/validation/teacher";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
-import { useEffect } from "react";
-import { useCreateTeacher } from "@/hooks/teachers/useCreateTeacher";
-import { useUpdateTeacher } from "@/hooks/teachers/useUpdateTeacher";
+import { Modal } from "../shared/Modal";
 
 interface TeacherFormModalProps {
   isOpen: boolean;
@@ -153,7 +153,7 @@ export const TeacherFormModal = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-primary"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">

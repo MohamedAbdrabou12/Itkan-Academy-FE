@@ -377,10 +377,9 @@ const ParentsGridPage = () => {
         entityName="ولي أمر"
         searchPlaceholder="ابحث باسم أو بريد ولي الأمر..."
         pageSizeOptions={PAGE_SIZE_OPTIONS}
-        viewPermission={PermissionKeys.PARENTS_VIEW}
-        addPermission={PermissionKeys.PARENTS_ADD}
-        editPermission={PermissionKeys.PARENTS_EDIT}
-        deletePermission={PermissionKeys.PARENTS_DELETE}
+        viewPermission={PermissionKeys.PARENTS_MANAGEMENT_VIEW}
+        addPermission={PermissionKeys.PARENTS_MANAGEMENT_ADD}
+        editPermission={PermissionKeys.PARENTS_MANAGEMENT_EDIT}
         enableSearch
       />
 
