@@ -46,7 +46,7 @@ export const navLinks = [
     title: "أولياء الأمور",
     icon: Users,
     url: "/itkan-dashboard/parents",
-    permission: PermissionKeys.PARENTS_VIEW,
+    permissions: [PermissionKeys.SYSTEM_PARENTS_VIEW],
   },
   {
     id: "classes",
