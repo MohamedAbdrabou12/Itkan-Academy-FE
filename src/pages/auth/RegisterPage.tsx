@@ -1,4 +1,5 @@
 import { useRegister } from "@/hooks/auth/useRegister";
+import type { RegisterFormData as RegisterPayload } from "@/hooks/auth/useRegister";
 import { User, Mail, Phone, Lock, BookOpen, Eye, EyeOff, ClipboardList } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -6,10 +7,9 @@ import { Link } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import RegisterImage from "@/components/assets/5.jpg";
 
-
 interface RegisterFormData {
   full_name: string;
-  email: string;
+  email?: string;
   phone: string;
   national_id: string;
   password: string;
@@ -17,21 +17,24 @@ interface RegisterFormData {
 }
 
 export default function RegisterPage() {
-  const { register, handleSubmit, getValues, formState: { errors, isSubmitting } } =
-    useForm<RegisterFormData>();
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
   const { register: registerUser, isPending } = useRegister();
 
   const onSubmit = async (data: RegisterFormData) => {
-    const payload = {
+    const payload: RegisterPayload = {
       full_name: data.full_name,
-      email: data.email,
       phone: data.phone,
       national_id: data.national_id,
       password: data.password,
     };
+    if (data.email) payload.email = data.email;
     registerUser(payload);
   };
 
@@ -51,22 +54,18 @@ export default function RegisterPage() {
           transition={{ duration: 0.8 }}
           className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-5"
         >
-          {/* FORM SECTION */}
           <div className="p-8 sm:p-12 lg:p-14 order-2 lg:order-1 lg:col-span-3">
             <div className="text-center mb-10">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <BookOpen className="h-8 w-8 text-emerald-600" />
                 <span className="text-xl font-extrabold text-gray-900">مدرسة الإتقان</span>
               </div>
-
               <h2 className="text-3xl font-bold text-gray-900 mb-2">تسجيل طالب جديد</h2>
               <p className="text-gray-500 text-sm">ابدأ رحلتك في حفظ القرآن الكريم</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
-
-                {/* Full Name */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-1">
                     <User className="h-5 w-5 text-emerald-600" />
@@ -81,12 +80,9 @@ export default function RegisterPage() {
                     className={InputClass}
                     placeholder="ادخل الاسم الكامل"
                   />
-                  <p className="mt-1 text-xs text-red-600 min-h-5">
-                    {errors.full_name?.message || " "}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600 min-h-5">{errors.full_name?.message || " "}</p>
                 </div>
 
-                {/* Phone */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-1">
                     <Phone className="h-5 w-5 text-emerald-600" />
@@ -101,32 +97,25 @@ export default function RegisterPage() {
                     className={InputClass}
                     placeholder="ادخل رقم الهاتف"
                   />
-                  <p className="mt-1 text-xs text-red-600 min-h-5">
-                    {errors.phone?.message || " "}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600 min-h-5">{errors.phone?.message || " "}</p>
                 </div>
 
-                {/* Email */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-1">
                     <Mail className="h-5 w-5 text-emerald-600" />
-                    <label className="text-sm font-medium text-gray-700">البريد الإلكتروني *</label>
+                    <label className="text-sm font-medium text-gray-700">البريد الإلكتروني</label>
                   </div>
                   <input
                     type="email"
                     {...register("email", {
-                      required: "البريد الإلكتروني مطلوب",
                       pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "البريد الإلكتروني غير صالح" },
                     })}
                     className={InputClass}
                     placeholder="example@email.com"
                   />
-                  <p className="mt-1 text-xs text-red-600 min-h-5">
-                    {errors.email?.message || " "}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600 min-h-5">{errors.email?.message || " "}</p>
                 </div>
 
-                {/* National ID */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-1">
                     <ClipboardList className="h-5 w-5 text-emerald-600" />
@@ -142,12 +131,9 @@ export default function RegisterPage() {
                     className={InputClass}
                     placeholder="ادخل الرقم القومي"
                   />
-                  <p className="mt-1 text-xs text-red-600 min-h-5">
-                    {errors.national_id?.message || " "}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600 min-h-5">{errors.national_id?.message || " "}</p>
                 </div>
 
-                {/* Password */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-1">
                     <Lock className="h-5 w-5 text-emerald-600" />
@@ -155,7 +141,7 @@ export default function RegisterPage() {
                   </div>
                   <div className="relative">
                     <input
-                      type={showPassword ? "text" : "password"}
+                      type={showPasswords ? "text" : "password"}
                       {...register("password", {
                         required: "كلمة المرور مطلوبة",
                         minLength: { value: 8, message: "كلمة المرور يجب أن تكون 8 أحرف على الأقل" },
@@ -165,10 +151,10 @@ export default function RegisterPage() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowPasswords(prev => !prev)}
                       className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-500 hover:text-emerald-600 transition"
                     >
-                      {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                      {showPasswords ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                     </button>
                   </div>
                   <p className={`mt-1 text-xs ${errors.password ? "text-red-600" : "text-gray-500"} min-h-5`}>
@@ -176,7 +162,6 @@ export default function RegisterPage() {
                   </p>
                 </div>
 
-                {/* Confirm Password */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 mb-1">
                     <Lock className="h-5 w-5 text-emerald-600" />
@@ -184,25 +169,24 @@ export default function RegisterPage() {
                   </div>
                   <div className="relative">
                     <input
-                      type={showConfirmPassword ? "text" : "password"}
+                      type={showPasswords ? "text" : "password"}
                       {...register("confirmPassword", {
                         required: "تأكيد كلمة المرور مطلوب",
-                        validate: value => value === getValues("password") || "كلمة المرور غير متطابقة",
+                        validate: value =>
+                          value === getValues("password") || "كلمة المرور غير متطابقة",
                       })}
                       className={PasswordInputClass}
                       placeholder="اعد كتابة كلمة المرور"
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() => setShowPasswords(prev => !prev)}
                       className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-500 hover:text-emerald-600 transition"
                     >
-                      {showConfirmPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+                      {showPasswords ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
                     </button>
                   </div>
-                  <p className="mt-1 text-xs text-red-600 min-h-5">
-                    {errors.confirmPassword?.message || " "}
-                  </p>
+                  <p className="mt-1 text-xs text-red-600 min-h-5">{errors.confirmPassword?.message || " "}</p>
                 </div>
               </div>
 
@@ -227,7 +211,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* IMAGE SECTION */}
           <div className="relative h-64 lg:h-auto order-1 lg:order-2 lg:col-span-2 bg-black">
             <img
               src={RegisterImage}
@@ -235,13 +218,6 @@ export default function RegisterPage() {
               className="absolute inset-0 h-full w-full object-cover opacity-70"
             />
             <div className="absolute inset-0 bg-emerald-700/40 backdrop-brightness-100"></div>
-            <div className="hidden lg:flex absolute inset-0 items-center justify-center p-10 text-black flex-col z-10">
-              {/* <BookOpen className="h-14 w-14 mb-4 text-emerald-600" /> */}
-              {/* <h3 className="text-3xl font-extrabold mb-2">مدرسة الاتقان</h3>
-              <p className="text-center text-lg font-medium leading-relaxed">
-                منارة علم وهداية لتحفيظ كتاب الله وتعليم أحكام التجويد
-              </p> */}
-            </div>
           </div>
         </motion.section>
       </AnimatePresence>
