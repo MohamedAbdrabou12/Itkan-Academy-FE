@@ -45,7 +45,7 @@ const GridTable = <T extends Record<string, unknown>>({
   );
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-100">
+    <div className="overflow-x-auto border border-gray-100">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -92,7 +92,7 @@ const GridTable = <T extends Record<string, unknown>>({
           {data.map((row, index) => (
             <tr
               key={index}
-              className="transition-colors hover:bg-gray-50 even:bg-gray-50/40"
+              className=" hover:bg-gray-50"
             >
               {columns.map((column) => (
                 <td

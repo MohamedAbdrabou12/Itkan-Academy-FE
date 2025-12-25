@@ -1,5 +1,5 @@
 import { useClickOutsideModal } from "@/hooks/useClickOutsideModal";
-import type { FormField, FormComponents } from "@/types/Forms";
+import type { FormComponents, FormField } from "@/types/Forms";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
@@ -146,7 +146,7 @@ export const GenericFormModal = <T extends z.ZodType>({
 
     // Validate single field using the full schema but only checking this field
     try {
-      const fieldSchema = schema.shape[fieldName as keyof typeof schema.shape];  
+      const fieldSchema = schema.shape[fieldName as keyof typeof schema.shape];
       if (fieldSchema) {
         fieldSchema.parse(formData[fieldName as keyof FormData] || "");
         setErrors((prev) => ({
@@ -301,7 +301,7 @@ export const GenericFormModal = <T extends z.ZodType>({
               <button
                 type="submit"
                 disabled={isSubmitting || !isFormValid() || !isFormDirty()}
-                className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="btn-primary"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">

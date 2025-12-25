@@ -39,3 +39,4 @@ export const dashboardRouting = [
     permission: PermissionKeys.SYSTEM_TEACHERS_VIEW,
   },
 ];
+

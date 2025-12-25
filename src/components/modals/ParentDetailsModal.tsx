@@ -1,7 +1,7 @@
 import type { ParentDetails } from "@/types/Parents";
 import type { StudentDetails } from "@/types/Students";
+import { Briefcase, Hash, Home, Link2, Mail, MapPin, Phone, User } from "lucide-react";
 import { useState } from "react";
-import { User, Mail, Phone, MapPin, Hash, Briefcase, Home, Link2 } from "lucide-react";
 import { StudentDetailsModal } from "./StudentDetailsModal";
 
 interface ParentDetailsModalProps {

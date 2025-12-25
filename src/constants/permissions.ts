@@ -158,7 +158,6 @@ export const PermissionKeys = {
   SYSTEM_STUDENTS_VIEW: "system.students.view",
   SYSTEM_STUDENTS_ADD: "system.students.add",
   SYSTEM_STUDENTS_EDIT: "system.students.edit",
-  SYSTEM_STUDENTS_DELETE: "system.students.delete",
 
   // System Parents Permissions
   SYSTEM_PARENTS_ALL: "system.parents.*",

@@ -53,7 +53,7 @@ export function SortableQuestionItem({
           options={questionOptions}
           disabled={isPending}
           placeholder="اختر السؤال"
-          className="!mb-4"
+          className="mb-4!"
           required
           enableSearch
         />

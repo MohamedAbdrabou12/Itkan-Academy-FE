@@ -65,7 +65,7 @@ const DataGrid = <T extends Record<string, unknown>>({
           />
         )}
 
-        <div className="px-2 sm:px-3">
+        <div>
           {loading && <Spinner />}
 
           {error && <GridError message={error} />}

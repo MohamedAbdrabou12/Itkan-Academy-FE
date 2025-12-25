@@ -10,15 +10,15 @@ import {
 import { Modal } from "../shared/Modal";
 
 import { useCreateClass } from "@/hooks/classes/useCreateClass";
+import { useUpdateClass } from "@/hooks/classes/useUpdateClass";
 import type { AddClassRequest, Class } from "@/types/classes";
+import { evaluationConfigOptions } from "@/utils/evaluationConfigOptions";
+import { arabicDaysOptions } from "@/utils/getArabicDayName";
 import { classSchema, type ClassFormData } from "@/validation/classSchema";
 import { useEffect } from "react";
 import HookFormInput from "../forms/HookFormInput";
-import HookFormSelect from "../forms/HookFormSelect";
-import { useUpdateClass } from "@/hooks/classes/useUpdateClass";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
-import { arabicDaysOptions } from "@/utils/getArabicDayName";
-import { evaluationConfigOptions } from "@/utils/evaluationConfigOptions";
+import HookFormSelect from "../forms/HookFormSelect";
 
 interface ClassFormModalProps {
   isOpen: boolean;
@@ -198,7 +198,7 @@ export const ClassFormModal = ({
               onClick={() => {
                 console.log(form);
               }}
-              className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-primary"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">

@@ -15,6 +15,21 @@ import {
 } from "lucide-react";
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
+import type { StudentDetails } from "@/types/Students";
+import {
+  BookOpen,
+  Calendar,
+  CalendarCheck,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  Hash,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+} from "lucide-react";
+import type { ReactNode } from "react";
 
 interface StudentDetailsModalProps {
   isOpen: boolean;
@@ -110,7 +125,7 @@ export const StudentDetailsModal = ({
           عرض معلومات الطالب الأساسية
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {allowedFields.map((key) => {
             if (key === "curriculum_progress") return null;
 
@@ -139,7 +154,7 @@ export const StudentDetailsModal = ({
         <div className="mt-10 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition shadow-md"
+            className="rounded-lg bg-emerald-600 px-6 py-2.5 text-white shadow-md transition hover:bg-emerald-700"
           >
             إغلاق
           </button>

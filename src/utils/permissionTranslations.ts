@@ -15,6 +15,7 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   students: "طلاب",
   student: "طلاب",
   training: "تدريب",
+  parent: "أولياء الأمور",
 
   // Modules
   curriculum: "المناهج",
@@ -43,6 +44,11 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   accounts: "الحسابات",
   expenses: "المصروفات",
   users: "المستخدمين",
+  question_bank: "بنك الاسئلة",
+  evaluations: "تقييمات",
+  finance: "المالية",
+  link_child: "ربط طفل",
+  unlink_child: "فصل طفل",
 
   // Actions
   view: "عرض",

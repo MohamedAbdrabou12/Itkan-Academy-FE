@@ -1,14 +1,21 @@
-import { useEffect, useState, useMemo, type ReactNode } from "react";
-import { useForm, FormProvider, type SubmitHandler, type Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import apiReq from "@/services/apiReq";
+import { ParentStatus, RelationshipType } from "@/types/Parents";
 import {
   parentCreateSchema,
   parentUpdateSchema,
   type ParentCreateForm,
   type ParentUpdateForm,
 } from "@/validation/parentSchema";
-import { RelationshipType, ParentStatus } from "@/types/Parents";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Briefcase, Mail, MapPin, Phone, User } from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  FormProvider,
+  useForm,
+  type Resolver,
+  type SubmitHandler,
+} from "react-hook-form";
+import { z } from "zod";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormSelect from "../forms/HookFormSelect";
 import apiReq from "@/services/apiReq";
@@ -45,7 +52,11 @@ type ParentFormModalProps = {
     address?: string | null;
     relationship_type: RelationshipType;
     user: { full_name: string; email: string; phone?: string | null };
-    children?: { student_id: number; full_name?: string; email?: string | null }[];
+    children?: {
+      student_id: number;
+      full_name?: string;
+      email?: string | null;
+    }[];
     status?: ParentStatus;
   };
   isEditing?: boolean;
@@ -53,7 +64,11 @@ type ParentFormModalProps = {
   apiError?: string | null;
 };
 
-type StudentOption = { student_id: number; full_name: string; email?: string | null };
+type StudentOption = {
+  student_id: number;
+  full_name: string;
+  email?: string | null;
+};
 
 const ICONS: Record<string, ReactNode> = {
   full_name: <User size={16} className="text-emerald-600" />,
@@ -138,7 +153,7 @@ export const ParentFormModal = ({
           student_id: c.student_id,
           full_name: c.full_name ?? `ID ${c.student_id}`,
           email: c.email ?? null,
-        })) ?? []
+        })) ?? [],
       );
     }
   }, [initialData, isOpen, form, onCloseHandler]);
@@ -152,7 +167,10 @@ export const ParentFormModal = ({
     const timer = setTimeout(async () => {
       setLoadingSuggestions(true);
       try {
-        const res = (await apiReq("GET", `/students/?search=${encodeURIComponent(query)}&size=10`)) as {
+        const res = (await apiReq(
+          "GET",
+          `/students/?search=${encodeURIComponent(query)}&size=10`,
+        )) as {
           items: StudentOption[];
         };
         setSuggestions(res.items.filter((it) => !selectedStudents.some((s) => s.student_id === it.student_id)));

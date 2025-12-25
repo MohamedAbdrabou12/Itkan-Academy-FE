@@ -23,10 +23,7 @@ const GridHeader = ({
 
       {onAddNew && (
         <PermissionGate permissions={addPermission ? [addPermission] : []}>
-          <button
-            onClick={onAddNew}
-            className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-emerald-700 hover:shadow-lg active:scale-95"
-          >
+          <button onClick={onAddNew} className="btn-primary">
             <Plus className="h-4 w-4" />
             <span>{addButtonText}</span>
           </button>
