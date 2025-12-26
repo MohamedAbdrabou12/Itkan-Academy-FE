@@ -65,6 +65,8 @@ export interface DataGridProps<T> {
   addPermission?: PERMISSION_VALUE;
   editPermission?: PERMISSION_VALUE;
   deletePermission?: PERMISSION_VALUE;
+  linkPermission?: PERMISSION_VALUE;
+  unlinkPermission?: PERMISSION_VALUE;
 }
 
 // Generic response interface for API calls

@@ -14,6 +14,13 @@ import {
 
 export const navLinks = [
   {
+    id: "branches",
+    title: "الفروع",
+    icon: Warehouse,
+    url: "/itkan-dashboard/branches",
+    permissions: [PermissionKeys.SYSTEM_BRANCHES_VIEW],
+  },
+  {
     id: "roles",
     title: "الادوار الوظيفية",
     icon: BookA,
@@ -28,13 +35,6 @@ export const navLinks = [
     permissions: [PermissionKeys.SYSTEM_STAFF_VIEW],
   },
   {
-    id: "teachers",
-    title: "المعلمين",
-    icon: UserRound,
-    url: "/itkan-dashboard/teachers",
-    permissions: [PermissionKeys.SYSTEM_TEACHERS_VIEW],
-  },
-  {
     id: "students",
     title: "الطلاب",
     icon: LucideGraduationCap,
@@ -46,14 +46,7 @@ export const navLinks = [
     title: "أولياء الأمور",
     icon: Users,
     url: "/itkan-dashboard/parents",
-    permissions: [PermissionKeys.PARENTS_MANAGEMENT_VIEW],
-  },
-  {
-    id: "branches",
-    title: "الفروع",
-    icon: Warehouse,
-    url: "/itkan-dashboard/branches",
-    permissions: [PermissionKeys.SYSTEM_BRANCHES_VIEW],
+    permissions: [PermissionKeys.SYSTEM_PARENTS_VIEW],
   },
   {
     id: "classes",
@@ -61,6 +54,20 @@ export const navLinks = [
     icon: BookmarkCheck,
     url: "/itkan-dashboard/classes",
     permissions: [PermissionKeys.SYSTEM_TEACHERS_VIEW],
+  },
+  {
+    id: "teachers",
+    title: "المعلمين",
+    icon: UserRound,
+    url: "/itkan-dashboard/teachers",
+    permissions: [PermissionKeys.SYSTEM_TEACHERS_VIEW],
+  },
+  {
+    id: "attendance_and_evaluations",
+    title: "الحضور و التقييمات",
+    icon: BookmarkCheck,
+    url: "/itkan-dashboard/attendance-and-evaluations",
+    permissions: [PermissionKeys.EVALUATION_STUDENT_VIEW],
   },
   {
     id: "reports",
@@ -88,12 +95,5 @@ export const navLinks = [
     icon: Newspaper,
     url: "/itkan-dashboard/exam_dashboard",
     permissions: [PermissionKeys.ACADEMIC_EXAMS_VIEW],
-  },
-  {
-    id: "attendance-and-evaluations",
-    title: "الحضور و التقييمات",
-    icon: BookmarkCheck,
-    url: "/itkan-dashboard/attendance-and-evaluations",
-    permissions: [PermissionKeys.EVALUATION_STUDENT_VIEW],
   },
 ];

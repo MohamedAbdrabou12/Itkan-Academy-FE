@@ -11,9 +11,9 @@ export const parentCreateSchema = z.object({
     .refine(
       (val) => {
         if (!val) return true;
-        return /^\+?\d{10,15}$/.test(val);
+        return /^01[0125][0-9]{8}$/.test(val);
       },
-      { message: "رقم الهاتف غير صحيح" }
+      { message: "رقم الهاتف غير صحيح، يجب أن يكون 11 رقم ويبدأ بـ 01" }
     ),
   occupation: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
