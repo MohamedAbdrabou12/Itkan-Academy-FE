@@ -7,7 +7,7 @@ import {
   type ParentUpdateForm,
 } from "@/validation/parentSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Briefcase, Mail, MapPin, Phone, User } from "lucide-react";
+import { Briefcase, Mail, MapPin, Phone, Search, User } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   FormProvider,
@@ -18,8 +18,6 @@ import {
 import { z } from "zod";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormSelect from "../forms/HookFormSelect";
-import apiReq from "@/services/apiReq";
-import { User, Mail, Phone, Briefcase, MapPin, Search } from "lucide-react";
 
 const phoneRegex = /^01[0125][0-9]{8}$/;
 
@@ -27,16 +25,23 @@ const parentBaseFormSchema = z.object({
   children_ids: z.array(z.number()).optional().nullable(),
 });
 
-const ExtendedCreateSchema = parentCreateSchema.merge(parentBaseFormSchema).extend({
-  phone: z.string().regex(phoneRegex, "يجب أن يكون رقم الهاتف 11 رقم ويبدأ بـ 01"),
-  occupation: z.string().min(2, "الوظيفة مطلوبة"),
-  address: z.string().min(5, "العنوان مطلوب"),
-  status: z.nativeEnum(ParentStatus).default(ParentStatus.PENDING),
-});
+const ExtendedCreateSchema = parentCreateSchema
+  .merge(parentBaseFormSchema)
+  .extend({
+    phone: z
+      .string()
+      .regex(phoneRegex, "يجب أن يكون رقم الهاتف 11 رقم ويبدأ بـ 01"),
+    occupation: z.string().min(2, "الوظيفة مطلوبة"),
+    address: z.string().min(5, "العنوان مطلوب"),
+    status: z.nativeEnum(ParentStatus).default(ParentStatus.PENDING),
+  });
 
-const ExtendedUpdateSchema = parentUpdateSchema.merge(parentBaseFormSchema.partial());
+const ExtendedUpdateSchema = parentUpdateSchema.merge(
+  parentBaseFormSchema.partial(),
+);
 
-type FormData = z.infer<typeof ExtendedCreateSchema> & z.infer<typeof ExtendedUpdateSchema>;
+type FormData = z.infer<typeof ExtendedCreateSchema> &
+  z.infer<typeof ExtendedUpdateSchema>;
 
 type ParentFormSubmitData =
   | (ParentCreateForm & { children_ids: number[] })
@@ -173,7 +178,12 @@ export const ParentFormModal = ({
         )) as {
           items: StudentOption[];
         };
-        setSuggestions(res.items.filter((it) => !selectedStudents.some((s) => s.student_id === it.student_id)));
+        setSuggestions(
+          res.items.filter(
+            (it) =>
+              !selectedStudents.some((s) => s.student_id === it.student_id),
+          ),
+        );
       } catch {
         setSuggestions([]);
       } finally {
@@ -217,68 +227,139 @@ export const ParentFormModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 px-4">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
-        <h3 className="text-xl font-semibold text-emerald-700 mb-6 text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-lg">
+        <h3 className="mb-6 text-center text-xl font-semibold text-emerald-700">
           {isEditing ? "تعديل ولي الأمر" : "إضافة ولي أمر جديد"}
         </h3>
 
         <FormProvider {...form}>
-          <form onSubmit={form.handleSubmit(onSubmitHandler)} autoComplete="off">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmitHandler)}
+            autoComplete="off"
+          >
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {apiError && (
-                <div className="md:col-span-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <div className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700 md:col-span-2">
                   <strong className="font-bold">خطأ: </strong>
                   <span>{apiError}</span>
                 </div>
               )}
 
-              <HookFormInput label="الاسم الكامل" name="full_name" placeholder="ادخل الاسم الكامل" required icon={ICONS.full_name} />
-              <HookFormInput label="البريد الإلكتروني" name="email" type="email" placeholder="example@domain.com" required icon={ICONS.email} />
-              <HookFormInput label="الهاتف" name="phone" placeholder="ادخل رقم الهاتف" required icon={ICONS.phone} />
-              <HookFormInput label="الوظيفة" name="occupation" placeholder="ادخل الوظيفة" required icon={ICONS.occupation} />
-              <HookFormInput label="العنوان" name="address" placeholder="ادخل العنوان التفصيلي" required icon={ICONS.address} />
-              
-              <HookFormSelect label="نوع العلاقة" name="relationship_type" options={relationshipOptions} required />
-              <HookFormSelect label="الحالة" name="status" options={statusOptions} disabled={!isEditing} required />
+              <HookFormInput
+                label="الاسم الكامل"
+                name="full_name"
+                placeholder="ادخل الاسم الكامل"
+                required
+                icon={ICONS.full_name}
+              />
+              <HookFormInput
+                label="البريد الإلكتروني"
+                name="email"
+                type="email"
+                placeholder="example@domain.com"
+                required
+                icon={ICONS.email}
+              />
+              <HookFormInput
+                label="الهاتف"
+                name="phone"
+                placeholder="ادخل رقم الهاتف"
+                required
+                icon={ICONS.phone}
+              />
+              <HookFormInput
+                label="الوظيفة"
+                name="occupation"
+                placeholder="ادخل الوظيفة"
+                required
+                icon={ICONS.occupation}
+              />
+              <HookFormInput
+                label="العنوان"
+                name="address"
+                placeholder="ادخل العنوان التفصيلي"
+                required
+                icon={ICONS.address}
+              />
 
-              <div className="md:col-span-2 relative">
-                <label className="block text-sm font-medium text-gray-700 mb-1">الأبناء المرتبطين</label>
-                
-                <div className="flex flex-wrap gap-2 mb-3 p-2 border border-gray-300 rounded-lg min-h-[45px] bg-gray-50/50">
+              <HookFormSelect
+                label="نوع العلاقة"
+                name="relationship_type"
+                options={relationshipOptions}
+                required
+              />
+              <HookFormSelect
+                label="الحالة"
+                name="status"
+                options={statusOptions}
+                disabled={!isEditing}
+                required
+              />
+
+              <div className="relative md:col-span-2">
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  الأبناء المرتبطين
+                </label>
+
+                <div className="mb-3 flex min-h-[45px] flex-wrap gap-2 rounded-lg border border-gray-300 bg-gray-50/50 p-2">
                   {selectedStudents.map((s) => (
-                    <div key={s.student_id} className="flex items-center gap-2 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-200 animate-in fade-in zoom-in duration-200">
-                      <span className="text-xs font-semibold">{s.full_name}</span>
-                      <button type="button" onClick={() => removeStudent(s.student_id)} className="hover:text-red-600 transition">×</button>
+                    <div
+                      key={s.student_id}
+                      className="animate-in fade-in zoom-in flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-100 px-3 py-1 text-emerald-800 duration-200"
+                    >
+                      <span className="text-xs font-semibold">
+                        {s.full_name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeStudent(s.student_id)}
+                        className="transition hover:text-red-600"
+                      >
+                        ×
+                      </button>
                     </div>
                   ))}
-                  {selectedStudents.length === 0 && <span className="text-xs text-gray-400 self-center px-2">لم يتم اختيار طلاب بعد</span>}
+                  {selectedStudents.length === 0 && (
+                    <span className="self-center px-2 text-xs text-gray-400">
+                      لم يتم اختيار طلاب بعد
+                    </span>
+                  )}
                 </div>
-                
-                <div className="relative group">
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <Search size={16} className="text-gray-400 group-focus-within:text-emerald-600 transition-colors" />
+
+                <div className="group relative">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                    <Search
+                      size={16}
+                      className="text-gray-400 transition-colors group-focus-within:text-emerald-600"
+                    />
                   </div>
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 pr-10 shadow-sm transition-all focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 focus:outline-none placeholder:text-gray-400 text-sm py-2.5"
+                    className="w-full rounded-lg border border-gray-300 py-2.5 pr-10 text-sm shadow-sm transition-all placeholder:text-gray-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20"
                     placeholder="ابحث عن طالب بالاسم أو البريد وأضفه..."
                   />
                 </div>
 
-                {loadingSuggestions && <div className="text-xs text-emerald-600 mt-2 flex items-center gap-2 px-2">جارٍ البحث...</div>}
-                
+                {loadingSuggestions && (
+                  <div className="mt-2 flex items-center gap-2 px-2 text-xs text-emerald-600">
+                    جارٍ البحث...
+                  </div>
+                )}
+
                 {!loadingSuggestions && query && suggestions.length > 0 && (
-                  <div className="absolute right-0 mt-1 max-h-48 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-xl w-full z-50">
+                  <div className="absolute right-0 z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-xl">
                     {suggestions.slice(0, 10).map((s) => (
                       <button
                         key={s.student_id}
                         type="button"
                         onClick={() => addStudent(s)}
-                        className="w-full text-right px-4 py-3 hover:bg-emerald-50 border-b border-gray-50 last:border-0 transition-colors"
+                        className="w-full border-b border-gray-50 px-4 py-3 text-right transition-colors last:border-0 hover:bg-emerald-50"
                       >
-                        <div className="text-sm font-medium text-gray-800">{s.full_name}</div>
+                        <div className="text-sm font-medium text-gray-800">
+                          {s.full_name}
+                        </div>
                         <div className="text-xs text-gray-500">{s.email}</div>
                       </button>
                     ))}
@@ -291,7 +372,7 @@ export const ParentFormModal = ({
               <button
                 type="button"
                 onClick={onCloseHandler}
-                className="rounded-lg border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                className="rounded-lg border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
                 disabled={isSubmitting}
               >
                 إلغاء
@@ -299,9 +380,13 @@ export const ParentFormModal = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="rounded-lg bg-emerald-600 px-8 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 disabled:opacity-50 transition-all"
+                className="rounded-lg bg-emerald-600 px-8 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-emerald-700 disabled:opacity-50"
               >
-                {isSubmitting ? "جاري الحفظ..." : isEditing ? "تحديث البيانات" : "إضافة ولي الأمر"}
+                {isSubmitting
+                  ? "جاري الحفظ..."
+                  : isEditing
+                    ? "تحديث البيانات"
+                    : "إضافة ولي الأمر"}
               </button>
             </div>
           </form>
