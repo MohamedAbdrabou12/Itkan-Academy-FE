@@ -28,6 +28,10 @@ import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
 import QuestionBankPage from "./pages/staff/QuestionBankPage";
 import ExamPage from "./pages/staff/ExamPage";
+import StudentExamsPage from "./pages/student/StudentExams";
+import TakeExam from "./pages/student/StudentExams/ExamTake";
+import ExamCorrection from "./pages/staff/ExamCorrection";
+import ExamCorrectionAttempts from "./pages/staff/ExamCorrectionAttempts";
 
 const App = () => {
   return (
@@ -55,6 +59,8 @@ const App = () => {
             <Route path="/branches" element={<BranchesPage />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/programs" element={<ProgramsPage />} />
+            <Route path="/studentExam" element={<StudentExamsPage />} />
+            <Route path="/exams/:examId/take" element={<TakeExam />} />
           </Route>
 
           <Route element={<ItkanDashboardLayout />}>
@@ -98,6 +104,15 @@ const App = () => {
             <Route
               path="/itkan-dashboard/exam_dashboard"
               element={<ExamPage />}
+            />
+
+            <Route
+              path="/itkan-dashboard/exam-correction/:examId"
+              element={<ExamCorrection />}
+            />
+            <Route
+              path="/itkan-dashboard/exam-correction/:examId/attempt/:attemptId"
+              element={<ExamCorrectionAttempts />}
             />
           </Route>
         </Route>
