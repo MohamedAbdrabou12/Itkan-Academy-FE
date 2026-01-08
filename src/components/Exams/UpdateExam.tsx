@@ -36,6 +36,7 @@ import { useUpdateExam } from "@/hooks/Exams/useUpdateExam";
 import { usePublishExam } from "@/hooks/Exams/usePublishExam";
 import { useCloseExam } from "@/hooks/Exams/useCloseExam";
 import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
+import { useNavigate } from "react-router";
 
 type FormData = z.infer<typeof examSchema>;
 
@@ -46,6 +47,7 @@ export default function UpdateExam({
   setActiveMood: (mood: "view" | "edit" | "add") => void;
   examToEdit: Exam | null;
 }) {
+  const navigate = useNavigate();
   const form = useForm<FormData>({
     resolver: zodResolver(examSchema) as Resolver<FormData>,
     defaultValues: {
@@ -155,6 +157,7 @@ export default function UpdateExam({
                   name="title"
                   placeholder="ادخل عنوان الامتحان"
                   type="text"
+                  disabled={examToEdit?.status != ExamStatus.DRAFT}
                   required
                 />
                 <HookFormInput
@@ -162,6 +165,7 @@ export default function UpdateExam({
                   name="duration_minutes"
                   placeholder="ادخل وقت الامتحان بالدقائق"
                   type="number"
+                  disabled={examToEdit?.status != ExamStatus.DRAFT}
                   required
                 />
               </div>
@@ -172,6 +176,7 @@ export default function UpdateExam({
                   name="start_time"
                   placeholder="قم بأختيار التاريخ"
                   type="date"
+                  disabled={examToEdit?.status != ExamStatus.DRAFT}
                   required
                 />
 
@@ -180,6 +185,7 @@ export default function UpdateExam({
                   name="end_time"
                   placeholder="قم بأختيار التاريخ"
                   type="date"
+                  disabled={examToEdit?.status != ExamStatus.DRAFT}
                   required
                 />
               </div>
@@ -188,7 +194,9 @@ export default function UpdateExam({
                 <HookFormSelect
                   label="الفصل"
                   name="class_id"
-                  disabled={!activeBranch?.id}
+                  disabled={
+                    !activeBranch?.id || examToEdit?.status != ExamStatus.DRAFT
+                  }
                   options={classesOptions}
                   placeholder="اختر الفصل"
                   required
@@ -231,6 +239,7 @@ export default function UpdateExam({
                 >
                   <SortableContext
                     items={fields.map((field) => field.id)}
+                    disabled={examToEdit?.status != ExamStatus.DRAFT}
                     strategy={verticalListSortingStrategy}
                   >
                     {fields.map((field, index) => {
@@ -293,7 +302,12 @@ export default function UpdateExam({
                       type="button"
                       className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={() => {
-                        publishExamMutation.mutate();
+                        publishExamMutation.mutate(undefined, {
+                          onSuccess: () => {
+                            setActiveMood("view");
+                            form.reset();
+                          },
+                        });
                       }}
                       disabled={
                         isPending || examToEdit?.status != ExamStatus.DRAFT
@@ -331,7 +345,12 @@ export default function UpdateExam({
                       type="button"
                       className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={() => {
-                        closeExamMutation.mutate();
+                        closeExamMutation.mutate(undefined, {
+                          onSuccess: () => {
+                            setActiveMood("view");
+                            form.reset();
+                          },
+                        });
                       }}
                       disabled={
                         isPending || examToEdit?.status != ExamStatus.PUBLISHED
@@ -363,6 +382,19 @@ export default function UpdateExam({
                       ) : (
                         "غلق"
                       )}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={() => {
+                        navigate(
+                          `/itkan-dashboard/exam-correction/${examToEdit?.id}`,
+                        );
+                      }}
+                      disabled={examToEdit?.status != ExamStatus.CLOSED}
+                    >
+                      تصحيح
                     </button>
                   </div>
 

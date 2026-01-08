@@ -1,4 +1,9 @@
+import { useGetQuestions } from "@/hooks/question_bank/useGetQuestions";
 import { useAuthStore } from "@/stores/auth";
+import { ExamStatus } from "@/types/exams";
+import { examSchema } from "@/validation/examSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
 import {
   FormProvider,
   useFieldArray,
@@ -6,18 +11,13 @@ import {
   useWatch,
   type Resolver,
 } from "react-hook-form";
+import type z from "zod";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormSelect from "../forms/HookFormSelect";
-import { Plus } from "lucide-react";
-import { ExamStatus, type ExamCreate } from "@/types/exams";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { examSchema } from "@/validation/examSchema";
-import type z from "zod";
-import { useGetQuestions } from "@/hooks/question_bank/useGetQuestions";
 
 import {
-  DndContext,
   closestCenter,
+  DndContext,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -31,9 +31,9 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { SortableQuestionItem } from "./SortableQuestionItem";
 import { useCreateExam } from "@/hooks/Exams/useCreateExam";
 import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
+import { SortableQuestionItem } from "./SortableQuestionItem";
 
 type FormData = z.infer<typeof examSchema>;
 
@@ -69,13 +69,16 @@ export default function CreateExam({
   const createExamMutation = useCreateExam();
 
   const onSubmit = (data: FormData) => {
-    const examData: ExamCreate = {
+    const examData: FormData = {
       ...data,
     };
     examData.questions = data.questions.map((question, index) => ({
       ...question,
       order: index,
     }));
+    examData.start_time = new Date(data.start_time).toISOString();
+    examData.end_time = new Date(data.end_time).toISOString();
+
     createExamMutation.mutate(examData, {
       onSuccess: () => {
         setActiveMood("view");
@@ -151,7 +154,7 @@ export default function CreateExam({
                   label="تاريخ بداية الامتحان"
                   name="start_time"
                   placeholder="قم بأختيار التاريخ"
-                  type="date"
+                  type="datetime-local"
                   required
                 />
 
@@ -159,7 +162,7 @@ export default function CreateExam({
                   label="تاريخ نهاية الامتحان"
                   name="end_time"
                   placeholder="قم بأختيار التاريخ"
-                  type="date"
+                  type="datetime-local"
                   required
                 />
               </div>

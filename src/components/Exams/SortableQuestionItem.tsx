@@ -51,7 +51,7 @@ export function SortableQuestionItem({
           label="السؤال"
           name={`questions.${index}.question_id`}
           options={questionOptions}
-          disabled={isPending}
+          disabled={isPending || examStatus != ExamStatus.DRAFT}
           placeholder="اختر السؤال"
           className="mb-4!"
           required
@@ -63,6 +63,7 @@ export function SortableQuestionItem({
           label="الدرجة"
           name={`questions.${index}.marks`}
           placeholder="ادخل درجة السؤال"
+          disabled={isPending || examStatus != ExamStatus.DRAFT}
           type="number"
           required
         />

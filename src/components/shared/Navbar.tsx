@@ -17,7 +17,7 @@ export default function Navbar() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-white shadow-lg">
+    <nav className="top-0 z-50 w-full bg-white shadow-lg">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between">
           {/* Logo */}
@@ -61,6 +61,12 @@ export default function Navbar() {
               className={`${isActive("/news") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
             >
               الأخبار
+            </Link>
+            <Link
+              to="/studentExam"
+              className={`${isActive("/studentExam") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
+            >
+              الامتحانات
             </Link>
             <Link
               to="/contact"
