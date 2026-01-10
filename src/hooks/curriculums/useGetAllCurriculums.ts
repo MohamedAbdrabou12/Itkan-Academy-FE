@@ -1,6 +1,7 @@
 import apiReq from "@/services/apiReq";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../useDebounce";
+import type { Curriculum } from "@/types/Curriculum";
 
 interface UseGetAllCurriculumsParams {
   page?: number;
@@ -34,7 +35,7 @@ export const useGetAllCurriculums = (params?: UseGetAllCurriculumsParams) => {
   });
 
   return {
-    curriculums: data?.items || [],
+    curriculums: (data?.items as Curriculum[]) || [],
     pagination: {
       page: data?.page || 1,
       pageSize: data?.size || 10,

@@ -79,10 +79,10 @@ export const navLinks = [
     permissions: [PermissionKeys.ACADEMIC_CURRICULUM_VIEW],
   },
   {
-    id: "educational_content",
+    id: "subjects",
     title: "المنهج التعليمي",
     icon: NotebookPen,
-    url: "/itkan-dashboard/educational-content",
+    url: "/itkan-dashboard/subjects",
     permissions: [PermissionKeys.ACADEMIC_EDUCATIONAL_CONTENT_VIEW],
   },
   {
