@@ -1,7 +1,7 @@
 import apiReq from "@/services/apiReq";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "../useDebounce";
-import type { Curriculum } from "@/types/Curriculum";
+import { type Curriculum } from "@/types/Curriculum";
 
 interface UseGetAllCurriculumsParams {
   page?: number;
@@ -11,28 +11,39 @@ interface UseGetAllCurriculumsParams {
   sort_order?: "asc" | "desc";
 }
 
+interface GetAllCurriculumsResponse {
+  items: Curriculum[];
+  page: number;
+  size: number;
+  total: number;
+  pages: number;
+}
+
 export const useGetAllCurriculums = (params?: UseGetAllCurriculumsParams) => {
   const debouncedSearch = useDebounce(params?.search, 300);
 
-  const { data, isPending, error, refetch } = useQuery({
-    queryKey: ["curriculums", { ...params, search: debouncedSearch }],
-    queryFn: async () => {
-      const searchParams = new URLSearchParams();
+  const { data, isPending, error, refetch } =
+    useQuery<GetAllCurriculumsResponse>({
+      queryKey: ["curriculums", { ...params, search: debouncedSearch }],
+      queryFn: async () => {
+        const searchParams = new URLSearchParams();
 
-      // Add params to URL if they exist
-      if (params?.page) searchParams.append("page", params.page.toString());
-      if (params?.size) searchParams.append("size", params.size.toString());
-      if (debouncedSearch) searchParams.append("search", debouncedSearch);
-      if (params?.sort_by) searchParams.append("sort_by", params.sort_by);
-      if (params?.sort_order)
-        searchParams.append("sort_order", params.sort_order);
+        // Add params to URL if they exist
+        if (params?.page) searchParams.append("page", params.page.toString());
+        if (params?.size) searchParams.append("size", params.size.toString());
+        if (debouncedSearch) searchParams.append("search", debouncedSearch);
+        if (params?.sort_by) searchParams.append("sort_by", params.sort_by);
+        if (params?.sort_order)
+          searchParams.append("sort_order", params.sort_order);
 
-      const queryString = searchParams.toString();
-      const url = queryString ? `/curriculums?${queryString}` : "/curriculums";
+        const queryString = searchParams.toString();
+        const url = queryString
+          ? `/curriculums?${queryString}`
+          : "/curriculums";
 
-      return await apiReq("GET", url);
-    },
-  });
+        return await apiReq("GET", url);
+      },
+    });
 
   return {
     curriculums: (data?.items as Curriculum[]) || [],

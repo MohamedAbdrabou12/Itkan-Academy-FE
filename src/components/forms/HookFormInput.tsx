@@ -56,7 +56,7 @@ export default function HookFormInput({
           id={name}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full bg-transparent text-gray-800 outline-none disabled:opacity-60"
+          className="w-full bg-transparent text-gray-800 outline-none placeholder:text-gray-800 disabled:opacity-60"
         />
       </div>
 
