@@ -4,7 +4,14 @@ import { useController, useFormContext } from "react-hook-form";
 interface HookFormInputProps {
   name: string;
   label?: string;
-  type?: "text" | "email" | "password" | "date" | "time" | "number";
+  type?:
+    | "text"
+    | "email"
+    | "password"
+    | "date"
+    | "time"
+    | "number"
+    | "datetime-local";
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
