@@ -8,6 +8,8 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import ClassesGridPage from "@/pages/general-manager/ClassesGridPage";
+import CurriculumGridPage from "@/pages/general-manager/CurriculumGridPage";
+import EducationalContentPage from "@/pages/general-manager/EducationalContentPage";
 import ParentsGridPage from "@/pages/general-manager/ParentsGridPage";
 import ReportsPage from "@/pages/general-manager/ReportsPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
@@ -16,6 +18,8 @@ import StudentsGridPage from "@/pages/general-manager/StudentsGridPage";
 import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
+import ExamPage from "@/pages/staff/ExamPage";
+import QuestionBankPage from "@/pages/staff/QuestionBankPage";
 import AboutPage from "@/pages/student/AboutPage";
 import BranchesPage from "@/pages/student/BranchesPage";
 import ContactPage from "@/pages/student/ContactPage";
@@ -26,8 +30,6 @@ import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import QuestionBankPage from "./pages/staff/QuestionBankPage";
-import ExamPage from "./pages/staff/ExamPage";
 
 const App = () => {
   return (
@@ -89,15 +91,21 @@ const App = () => {
               path="/itkan-dashboard/parents"
               element={<ParentsGridPage />}
             />
-
             <Route
               path="/itkan-dashboard/question_bank"
               element={<QuestionBankPage />}
             />
-
             <Route
               path="/itkan-dashboard/exam_dashboard"
               element={<ExamPage />}
+            />
+            <Route
+              path="/itkan-dashboard/curriculum"
+              element={<CurriculumGridPage />}
+            />
+            <Route
+              path="/itkan-dashboard/educational-content"
+              element={<EducationalContentPage />}
             />
           </Route>
         </Route>
