@@ -3,7 +3,7 @@ import type { FormComponents, FormField } from "@/types/Forms";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-interface GenericFormModalProps<T extends z.ZodType> {
+interface GenericFormModalProps<T extends z.ZodObject> {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: z.infer<T>) => Promise<void>;
@@ -21,7 +21,7 @@ interface GenericFormModalProps<T extends z.ZodType> {
   hideRequiredIndicator?: boolean;
 }
 
-export const GenericFormModal = <T extends z.ZodType>({
+export const GenericFormModal = <T extends z.ZodObject>({
   isOpen,
   onClose,
   onSubmit,
@@ -93,13 +93,12 @@ export const GenericFormModal = <T extends z.ZodType>({
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const newErrors: Record<string, string> = {};
-        error.errors.forEach((err) => {
-          if (err.path[0]) {
-            newErrors[err.path[0] as string] = err.message;
-          }
+        const errorMessages = JSON.parse(error.message);
+        const fieldErrors: Record<string, string> = {};
+        errorMessages.forEach((err: { path: string[]; message: string }) => {
+          fieldErrors[err.path[0]] = err.message;
         });
-        setErrors(newErrors);
+        setErrors(fieldErrors);
       }
       return false;
     }
@@ -156,7 +155,8 @@ export const GenericFormModal = <T extends z.ZodType>({
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldError = error.errors[0];
+        const errorMessages = JSON.parse(error.message);
+        const fieldError = errorMessages[0];
         if (fieldError) {
           setErrors((prev) => ({
             ...prev,
@@ -173,9 +173,12 @@ export const GenericFormModal = <T extends z.ZodType>({
       // Create default data based on fields
       const defaultData: Partial<FormData> = {};
       fields.forEach((field) => {
-        const initialValue = initialData?.[field.name as keyof FormData];
-        defaultData[field.name as keyof FormData] =
-          initialValue !== undefined ? initialValue : "";
+        const fieldName = field.name as keyof FormData;
+        const initialValue = initialData?.[fieldName];
+        // Ensure the value is assignable to the field's type, defaulting to empty string for string types
+        // or undefined for other types if initialValue is not provided. This cast is necessary because Zod's infer type can be broad.
+        defaultData[fieldName] = (initialValue ??
+          "") as FormData[typeof fieldName];
       });
 
       console.log("Initializing form with:", defaultData);

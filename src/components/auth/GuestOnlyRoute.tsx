@@ -8,7 +8,7 @@ const GuestOnlyRoute = () => {
 
   if (isPending) return <Spinner />;
 
-  if (me) return <Navigate to={getHomePath(me.role)} replace />;
+  if (me) return <Navigate to={getHomePath(me.role_name)} replace />;
 
   return <Outlet />;
 };
