@@ -32,6 +32,13 @@ const ClassSelectionGrid = ({
                 </div>
               </div>
 
+              <p className="pt-2">
+                المادة:{" "}
+                <span className="rounded-2xl border border-gray-100 bg-emerald-300/40 px-2 text-sm text-emerald-800">
+                  {classItem.subject.name}
+                </span>
+              </p>
+
               {classItem.schedule && (
                 <div className="mt-3 space-y-2">
                   <div className="text-sm font-medium text-gray-600">

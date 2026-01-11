@@ -5,12 +5,15 @@ import {
   FormProvider,
   useFieldArray,
   useForm,
+  useWatch,
   type Resolver,
 } from "react-hook-form";
 import { Modal } from "../shared/Modal";
 
 import { useCreateClass } from "@/hooks/classes/useCreateClass";
 import { useUpdateClass } from "@/hooks/classes/useUpdateClass";
+import { useGetAllCurriculums } from "@/hooks/curriculums/useGetAllCurriculums";
+import { useGetSubjectsByCurriculum } from "@/hooks/subjects/useGetSubjectsByCurriculum";
 import type { AddClassRequest, Class } from "@/types/classes";
 import { evaluationConfigOptions } from "@/utils/evaluationConfigOptions";
 import { arabicDaysOptions } from "@/utils/getArabicDayName";
@@ -52,10 +55,28 @@ export const ClassFormModal = ({
   });
 
   const { branches } = useGetAllBranches();
+  const { curriculums } = useGetAllCurriculums();
+
+  const selectedCurriculum = useWatch({
+    name: "curriculum_id",
+    control: form.control,
+  }) as string;
+
+  const { subjects } = useGetSubjectsByCurriculum(selectedCurriculum);
 
   const branchesOptions = branches.map((branch) => ({
     value: `${branch.id}`,
     label: branch.name,
+  }));
+
+  const curriculumsOptions = curriculums.map((curriculum) => ({
+    value: `${curriculum.id}`,
+    label: curriculum.name,
+  }));
+
+  const subjectsOptions = subjects.map((subject) => ({
+    value: `${subject.id}`,
+    label: subject.name,
   }));
 
   function onCloseHandler() {
@@ -175,12 +196,29 @@ export const ClassFormModal = ({
               placeholder="اختر الفرع"
             />
 
+            <HookFormSelect
+              label="المستوى الدراسي"
+              name="curriculum_id"
+              options={curriculumsOptions}
+              required
+              placeholder="اختر المستوى الدراسي"
+            />
+
+            <HookFormSelect
+              label="المادة"
+              name="subject_id"
+              disabled={!selectedCurriculum}
+              options={subjectsOptions}
+              required
+              placeholder="اختر المادة"
+            />
+
             <HookFormMultiSelect
               label="التقييمات"
               name="evaluation_config"
               required
               options={evaluationConfigOptions}
-              placeholder="اختر الفرع"
+              placeholder="اختر التقييمات"
             />
           </div>
 

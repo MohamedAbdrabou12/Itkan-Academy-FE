@@ -8,6 +8,7 @@ interface CreateBulkEvaluationData {
   // YYYY-MM-DD
   date: string;
   records: AttendanceStatusMap;
+  unit_item_id: number;
 }
 
 export const useCreateBulkEvaluation = (
