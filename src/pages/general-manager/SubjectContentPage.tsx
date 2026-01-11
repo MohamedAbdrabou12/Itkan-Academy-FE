@@ -14,15 +14,16 @@ import {
   type UnitItem,
 } from "@/types/educationalContent";
 import clsx from "clsx";
-import { ChevronDown, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, Plus } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const SubjectContentPage = () => {
   const { id } = useParams<{ id: string }>();
   const { subject, isPending, error } = useGetSubject(id);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [unitBeingEdited, setUnitBeingEdited] = useState<Unit | null>(null);
+  const navigate = useNavigate();
 
   const onAddNewUnit = () => {
     setIsFormModalOpen(true);
@@ -94,6 +95,10 @@ const SubjectContentPage = () => {
           subject_id={subject.id.toString()}
         />
       )}
+
+      <button onClick={() => navigate(-1)} className="btn-primary mt-4">
+        <ArrowLeft className="h-4 w-4" /> الرجوع
+      </button>
     </div>
   );
 };
