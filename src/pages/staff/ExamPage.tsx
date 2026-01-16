@@ -8,7 +8,7 @@ export default function ExamPage() {
   const [activeMood, setActiveMood] = useState<"view" | "edit" | "add">("view");
   const [examToEdit, setExamToEdit] = useState<Exam | null>(null);
   return (
-    <div className="h-full w-full overflow-hidden">
+    <div className="h-full w-full">
       {activeMood == "view" && (
         <ExamsGridPage
           setActiveMood={setActiveMood}

@@ -9,15 +9,18 @@ import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import ClassesGridPage from "@/pages/general-manager/ClassesGridPage";
 import CurriculumGridPage from "@/pages/general-manager/CurriculumGridPage";
-import SubjectsListPage from "@/pages/general-manager/SubjectsListPage";
 import ParentsGridPage from "@/pages/general-manager/ParentsGridPage";
 import ReportsPage from "@/pages/general-manager/ReportsPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
 import StaffRoleGridPage from "@/pages/general-manager/StaffGridPage";
 import StudentsGridPage from "@/pages/general-manager/StudentsGridPage";
+import SubjectContentPage from "@/pages/general-manager/SubjectContentPage";
+import SubjectsListPage from "@/pages/general-manager/SubjectsListPage";
 import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
+import ExamCorrection from "@/pages/staff/ExamCorrection";
+import ExamCorrectionAttempts from "@/pages/staff/ExamCorrectionAttempts";
 import ExamPage from "@/pages/staff/ExamPage";
 import QuestionBankPage from "@/pages/staff/QuestionBankPage";
 import AboutPage from "@/pages/student/AboutPage";
@@ -27,10 +30,11 @@ import HomePage from "@/pages/student/HomePage";
 import NewsPage from "@/pages/student/NewsPage";
 import ProgramsPage from "@/pages/student/ProgramsPage";
 import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
+import StudentExamsPage from "@/pages/student/StudentExams";
+import TakeExam from "@/pages/student/StudentExams/ExamTake";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import SubjectContentPage from "./pages/general-manager/SubjectContentPage";
 
 const App = () => {
   return (
@@ -42,10 +46,7 @@ const App = () => {
         <Route path="register-pending" element={<RegisterPendingPage />} />
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
-        <Route
-          path="password-reset-sent"
-          element={<PasswordResetSentPage />}
-        />
+        <Route path="password-reset-sent" element={<PasswordResetSentPage />} />
         <Route path="login" element={<LoginPage />} />
         {/* </Route> */}
 
@@ -58,56 +59,39 @@ const App = () => {
             <Route path="branches" element={<BranchesPage />} />
             <Route path="news" element={<NewsPage />} />
             <Route path="programs" element={<ProgramsPage />} />
+            <Route path="studentExam" element={<StudentExamsPage />} />
+            <Route path="exams/:examId/take" element={<TakeExam />} />
           </Route>
 
           <Route path="itkan-dashboard" element={<ItkanDashboardLayout />}>
             <Route index element={<>Hello</>} />
             <Route path="roles" element={<RolesGridPage />} />
-            <Route
-              path="branches"
-              element={<BranchesGridPage />}
-            />
-            <Route
-              path="staff"
-              element={<StaffRoleGridPage />}
-            />
+            <Route path="branches" element={<BranchesGridPage />} />
+            <Route path="staff" element={<StaffRoleGridPage />} />
             <Route
               path="attendance-and-evaluations"
               element={<AttendanceEvaluationsPage />}
             />
             <Route path="reports" element={<ReportsPage />} />
-            <Route
-              path="students"
-              element={<StudentsGridPage />}
-            />
-            <Route
-              path="teachers"
-              element={<TeachersGridPage />}
-            />
-            <Route
-              path="classes"
-              element={<ClassesGridPage />}
-            />
-            <Route
-              path="parents"
-              element={<ParentsGridPage />}
-            />
-            <Route
-              path="question_bank"
-              element={<QuestionBankPage />}
-            />
-            <Route
-              path="exam_dashboard"
-              element={<ExamPage />}
-            />
-            <Route
-              path="curriculum"
-              element={<CurriculumGridPage />}
-            />
+            <Route path="students" element={<StudentsGridPage />} />
+            <Route path="teachers" element={<TeachersGridPage />} />
+            <Route path="classes" element={<ClassesGridPage />} />
+            <Route path="parents" element={<ParentsGridPage />} />
+            <Route path="question_bank" element={<QuestionBankPage />} />
+            <Route path="exam_dashboard" element={<ExamPage />} />
+            <Route path="curriculum" element={<CurriculumGridPage />} />
             <Route path="subjects">
               <Route index element={<SubjectsListPage />} />
               <Route path=":id" element={<SubjectContentPage />} />
             </Route>
+            <Route
+              path="exam-correction/:examId"
+              element={<ExamCorrection />}
+            />
+            <Route
+              path="exam-correction/:examId/attempt/:attemptId"
+              element={<ExamCorrectionAttempts />}
+            />
           </Route>
         </Route>
 

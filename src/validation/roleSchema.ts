@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const roleSchema = z.object({
-  name: z.string().min(1, "Role name is required"),
-  name_ar: z.string().min(1, "Arabic name is required"),
+  name: z.string().min(1, "اسم الدور مطلوب"),
+  name_ar: z.string().min(1, "الاسم العربى للدور مطلوب"),
   description: z.string().optional().or(z.literal("")),
   description_ar: z.string().optional().or(z.literal("")),
 });
