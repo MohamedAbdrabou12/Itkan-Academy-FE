@@ -32,6 +32,12 @@ import StudentExamsPage from "./pages/student/StudentExams";
 import TakeExam from "./pages/student/StudentExams/ExamTake";
 import ExamCorrection from "./pages/staff/ExamCorrection";
 import ExamCorrectionAttempts from "./pages/staff/ExamCorrectionAttempts";
+import AttendancePage from "./pages/attendance/AttendancePage";
+import AttendanceManagementPage from "./pages/attendance/AttendanceManagementPage";
+import UserAttendancePage from "./pages/attendance/UserAttendancePage";
+import CalendarsPage from "./pages/attendance/CalendarsPage";
+import CalendarDetailPage from "./pages/attendance/CalendarDetailPage";
+import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
 
 const App = () => {
   return (
@@ -113,6 +119,30 @@ const App = () => {
             <Route
               path="/itkan-dashboard/exam-correction/:examId/attempt/:attemptId"
               element={<ExamCorrectionAttempts />}
+            />
+              <Route
+                path="/itkan-dashboard/attendance-calendars"
+                element={<CalendarsPage />}
+              />
+              <Route
+                path="/itkan-dashboard/attendance/calendars/:calendarId"
+                element={<CalendarDetailPage />}
+              />
+              <Route
+                path="/itkan-dashboard/attendance/work-schedules"
+                element={<WorkSchedulesPage />}
+              />
+            <Route
+              path="/itkan-dashboard/daily-attendance"
+              element={<AttendancePage />}
+            />
+            <Route
+              path="/itkan-dashboard/attendance-management"
+              element={<AttendanceManagementPage />}
+            />
+            <Route
+              path="/itkan-dashboard/attendance/user/:userId"
+              element={<UserAttendancePage />}
             />
           </Route>
         </Route>
