@@ -168,7 +168,7 @@ const UnitComponent = ({ unit, onUnitEdit }: UnitComponentProps) => {
           </div>
         </div>
         {isDropdownOpen && (
-          <div className="rounded-b-xl border-x-2 border-b-2 border-gray-200 bg-emerald-200/30">
+          <div className="rounded-b-lg border-x-2 border-b-2 border-gray-200 bg-emerald-200/30">
             {unit.items.map((item, index) => (
               <div
                 className={clsx(

@@ -35,6 +35,7 @@ import TakeExam from "@/pages/student/StudentExams/ExamTake";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
+import StudentProgressPage from "./pages/student/StudentProgressPage";
 
 const App = () => {
   return (
@@ -59,6 +60,7 @@ const App = () => {
             <Route path="branches" element={<BranchesPage />} />
             <Route path="news" element={<NewsPage />} />
             <Route path="programs" element={<ProgramsPage />} />
+            <Route path="student-progress" element={<StudentProgressPage />} />
             <Route path="studentExam" element={<StudentExamsPage />} />
             <Route path="exams/:examId/take" element={<TakeExam />} />
           </Route>
