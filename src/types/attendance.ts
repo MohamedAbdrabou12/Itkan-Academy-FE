@@ -1,6 +1,11 @@
 export type Weekday = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
-export type AttendanceSourceType = "manual" | "biometric" | "rfid" | "mobile" | "api";
+export type AttendanceSourceType =
+  | "manual"
+  | "biometric"
+  | "rfid"
+  | "mobile"
+  | "api";
 
 export type AttendanceLogType = "check_in" | "check_out";
 
@@ -57,6 +62,8 @@ export interface StaffWorkSchedule {
   grace_minutes: number;
   created_at: string;
   updated_at: string;
+  user?: { id: number; full_name: string };
+  calendar?: { id: number; name: string };
 }
 
 export interface AttendanceLog {

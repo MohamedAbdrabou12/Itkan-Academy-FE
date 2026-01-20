@@ -22,7 +22,7 @@ export default function UserAttendancePage() {
     user_id: Number(userId) || 0,
     from_date: fromDate,
     to_date: toDate,
-    branch_id: activeBranch?.id,
+    branch_id: activeBranch?.id ? Number(activeBranch.id) : undefined,
   });
 
   const getStatusBadge = (status: string) => {
@@ -194,7 +194,7 @@ export default function UserAttendancePage() {
         <div>
           <AttendanceCalendarView
             user_id={Number(userId)}
-            branch_id={activeBranch?.id}
+            branch_id={activeBranch?.id ? Number(activeBranch.id) : undefined}
           />
         </div>
       </div>

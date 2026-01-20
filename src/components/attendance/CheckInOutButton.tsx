@@ -10,7 +10,7 @@ export const CheckInOutButton = () => {
   const { attendance } = useGetDailyAttendance({
     date: today,
     user_id: user?.id,
-    branch_id: activeBranch?.id,
+    branch_id: activeBranch?.id ? Number(activeBranch.id) : undefined,
   });
 
   const todayAttendance = attendance[0];

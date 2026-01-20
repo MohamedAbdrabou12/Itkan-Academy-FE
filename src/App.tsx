@@ -38,6 +38,7 @@ import UserAttendancePage from "./pages/attendance/UserAttendancePage";
 import CalendarsPage from "./pages/attendance/CalendarsPage";
 import CalendarDetailPage from "./pages/attendance/CalendarDetailPage";
 import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
+// import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
 
 const App = () => {
   return (
@@ -120,18 +121,18 @@ const App = () => {
               path="/itkan-dashboard/exam-correction/:examId/attempt/:attemptId"
               element={<ExamCorrectionAttempts />}
             />
-              <Route
-                path="/itkan-dashboard/attendance-calendars"
-                element={<CalendarsPage />}
-              />
-              <Route
-                path="/itkan-dashboard/attendance/calendars/:calendarId"
-                element={<CalendarDetailPage />}
-              />
-              <Route
-                path="/itkan-dashboard/attendance/work-schedules"
-                element={<WorkSchedulesPage />}
-              />
+            <Route
+              path="/itkan-dashboard/attendance-calendars"
+              element={<CalendarsPage />}
+            />
+            <Route
+              path="/itkan-dashboard/attendance/calendars/:calendarId"
+              element={<CalendarDetailPage />}
+            />
+            <Route
+              path="/itkan-dashboard/attendance/work-schedules"
+              element={<WorkSchedulesPage />}
+            />
             <Route
               path="/itkan-dashboard/daily-attendance"
               element={<AttendancePage />}

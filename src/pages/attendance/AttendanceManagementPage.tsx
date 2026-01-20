@@ -16,7 +16,7 @@ export default function AttendanceManagementPage() {
   const { staff } = useGetAllStaff({});
   const { attendance, isPending } = useGetDailyAttendance({
     date: selectedDate,
-    branch_id: activeBranch?.id,
+    branch_id: activeBranch?.id ? Number(activeBranch.id) : undefined,
     user_id: selectedUserId,
   });
 
@@ -155,7 +155,7 @@ export default function AttendanceManagementPage() {
         <div>
           <AttendanceCalendarView
             user_id={selectedUserId}
-            branch_id={activeBranch?.id}
+            branch_id={activeBranch?.id ? Number(activeBranch.id) : undefined}
           />
         </div>
       </div>

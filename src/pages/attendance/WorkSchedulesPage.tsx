@@ -1,12 +1,25 @@
-import { useGetAllStaff } from "@/hooks/staff/useGetStaff";
+import { useGetBranchStaff } from "@/hooks/branches/useGetBranchStaff";
 import { useGetCalendars } from "@/hooks/attendance/useGetCalendars";
-import { useGetWorkSchedule } from "@/hooks/attendance/useGetWorkSchedule";
+import { useGetWorkSchedules } from "@/hooks/attendance/useGetWorkSchedules";
 import { useCreateWorkSchedule } from "@/hooks/attendance/useCreateWorkSchedule";
-import type { StaffWorkScheduleCreate } from "@/types/attendance";
+import { useUpdateWorkSchedule } from "@/hooks/attendance/useUpdateWorkSchedule";
+import type {
+  StaffWorkSchedule,
+  StaffWorkScheduleCreate,
+} from "@/types/attendance";
 import { useState } from "react";
 import PermissionGate from "@/components/auth/PermissionGate";
 import { PermissionKeys } from "@/constants/permissions";
 import { useAuthStore } from "@/stores/auth";
+import { Pencil } from "lucide-react";
+
+const formatTime12h = (timeStr: string) => {
+  if (!timeStr) return "";
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  const period = hours >= 12 ? "م" : "ص";
+  const displayHours = hours % 12 || 12;
+  return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+};
 
 export default function WorkSchedulesPage() {
   const { activeBranch } = useAuthStore();
@@ -15,19 +28,40 @@ export default function WorkSchedulesPage() {
     number | undefined
   >();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingSchedule, setEditingSchedule] =
+    useState<StaffWorkSchedule | null>(null);
 
-  const { staff } = useGetAllStaff({});
-  const { calendars } = useGetCalendars({ branch_id: activeBranch?.id });
-  const { schedule, refetch } = useGetWorkSchedule({
-    user_id: selectedUserId || 0,
+  const { staff } = useGetBranchStaff();
+  const { calendars } = useGetCalendars({
+    branch_id: activeBranch?.id ? Number(activeBranch.id) : undefined,
+  });
+  const { schedules, refetch } = useGetWorkSchedules({
+    user_id: selectedUserId,
     calendar_id: selectedCalendarId,
   });
   const { mutate: createSchedule, isPending: isCreating } =
     useCreateWorkSchedule();
+  const { mutate: updateSchedule, isPending: isUpdating } =
+    useUpdateWorkSchedule();
 
-  const handleCreateSchedule = async (data: StaffWorkScheduleCreate) => {
-    createSchedule(data);
+  const handleOpenCreateModal = () => {
+    setEditingSchedule(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (schedule: StaffWorkSchedule) => {
+    setEditingSchedule(schedule);
+    setIsModalOpen(true);
+  };
+
+  const handleSubmitSchedule = async (data: StaffWorkScheduleCreate) => {
+    if (editingSchedule) {
+      updateSchedule({ id: editingSchedule.id, data });
+    } else {
+      createSchedule(data);
+    }
     setIsModalOpen(false);
+    setEditingSchedule(null);
     refetch();
   };
 
@@ -41,7 +75,7 @@ export default function WorkSchedulesPage() {
         <PermissionGate
           permissions={[PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE]}
         >
-          <button onClick={() => setIsModalOpen(true)} className="btn-primary">
+          <button onClick={handleOpenCreateModal} className="btn-primary">
             إضافة جدول عمل جديد
           </button>
         </PermissionGate>
@@ -61,8 +95,8 @@ export default function WorkSchedulesPage() {
             }
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
           >
-            <option value="">اختر موظف</option>
-            {staff.map((s) => (
+            <option value="">جميع الموظفين</option>
+            {staff.map((s: { id: number; full_name: string }) => (
               <option key={s.id} value={s.id}>
                 {s.full_name}
               </option>
@@ -83,8 +117,8 @@ export default function WorkSchedulesPage() {
             }
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
           >
-            <option value="">اختر تقويم</option>
-            {calendars.map((c) => (
+            <option value="">جميع التقاويم</option>
+            {calendars.map((c: { id: number; name: string }) => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>
@@ -93,79 +127,106 @@ export default function WorkSchedulesPage() {
         </div>
       </div>
 
-      {selectedUserId && selectedCalendarId && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          {schedule ? (
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-800">
-                جدول العمل الحالي
-              </h2>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <div className="text-sm text-gray-500">وقت البداية</div>
-                  <div className="text-lg font-semibold text-gray-800">
-                    {schedule.start_time}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">وقت النهاية</div>
-                  <div className="text-lg font-semibold text-gray-800">
-                    {schedule.end_time}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-500">دقائق السماح</div>
-                  <div className="text-lg font-semibold text-gray-800">
-                    {schedule.grace_minutes} دقيقة
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="py-8 text-center text-gray-500">
-              لا يوجد جدول عمل محدد لهذا الموظف والتقويم
-            </div>
-          )}
-        </div>
-      )}
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        {schedules.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-sm">
+              <thead className="bg-gray-50 font-medium text-gray-700">
+                <tr>
+                  <th className="px-6 py-4">الموظف</th>
+                  <th className="px-6 py-4">التقويم</th>
+                  <th className="px-6 py-4">وقت البداية</th>
+                  <th className="px-6 py-4">وقت النهاية</th>
+                  <th className="px-6 py-4">دقائق السماح</th>
+                  <th className="px-6 py-4">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {schedules.map((schedule) => (
+                  <tr key={schedule.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 font-medium text-gray-900">
+                      {schedule.user?.full_name || `موظف #${schedule.user_id}`}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">
+                      {schedule.calendar?.name ||
+                        `تقويم #${schedule.calendar_id}`}
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-700">
+                      {formatTime12h(schedule.start_time)}
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-gray-700">
+                      {formatTime12h(schedule.end_time)}
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">
+                      {schedule.grace_minutes} دقيقة
+                    </td>
+                    <td className="px-6 py-4">
+                      <PermissionGate
+                        permissions={[
+                          PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE,
+                        ]}
+                      >
+                        <button
+                          onClick={() => handleOpenEditModal(schedule)}
+                          className="text-blue-600 hover:text-blue-800"
+                          title="تعديل"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                      </PermissionGate>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="py-12 text-center text-gray-500">
+            لا توجد جداول عمل مطابقة للفلتر المحدد
+          </div>
+        )}
+      </div>
 
       {isModalOpen && (
-        <CreateWorkScheduleModal
+        <WorkScheduleModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleCreateSchedule}
-          isSubmitting={isCreating}
+          onSubmit={handleSubmitSchedule}
+          isSubmitting={isCreating || isUpdating}
           staff={staff}
           calendars={calendars}
+          initialData={editingSchedule || undefined}
         />
       )}
     </div>
   );
 }
 
-interface CreateWorkScheduleModalProps {
+interface WorkScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: StaffWorkScheduleCreate) => void;
   isSubmitting: boolean;
   staff: Array<{ id: number; full_name: string }>;
   calendars: Array<{ id: number; name: string }>;
+  initialData?: StaffWorkSchedule;
 }
 
-function CreateWorkScheduleModal({
+function WorkScheduleModal({
   isOpen,
   onClose,
   onSubmit,
   isSubmitting,
   staff,
   calendars,
-}: CreateWorkScheduleModalProps) {
+  initialData,
+}: WorkScheduleModalProps) {
   const [formData, setFormData] = useState<StaffWorkScheduleCreate>({
-    user_id: staff[0]?.id || 0,
-    calendar_id: calendars[0]?.id || 0,
-    start_time: "09:00",
-    end_time: "17:00",
-    grace_minutes: 15,
+    user_id: initialData?.user_id || staff[0]?.id || 0,
+    calendar_id: initialData?.calendar_id || calendars[0]?.id || 0,
+    start_time: initialData?.start_time || "09:00",
+    end_time: initialData?.end_time || "17:00",
+    grace_minutes: initialData?.grace_minutes ?? 15,
   });
 
   if (!isOpen) return null;
@@ -179,7 +240,7 @@ function CreateWorkScheduleModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
         <h3 className="mb-4 text-lg font-semibold text-gray-800">
-          إضافة جدول عمل جديد
+          {initialData ? "تعديل جدول عمل" : "إضافة جدول عمل جديد"}
         </h3>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -194,8 +255,9 @@ function CreateWorkScheduleModal({
               }
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
               required
+              disabled={!!initialData}
             >
-              {staff.map((s) => (
+              {staff.map((s: { id: number; full_name: string }) => (
                 <option key={s.id} value={s.id}>
                   {s.full_name}
                 </option>
@@ -218,7 +280,7 @@ function CreateWorkScheduleModal({
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
               required
             >
-              {calendars.map((c) => (
+              {calendars.map((c: { id: number; name: string }) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
@@ -288,7 +350,7 @@ function CreateWorkScheduleModal({
               disabled={isSubmitting}
               className="btn-primary"
             >
-              {isSubmitting ? "جاري الحفظ..." : "إنشاء"}
+              {isSubmitting ? "جاري الحفظ..." : initialData ? "تحديث" : "إنشاء"}
             </button>
           </div>
         </form>
