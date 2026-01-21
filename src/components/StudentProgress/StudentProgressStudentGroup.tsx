@@ -7,23 +7,20 @@ import StudentProgressSubjectGroup from "./StudentProgressSubjectGroup";
 export interface StudentProgressItemStudentGroupProps {
   studentName: string;
   groups: StudentProgressBySubjectList;
-  roundTopCorner: boolean;
 }
 
 const StudentProgressStudentGroup = ({
   studentName,
   groups,
-  roundTopCorner,
 }: StudentProgressItemStudentGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
-    <div className="flex flex-col">
+    <div className="group flex flex-col border-gray-200 not-last:border-b-4">
       <div
         className={clsx(
-          "flex cursor-pointer flex-col gap-2 border-gray-200 px-6 py-2 transition-colors duration-150",
+          "flex cursor-pointer flex-col gap-2 px-6 py-4 transition-colors duration-150 group-first:rounded-t-lg",
           isDropdownOpen ? "bg-emerald-400/20" : "hover:bg-emerald-300/20",
-          roundTopCorner ? "rounded-t-lg" : ""
         )}
         onClick={() => setIsDropdownOpen((open) => !open)}
       >
@@ -35,17 +32,18 @@ const StudentProgressStudentGroup = ({
             )}
           />
 
-          <div className="text-xl">{studentName}</div>
+          <div className="text-xl font-semibold">{studentName}</div>
         </div>
       </div>
       {isDropdownOpen &&
-        groups.map(({ subject_id, subject_name, unit_items_info, items }) => (
+        groups.map(({ subject_id, subject_name, curriculum_name, unit_items_info, items }) => (
           <StudentProgressSubjectGroup
             key={subject_id}
             subjectName={subject_name}
+            curriculumName={curriculum_name}
             unitItemsInfo={unit_items_info}
             progressItems={items}
-            roundTopCorner={false}
+            forceRectangularShape={true}
           />
         ))}
     </div>

@@ -57,6 +57,7 @@ export interface StudentProgressEntry {
 export type StudentProgressBySubjectList = {
   subject_id: number;
   subject_name: string;
+  curriculum_name: string;
   unit_items_info: StudentProgressUnitItemInfo[];
   items: StudentProgressEntry[];
 }[];

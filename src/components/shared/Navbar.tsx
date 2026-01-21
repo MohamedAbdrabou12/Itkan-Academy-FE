@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/stores/auth";
+import { UserRole } from "@/types/Roles";
 import { Bell, BookOpen, LogOut, Menu, User, X } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 
 export default function Navbar() {
@@ -17,14 +18,34 @@ export default function Navbar() {
     navigate("/login");
   };
 
-  const barItems = [
+  const barItems: {
+    to: `/${string}`;
+    label: string;
+    showIf?: () => boolean;
+  }[] = [
     { to: "/", label: "الرئيسية" },
     { to: "/about", label: "عن المدرسة" },
     { to: "/branches", label: "الفروع" },
     { to: "/programs", label: "البرامج" },
     { to: "/news", label: "الأخبار" },
-    { to: "/studentExam", label: "الامتحانات" },
-    { to: "/student-progress", label: "التقدم" },
+    {
+      to: "/studentExam",
+      label: "الامتحانات",
+      showIf: useCallback(
+        () => user?.role_name === UserRole.STUDENT,
+        [user?.role_name],
+      ),
+    },
+    {
+      to: "/student-progress",
+      label: "متابعة التقدم",
+      showIf: useCallback(
+        () =>
+          user != null &&
+          [UserRole.PARENT, UserRole.STUDENT].includes(user.role_name),
+        [user],
+      ),
+    },
     { to: "/contact", label: "تواصل معنا" },
   ];
 
@@ -44,15 +65,18 @@ export default function Navbar() {
 
           {/* Main Links */}
           <div className="hidden items-center space-x-8 md:flex">
-            {barItems.map((item, index) => (
-              <Link
-                to={item.to}
-                key={index}
-                className={`${isActive(item.to) ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {barItems.map(
+              (item, index) =>
+                (item.showIf?.() ?? true) && (
+                  <Link
+                    to={item.to}
+                    key={index}
+                    className={`${isActive(item.to) ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
+                  >
+                    {item.label}
+                  </Link>
+                ),
+            )}
 
             {/* Auth Section */}
             {user ? (

@@ -169,13 +169,8 @@ const UnitComponent = ({ unit, onUnitEdit }: UnitComponentProps) => {
         </div>
         {isDropdownOpen && (
           <div className="rounded-b-lg border-x-2 border-b-2 border-gray-200 bg-emerald-200/30">
-            {unit.items.map((item, index) => (
-              <div
-                className={clsx(
-                  "flex items-center border-gray-200 px-6 py-2",
-                  index === unit.items.length - 1 ? "" : "border-b-2",
-                )}
-              >
+            {unit.items.map((item) => (
+              <div className="not-last:border-b-2 flex items-center border-gray-200 px-6 py-2">
                 <div className="flex flex-1 flex-col">
                   <div className="flex gap-2">
                     <div className="text-lg">{item.title}</div>

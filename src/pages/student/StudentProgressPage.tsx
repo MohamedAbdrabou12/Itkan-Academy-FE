@@ -21,13 +21,13 @@ const StudentRoleStudentProgressPage = () => {
     return <EmptyState hasFilters={false} entityName="تقدم" />;
 
   return progressGroups.map(
-    ({ subject_id, subject_name, unit_items_info, items }, index) => (
+    ({ subject_id, subject_name, curriculum_name, unit_items_info, items }) => (
       <StudentProgressSubjectGroup
         key={subject_id}
         subjectName={subject_name}
+        curriculumName={curriculum_name}
         unitItemsInfo={unit_items_info}
         progressItems={items}
-        roundTopCorner={index === 0}
       />
     ),
   );
@@ -41,12 +41,11 @@ const ParentRoleStudentProgressPage = () => {
   if (!progressGroups || progressGroups?.length === 0)
     return <EmptyState hasFilters={false} entityName="تقدم" />;
 
-  return progressGroups.map(({ student_id, student_name, groups }, index) => (
+  return progressGroups.map(({ student_id, student_name, groups }) => (
     <StudentProgressStudentGroup
       key={student_id}
       studentName={student_name}
       groups={groups}
-      roundTopCorner={index === 0}
     />
   ));
 };

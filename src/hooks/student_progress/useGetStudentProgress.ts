@@ -13,7 +13,7 @@ export const useGetStudentProgressAsStudent = () => {
     useQuery<StudentProgressBySubjectList>({
       queryKey: ["student-progress", userId],
       queryFn: async () => {
-        const pathname = `/student-progress/as-student`;
+        const pathname = "/student-progress/as-student";
         return await apiReq("GET", pathname);
       },
     });
@@ -33,7 +33,7 @@ export const useGetStudentProgressAsParent = () => {
     useQuery<StudentProgressByStudentList>({
       queryKey: ["student-progress", userId],
       queryFn: async () => {
-        const pathname = `/student-progress/as-parent`;
+        const pathname = "/student-progress/as-parent";
         return await apiReq("GET", pathname);
       },
     });
