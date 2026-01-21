@@ -1,17 +1,25 @@
 import PermissionGate from "@/components/auth/PermissionGate";
 import { PermissionKeys } from "@/constants/permissions";
 import { useCreateCalendar } from "@/hooks/attendance/useCreateCalendar";
+import { useUpdateCalendar } from "@/hooks/attendance/useUpdateCalendar";
+import { useDeleteCalendar } from "@/hooks/attendance/useDeleteCalendar";
 import { useGetCalendars } from "@/hooks/attendance/useGetCalendars";
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useAuthStore } from "@/stores/auth";
 import type { SchoolCalendar, SchoolCalendarCreate } from "@/types/attendance";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { Pencil, Trash2 } from "lucide-react";
 
 export default function CalendarsPage() {
   const { activeBranch } = useAuthStore();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCalendar, setEditingCalendar] = useState<SchoolCalendar | null>(
+    null,
+  );
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [calendarToDelete, setCalendarToDelete] = useState<number | null>(null);
   const [selectedBranchId, setSelectedBranchId] = useState<number | undefined>(
     activeBranch?.id ? Number(activeBranch.id) : undefined,
   );
@@ -21,11 +29,61 @@ export default function CalendarsPage() {
   });
   const { branches } = useGetAllBranches({});
   const { mutate: createCalendar, isPending: isCreating } = useCreateCalendar();
+  const { mutate: updateCalendar, isPending: isUpdating } = useUpdateCalendar();
+  const { mutate: deleteCalendar } = useDeleteCalendar();
 
-  const handleCreateCalendar = async (data: SchoolCalendarCreate) => {
-    createCalendar(data);
-    setIsModalOpen(false);
-    refetch();
+  const handleOpenCreateModal = () => {
+    setEditingCalendar(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (
+    e: React.MouseEvent,
+    calendar: SchoolCalendar,
+  ) => {
+    e.stopPropagation();
+    setEditingCalendar(calendar);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteCalendar = (e: React.MouseEvent, calendarId: number) => {
+    e.stopPropagation();
+    setCalendarToDelete(calendarId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (calendarToDelete) {
+      deleteCalendar(calendarToDelete, {
+        onSuccess: () => {
+          refetch();
+          setIsDeleteModalOpen(false);
+          setCalendarToDelete(null);
+        },
+      });
+    }
+  };
+
+  const handleSubmitCalendar = async (data: SchoolCalendarCreate) => {
+    if (editingCalendar) {
+      updateCalendar(
+        { id: editingCalendar.id, data },
+        {
+          onSuccess: () => {
+            setIsModalOpen(false);
+            setEditingCalendar(null);
+            refetch();
+          },
+        },
+      );
+    } else {
+      createCalendar(data, {
+        onSuccess: () => {
+          setIsModalOpen(false);
+          refetch();
+        },
+      });
+    }
   };
 
   const getStatusBadge = (isActive: boolean) => {
@@ -52,7 +110,7 @@ export default function CalendarsPage() {
         <PermissionGate
           permissions={[PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE]}
         >
-          <button onClick={() => setIsModalOpen(true)} className="btn-primary">
+          <button onClick={handleOpenCreateModal} className="btn-primary">
             إضافة تقويم جديد
           </button>
         </PermissionGate>
@@ -108,7 +166,31 @@ export default function CalendarsPage() {
                       `Branch #${calendar.branch_id}`}
                   </p>
                 </div>
-                {getStatusBadge(calendar.is_active)}
+                <div className="flex flex-col items-end gap-2">
+                  {getStatusBadge(calendar.is_active)}
+                  <PermissionGate
+                    permissions={[
+                      PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE,
+                    ]}
+                  >
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => handleOpenEditModal(e, calendar)}
+                        className="rounded-md p-1 text-blue-600 hover:bg-blue-50"
+                        title="تعديل"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={(e) => handleDeleteCalendar(e, calendar.id)}
+                        className="rounded-md p-1 text-red-600 hover:bg-red-50"
+                        title="حذف"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </PermissionGate>
+                </div>
               </div>
 
               <div className="space-y-2 text-sm text-gray-600">
@@ -148,38 +230,56 @@ export default function CalendarsPage() {
       )}
 
       {isModalOpen && (
-        <CreateCalendarModal
+        <CalendarModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleCreateCalendar}
-          isSubmitting={isCreating}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingCalendar(null);
+          }}
+          onSubmit={handleSubmitCalendar}
+          isSubmitting={isCreating || isUpdating}
           branches={branches}
+          initialData={editingCalendar || undefined}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setCalendarToDelete(null);
+          }}
+          onConfirm={confirmDelete}
+          title="حذف التقويم"
+          message="هل أنت متأكد من حذف هذا التقويم؟ لا يمكن التراجع عن هذا الإجراء."
         />
       )}
     </div>
   );
 }
 
-interface CreateCalendarModalProps {
+interface CalendarModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: SchoolCalendarCreate) => void;
   isSubmitting: boolean;
   branches: Array<{ id: number; name: string }>;
+  initialData?: SchoolCalendar;
 }
 
-function CreateCalendarModal({
+function CalendarModal({
   isOpen,
   onClose,
   onSubmit,
   isSubmitting,
   branches,
-}: CreateCalendarModalProps) {
+  initialData,
+}: CalendarModalProps) {
   const [formData, setFormData] = useState<SchoolCalendarCreate>({
-    branch_id: branches[0]?.id || 0,
-    name: "",
-    timezone: "UTC",
-    is_active: true,
+    branch_id: initialData?.branch_id || branches[0]?.id || 0,
+    name: initialData?.name || "",
+    timezone: initialData?.timezone || "UTC",
+    is_active: initialData?.is_active ?? true,
   });
 
   if (!isOpen) return null;
@@ -193,7 +293,7 @@ function CreateCalendarModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
         <h3 className="mb-4 text-lg font-semibold text-gray-800">
-          إضافة تقويم جديد
+          {initialData ? "تعديل التقويم" : "إضافة تقويم جديد"}
         </h3>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -208,6 +308,7 @@ function CreateCalendarModal({
               }
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
               required
+              disabled={!!initialData}
             >
               {branches.map((branch) => (
                 <option key={branch.id} value={branch.id}>
@@ -275,10 +376,56 @@ function CreateCalendarModal({
               disabled={isSubmitting}
               className="btn-primary"
             >
-              {isSubmitting ? "جاري الحفظ..." : "إنشاء"}
+              {isSubmitting
+                ? "جاري الحفظ..."
+                : initialData
+                  ? "حفظ التغييرات"
+                  : "إنشاء"}
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+interface DeleteConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+}
+
+function DeleteConfirmationModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+}: DeleteConfirmationModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
+      <div className="w-full max-w-sm rounded-xl bg-white p-6 text-center shadow-lg">
+        <h3 className="mb-2 text-lg font-bold text-gray-800">{title}</h3>
+        <p className="mb-6 text-sm text-gray-600">{message}</p>
+
+        <div className="flex justify-center gap-3">
+          <button
+            onClick={onClose}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            إلغاء
+          </button>
+          <button
+            onClick={onConfirm}
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+          >
+            حذف
+          </button>
+        </div>
       </div>
     </div>
   );

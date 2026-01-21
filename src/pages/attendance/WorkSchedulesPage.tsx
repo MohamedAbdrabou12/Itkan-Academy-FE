@@ -3,6 +3,7 @@ import { useGetCalendars } from "@/hooks/attendance/useGetCalendars";
 import { useGetWorkSchedules } from "@/hooks/attendance/useGetWorkSchedules";
 import { useCreateWorkSchedule } from "@/hooks/attendance/useCreateWorkSchedule";
 import { useUpdateWorkSchedule } from "@/hooks/attendance/useUpdateWorkSchedule";
+import { useDeleteWorkSchedule } from "@/hooks/attendance/useDeleteWorkSchedule";
 import type {
   StaffWorkSchedule,
   StaffWorkScheduleCreate,
@@ -11,7 +12,7 @@ import { useState } from "react";
 import PermissionGate from "@/components/auth/PermissionGate";
 import { PermissionKeys } from "@/constants/permissions";
 import { useAuthStore } from "@/stores/auth";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 const formatTime12h = (timeStr: string) => {
   if (!timeStr) return "";
@@ -30,6 +31,8 @@ export default function WorkSchedulesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSchedule, setEditingSchedule] =
     useState<StaffWorkSchedule | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [scheduleToDelete, setScheduleToDelete] = useState<number | null>(null);
 
   const { staff } = useGetBranchStaff();
   const { calendars } = useGetCalendars({
@@ -43,6 +46,7 @@ export default function WorkSchedulesPage() {
     useCreateWorkSchedule();
   const { mutate: updateSchedule, isPending: isUpdating } =
     useUpdateWorkSchedule();
+  const { mutate: deleteSchedule } = useDeleteWorkSchedule();
 
   const handleOpenCreateModal = () => {
     setEditingSchedule(null);
@@ -63,6 +67,23 @@ export default function WorkSchedulesPage() {
     setIsModalOpen(false);
     setEditingSchedule(null);
     refetch();
+  };
+
+  const handleDeleteSchedule = (id: number) => {
+    setScheduleToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (scheduleToDelete) {
+      deleteSchedule(scheduleToDelete, {
+        onSuccess: () => {
+          setIsDeleteModalOpen(false);
+          setScheduleToDelete(null);
+          refetch();
+        },
+      });
+    }
   };
 
   return (
@@ -166,13 +187,22 @@ export default function WorkSchedulesPage() {
                           PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE,
                         ]}
                       >
-                        <button
-                          onClick={() => handleOpenEditModal(schedule)}
-                          className="text-blue-600 hover:text-blue-800"
-                          title="تعديل"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => handleOpenEditModal(schedule)}
+                            className="text-blue-600 hover:text-blue-800"
+                            title="تعديل"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteSchedule(schedule.id)}
+                            className="text-red-600 hover:text-red-800"
+                            title="حذف"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
                       </PermissionGate>
                     </td>
                   </tr>
@@ -197,6 +227,42 @@ export default function WorkSchedulesPage() {
           calendars={calendars}
           initialData={editingSchedule || undefined}
         />
+      )}
+
+      {isDeleteModalOpen && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="text-lg font-bold text-gray-800">حذف جدول العمل</h3>
+            <p className="py-4 text-gray-600">
+              هل أنت متأكد من حذف جدول العمل هذا؟ لا يمكن التراجع عن هذا
+              الإجراء.
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setScheduleToDelete(null);
+                }}
+              >
+                إلغاء
+              </button>
+              <button
+                className="btn btn-error text-white"
+                onClick={confirmDelete}
+              >
+                حذف
+              </button>
+            </div>
+          </div>
+          <div
+            className="modal-backdrop bg-black/40"
+            onClick={() => {
+              setIsDeleteModalOpen(false);
+              setScheduleToDelete(null);
+            }}
+          />
+        </div>
       )}
     </div>
   );
