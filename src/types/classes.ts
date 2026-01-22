@@ -1,4 +1,5 @@
 import type { ClassFormData } from "@/validation/classSchema";
+import type { Subject } from "./subjects";
 
 export type Weekday =
   | "saturday"
@@ -16,6 +17,9 @@ export interface Class {
   name: string;
   schedule: ClassSchedule;
   evaluation_config: string[];
+  curriculum_id: number;
+  subject_id: number;
+  subject: Subject;
   created_at: string;
   updated_at: string;
   [key: string]: unknown; // index signature
@@ -51,6 +55,8 @@ export interface Evaluation {
   student_id: number;
   class_id: number;
   date: string;
+  unit_item_id: number;
+  unit_item_title: string;
   attendance_status: AttendanceStatus;
   evaluation_grades: EvaluationGrade[];
   notes?: string;

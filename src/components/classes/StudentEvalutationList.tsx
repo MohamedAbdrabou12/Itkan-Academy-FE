@@ -12,9 +12,12 @@ import { englishToArabicDayMap } from "@/utils/getArabicDayName";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import StudentEvaluationItem from "./StudentEvaluationItem";
+import { useGetClassUnits } from "@/hooks/units/useGetClassUnits";
+import { useGetUnitItems } from "@/hooks/units/useGetUnitItems";
 
 interface StudentEvaluationListProps {
   selectedClassId: number;
+  selectedClassSubjectName: string;
   teacherClasses?: Class[];
   classStudents?: ClassStudent[];
   studentsLoading: boolean;
@@ -22,6 +25,10 @@ interface StudentEvaluationListProps {
   attendanceStatus: AttendanceStatusMap;
   evaluationConfig: string[];
   evaluationEditMode: boolean | null;
+  unitItemTitle: string | null;
+  unitId: number | null;
+  setUnitId: (id: number | null) => void;
+  setUnitItemId: (id: number | null) => void;
   onAttendanceChange: (studentId: number, status: AttendanceStatus) => void;
   onNotesChange: (studentId: number, notes: string) => void;
   onEvaluationChange: (
@@ -35,6 +42,7 @@ interface StudentEvaluationListProps {
 
 const StudentEvaluationList = ({
   selectedClassId,
+  selectedClassSubjectName,
   teacherClasses,
   classStudents,
   classDate,
@@ -42,6 +50,10 @@ const StudentEvaluationList = ({
   attendanceStatus,
   evaluationConfig,
   evaluationEditMode,
+  unitItemTitle,
+  unitId,
+  setUnitId,
+  setUnitItemId,
   onAttendanceChange,
   onNotesChange,
   onEvaluationChange,
@@ -49,6 +61,8 @@ const StudentEvaluationList = ({
   onClassDateChange,
 }: StudentEvaluationListProps) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { units } = useGetClassUnits(selectedClassId);
+  const { unitItems } = useGetUnitItems(unitId);
 
   const selectedClass = teacherClasses?.find((c) => c.id === selectedClassId);
   const datePickerRef = useRef(null);
@@ -277,6 +291,57 @@ const StudentEvaluationList = ({
             <div className="text-xs text-gray-500">
               <span>أيام الحصص: {classScheduleDays}</span>
             </div>
+          </div>
+
+          <div className="mt-4  border-t border-gray-200 p-2">
+            المادة:{" "}
+            <span className="rounded-2xl bg-emerald-300/40 px-2 text-sm text-emerald-800">
+              {selectedClassSubjectName}
+            </span>
+          </div>
+          <div className="flex gap-6">
+            {evaluationEditMode ? (
+              <p>الدرس: {unitItemTitle}</p>
+            ) : (
+              <>
+                <select
+                  className="rounded-md border border-gray-300 px-2 focus:outline-none focus:ring-0"
+                  name="unit_id"
+                  id="unit_id"
+                  onChange={(e) => {
+                    setUnitId(parseInt(e.target.value));
+                    setUnitItemId(null);
+                  }}
+                >
+                  <option disabled selected value="">
+                    اختر الوحدة
+                  </option>
+                  {units &&
+                    units.map((unit) => (
+                      <option key={unit.id} value={unit.id}>
+                        {unit.title}
+                      </option>
+                    ))}
+                </select>
+                <select
+                  className="rounded-md border border-gray-300 px-2 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={!unitId}
+                  name="unit_item_id"
+                  id="unit_item_id"
+                  onChange={(e) => setUnitItemId(parseInt(e.target.value))}
+                >
+                  <option disabled value="" selected>
+                    اختر الدرس
+                  </option>
+                  {unitItems &&
+                    unitItems.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.title}
+                      </option>
+                    ))}
+                </select>
+              </>
+            )}
           </div>
         </div>
 

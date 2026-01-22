@@ -4,12 +4,14 @@ interface ActionButtonsProps {
   onSubmit: () => void;
   isSubmitting: boolean;
   onCancel: () => void;
+  disabled: boolean;
 }
 
 const EvaluationsActionButtons = ({
   onSubmit,
   isSubmitting,
   onCancel,
+  disabled,
 }: ActionButtonsProps) => {
   return (
     <div className="mt-6 flex justify-end space-x-3">
@@ -23,7 +25,7 @@ const EvaluationsActionButtons = ({
       </button>
       <button
         onClick={onSubmit}
-        disabled={isSubmitting}
+        disabled={isSubmitting || disabled}
         className="flex cursor-pointer items-center space-x-2 rounded-lg bg-emerald-600 px-6 py-3 font-medium text-white transition-colors hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isSubmitting ? (
