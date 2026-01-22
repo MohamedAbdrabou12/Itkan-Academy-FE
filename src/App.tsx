@@ -32,10 +32,10 @@ import ProgramsPage from "@/pages/student/ProgramsPage";
 import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
 import StudentExamsPage from "@/pages/student/StudentExams";
 import TakeExam from "@/pages/student/StudentExams/ExamTake";
+import StudentProgressPage from "@/pages/student/StudentProgressPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import StudentProgressPage from "./pages/student/StudentProgressPage";
 
 const App = () => {
   return (
@@ -92,6 +92,15 @@ const App = () => {
             />
             <Route
               path="exam-correction/:examId/attempt/:attemptId"
+              element={<ExamCorrectionAttempts />}
+            />
+
+            <Route
+              path="/itkan-dashboard/exam-correction/:examId"
+              element={<ExamCorrection />}
+            />
+            <Route
+              path="/itkan-dashboard/exam-correction/:examId/attempt/:attemptId"
               element={<ExamCorrectionAttempts />}
             />
           </Route>
