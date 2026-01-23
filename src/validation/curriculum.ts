@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const curriculumSchema = z.object({
-  name: z.string().min(1, "اسم المنهج مطلوب"),
+  name: z.string().min(1, "اسم المستوى التعليمى مطلوب"),
   description: z.string().default(""),
   academic_year: z.string().min(1, "السنة الأكاديمية مطلوبة"),
   is_active: z

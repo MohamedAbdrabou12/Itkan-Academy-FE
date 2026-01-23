@@ -99,11 +99,11 @@ const UnitFormModal = ({
               placeholder="ادخل وصف الوحدة"
             />
             <HookFormSelect
-              label="المنهج"
+              label="المستوى الدراسى"
               name="curriculum_id"
               required
               options={curriculumOptions}
-              placeholder="اختر المنهج"
+              placeholder="اختر المستوى الدراسى"
             />
           </div>
           <div className="mt-6 flex justify-end gap-3">

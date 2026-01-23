@@ -91,9 +91,9 @@ export const CurriculumFormModal = ({
         >
           <div className="grid grid-cols-1 gap-4">
             <HookFormInput
-              label="اسم المنهج"
+              label="اسم المستوى الدراسى"
               name="name"
-              placeholder="ادخل اسم المنهج"
+              placeholder="ادخل اسم المستوى الدراسى"
               required
             />
 
@@ -107,11 +107,11 @@ export const CurriculumFormModal = ({
             <HookFormInput
               label="الوصف"
               name="description"
-              placeholder="ادخل وصف المنهج"
+              placeholder="ادخل وصف المستوى الدراسى"
             />
 
             <HookFormSelect
-              label="حالة المنهج"
+              label="حالة المستوى الدراسى"
               name="is_active"
               required
               options={statusOptions}

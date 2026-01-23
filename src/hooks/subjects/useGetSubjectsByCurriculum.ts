@@ -9,7 +9,7 @@ export const useGetSubjectsByCurriculum = (curriculum_id?: string) => {
     error,
     refetch,
   } = useQuery<Subject[]>({
-    queryKey: ["subjects_by_curriculum", curriculum_id],
+    queryKey: ["subjects"],
     queryFn: async () => {
       return await apiReq("GET", `/subjects/by-curriculum/${curriculum_id}`);
     },

@@ -14,7 +14,7 @@ import {
   type UnitItem,
 } from "@/types/educationalContent";
 import clsx from "clsx";
-import { ArrowLeft, ChevronDown, Plus } from "lucide-react";
+import { ArrowRight, ChevronDown, Plus } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
@@ -26,6 +26,7 @@ const SubjectContentPage = () => {
   const navigate = useNavigate();
 
   const onAddNewUnit = () => {
+    setUnitBeingEdited(null);
     setIsFormModalOpen(true);
   };
 
@@ -97,7 +98,7 @@ const SubjectContentPage = () => {
       )}
 
       <button onClick={() => navigate(-1)} className="btn-primary mt-4">
-        <ArrowLeft className="h-4 w-4" /> الرجوع
+        <ArrowRight className="h-4 w-4" /> الرجوع
       </button>
     </div>
   );
@@ -115,6 +116,7 @@ const UnitComponent = ({ unit, onUnitEdit }: UnitComponentProps) => {
     useState<UnitItem | null>(null);
 
   const onAddNewUnitItem = () => {
+    setUnitItemBeingEdited(null);
     setIsFormModalOpen(true);
   };
 
@@ -168,7 +170,7 @@ const UnitComponent = ({ unit, onUnitEdit }: UnitComponentProps) => {
           </div>
         </div>
         {isDropdownOpen && (
-          <div className="rounded-b-lg border-x-2 border-b-2 border-gray-200 bg-emerald-200/30">
+          <div className="rounded-b-lg border-x-2 border-b-2 border-gray-200">
             {unit.items.map((item) => (
               <div className="not-last:border-b-2 flex items-center border-gray-200 px-6 py-2">
                 <div className="flex flex-1 flex-col">

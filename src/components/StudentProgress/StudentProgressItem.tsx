@@ -28,7 +28,7 @@ const StudentProgressItem = (props: StudentProgressItemProps) => {
         props.className,
       )}
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         <div className="flex items-center gap-2">
           <div className="text-lg">
             {props.type === "started"
@@ -70,33 +70,39 @@ const StudentProgressItem = (props: StudentProgressItemProps) => {
           </div>
         </div>
         {props.type === "started" && (
-          <div className="flex gap-4 text-sm">
-            {props.progressItem.evaluation_info && (
-              <>
-                <div>
-                  {
-                    attendanceStatusDisplayNames[
-                      props.progressItem.evaluation_info.attendance_status
-                    ]
-                  }
-                </div>
-                {(props.progressItem.evaluation_info.attendance_status ===
-                  AttendanceStatus.PRESENT ||
-                  props.progressItem.evaluation_info.attendance_status ===
-                    AttendanceStatus.LATE) &&
-                  props.progressItem.evaluation_info.evaluation_grades.map(
-                    ({ name, grade }) => (
-                      <div key={name}>
-                        {name}: {grade}
-                      </div>
-                    ),
-                  )}
-              </>
-            )}
-            <div>
-              اكتمل: {formatArabicDate(new Date(props.progressItem.created_at))}
+          <>
+            <div className="flex justify-between">
+                {props.progressItem.evaluation_info && (
+                  <div className="flex gap-4">
+                    <div className='font-semibold'>
+                      {
+                        attendanceStatusDisplayNames[
+                          props.progressItem.evaluation_info.attendance_status
+                        ]
+                      }
+                    </div>
+                    {(props.progressItem.evaluation_info.attendance_status ===
+                      AttendanceStatus.PRESENT ||
+                      props.progressItem.evaluation_info.attendance_status ===
+                        AttendanceStatus.LATE) &&
+                      props.progressItem.evaluation_info.evaluation_grades.map(
+                        ({ name, grade }) => (
+                          <div key={name}>
+                            {name}: {grade}
+                          </div>
+                        ),
+                      )}
+                  </div>
+                )}
+              <div>
+                اكتمل:{" "}
+                {formatArabicDate(new Date(props.progressItem.created_at))}
+              </div>
             </div>
-          </div>
+            {props.progressItem.evaluation_info?.notes && (
+              <div>ملاحظات: {props.progressItem.evaluation_info.notes}</div>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -11,9 +11,7 @@ interface EditBulkEvaluationData {
   unit_item_id: number;
 }
 
-export const useEditBulkEvaluation = (
-  setSelectedClassId: React.Dispatch<React.SetStateAction<number | null>>,
-) => {
+export const useEditBulkEvaluation = (resetData: () => unknown) => {
   const queryClient = useQueryClient();
 
   const {
@@ -27,7 +25,7 @@ export const useEditBulkEvaluation = (
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["evaluations"] });
       toast(res.message, { type: "success" });
-      setSelectedClassId(null);
+      resetData();
     },
     onError: (error) => {
       toast(error.message, { type: "error" });

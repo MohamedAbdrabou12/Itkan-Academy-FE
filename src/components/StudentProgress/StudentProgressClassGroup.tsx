@@ -8,7 +8,8 @@ import { useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import StudentProgressItem from "./StudentProgressItem";
 
-export interface StudentProgressSubjectGroupProps {
+export interface StudentProgressClassGroupProps {
+  className: string;
   subjectName: string;
   curriculumName: string;
   unitItemsInfo: StudentProgressUnitItemInfo[];
@@ -16,13 +17,14 @@ export interface StudentProgressSubjectGroupProps {
   forceRectangularShape?: boolean;
 }
 
-const StudentProgressSubjectGroup = ({
+const StudentProgressClassGroup = ({
+  className,
   subjectName,
   curriculumName,
   unitItemsInfo,
   progressItems,
   forceRectangularShape,
-}: StudentProgressSubjectGroupProps) => {
+}: StudentProgressClassGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const incompleteUnitItems = useMemo(() => {
@@ -67,7 +69,15 @@ const StudentProgressSubjectGroup = ({
             )}
           />
 
-          <div className="flex-1 text-xl">{subjectName} - {curriculumName}</div>
+          <div className="text-xl">{className}</div>
+          <div className="flex flex-1 gap-2">
+            <div className="rounded-3xl bg-emerald-300/50 p-2 text-sm text-green-700">
+              المادة: {subjectName}
+            </div>
+            <div className="rounded-3xl bg-emerald-300/50 p-2 text-sm text-green-700">
+              المستوى: {curriculumName}
+            </div>
+          </div>
           <div className="text-lg">متقدم {progressPercentageDisplay}%</div>
         </div>
         <div
@@ -106,4 +116,4 @@ const StudentProgressSubjectGroup = ({
   );
 };
 
-export default StudentProgressSubjectGroup;
+export default StudentProgressClassGroup;

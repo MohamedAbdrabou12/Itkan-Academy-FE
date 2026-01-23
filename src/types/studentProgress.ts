@@ -19,6 +19,7 @@ export interface StudentProgressEvaluationInfo {
   attendance_status: AttendanceStatus;
   evaluation_grades: Record<string, number>[];
   date: string;
+  notes?: string;
 }
 
 export interface StudentProgressExamInfo {
@@ -54,16 +55,17 @@ export interface StudentProgressEntry {
   created_at: string;
 }
 
-export type StudentProgressBySubjectList = {
-  subject_id: number;
+export type StudentProgressClassGroup = {
+  class_id: number;
+  class_name: string;
   subject_name: string;
   curriculum_name: string;
   unit_items_info: StudentProgressUnitItemInfo[];
   items: StudentProgressEntry[];
-}[];
+};
 
-export type StudentProgressByStudentList = {
+export type StudentProgressStudentGroup = {
   student_id: number;
   student_name: string;
-  groups: StudentProgressBySubjectList;
-}[];
+  groups: StudentProgressClassGroup[];
+};
