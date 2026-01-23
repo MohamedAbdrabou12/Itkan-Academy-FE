@@ -53,12 +53,12 @@ const StudentProgressItem = (props: StudentProgressItemProps) => {
               props.progressItem.status === StudentProgressStatus.PASSED ? (
                 <>
                   <CircleCheck size="12" className="m-auto block" />
-                  اكتمل
+                  ناجح
                 </>
               ) : (
                 <>
                   <CircleX size="12" className="m-auto block" />
-                  فشل
+                  راسب
                 </>
               )
             ) : (

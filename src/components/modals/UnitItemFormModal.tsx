@@ -114,6 +114,7 @@ const UnitItemFormModal = ({
               label="محتوى الدرس"
               name="content"
               placeholder="ادخل محتوى الدرس..."
+              required
             />
           </div>
           <div className="mt-6 flex justify-end gap-3">
