@@ -3,15 +3,21 @@ import { useGetHolidays } from "@/hooks/attendance/useGetHolidays";
 import { useGetWorkingDays } from "@/hooks/attendance/useGetWorkingDays";
 import { useSetWorkingDays } from "@/hooks/attendance/useSetWorkingDays";
 import { useCreateHoliday } from "@/hooks/attendance/useCreateHoliday";
+import { useUpdateHoliday } from "@/hooks/attendance/useUpdateHoliday";
+import { useDeleteHoliday } from "@/hooks/attendance/useDeleteHoliday";
 import type {
   CalendarWorkingDayCreate,
+  CalendarHoliday,
   CalendarHolidayCreate,
+  CalendarHolidayUpdate,
   Weekday,
 } from "@/types/attendance";
 import { useParams, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import PermissionGate from "@/components/auth/PermissionGate";
 import { PermissionKeys } from "@/constants/permissions";
+import { Edit, Trash2 } from "lucide-react";
+import { DeleteConfirmationModal } from "@/components/modals/DeleteConfirmationModal";
 
 export default function CalendarDetailPage() {
   const { calendarId } = useParams<{ calendarId: string }>();
@@ -26,8 +32,18 @@ export default function CalendarDetailPage() {
     useSetWorkingDays();
   const { mutate: createHoliday, isPending: isCreatingHoliday } =
     useCreateHoliday();
+  const { mutate: updateHoliday, isPending: isUpdatingHoliday } =
+    useUpdateHoliday();
+  const { mutate: deleteHoliday, isPending: isDeletingHoliday } =
+    useDeleteHoliday();
 
   const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(false);
+  const [editingHoliday, setEditingHoliday] = useState<CalendarHoliday | null>(
+    null,
+  );
+  const [deletingHolidayId, setDeletingHolidayId] = useState<number | null>(
+    null,
+  );
   const [workingDays, setWorkingDaysState] = useState<Record<Weekday, boolean>>(
     {
       mon: false,
@@ -83,10 +99,55 @@ export default function CalendarDetailPage() {
     });
   };
 
-  const handleCreateHoliday = async (data: CalendarHolidayCreate) => {
-    createHoliday({ calendar_id: calendarIdNum, holiday: data });
-    setIsHolidayModalOpen(false);
-    refetchHolidays();
+  const handleCreateHoliday = (data: CalendarHolidayCreate) => {
+    createHoliday(
+      { calendar_id: calendarIdNum, holiday: data },
+      {
+        onSuccess: () => {
+          setIsHolidayModalOpen(false);
+          refetchHolidays();
+        },
+      },
+    );
+  };
+
+  const handleUpdateHoliday = (data: CalendarHolidayUpdate) => {
+    if (!editingHoliday) return;
+    updateHoliday(
+      {
+        calendar_id: calendarIdNum,
+        holiday_id: editingHoliday.id,
+        holiday: data,
+      },
+      {
+        onSuccess: () => {
+          setIsHolidayModalOpen(false);
+          setEditingHoliday(null);
+          refetchHolidays();
+        },
+      },
+    );
+  };
+
+  const handleEditClick = (holiday: CalendarHoliday) => {
+    setEditingHoliday(holiday);
+    setIsHolidayModalOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!deletingHolidayId) return;
+    deleteHoliday(
+      {
+        calendar_id: calendarIdNum,
+        holiday_id: deletingHolidayId,
+      },
+      {
+        onSuccess: () => {
+          setDeletingHolidayId(null);
+          refetchHolidays();
+        },
+      },
+    );
   };
 
   if (!calendar) {
@@ -185,21 +246,47 @@ export default function CalendarDetailPage() {
                   key={holiday.id}
                   className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
                 >
-                  <div>
-                    <div className="font-medium text-gray-800">
-                      {holiday.name}
+                  <div className="flex flex-1 items-center justify-between">
+                    <div>
+                      <div className="font-medium text-gray-800">
+                        {holiday.name}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {holiday.date}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-500">{holiday.date}</div>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        holiday.is_paid
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {holiday.is_paid ? "مدفوعة" : "غير مدفوعة"}
+                    </span>
                   </div>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      holiday.is_paid
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
+                  <PermissionGate
+                    permissions={[
+                      PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE,
+                    ]}
                   >
-                    {holiday.is_paid ? "مدفوعة" : "غير مدفوعة"}
-                  </span>
+                    <div className="mr-4 flex items-center gap-2 border-r border-gray-100 pr-4">
+                      <button
+                        onClick={() => handleEditClick(holiday)}
+                        className="rounded-lg p-1 text-gray-400 hover:bg-gray-50 hover:text-emerald-600"
+                        title="تعديل"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setDeletingHolidayId(holiday.id)}
+                        className="rounded-lg p-1 text-gray-400 hover:bg-gray-50 hover:text-red-600"
+                        title="حذف"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </PermissionGate>
                 </div>
               ))}
             </div>
@@ -208,35 +295,69 @@ export default function CalendarDetailPage() {
       </div>
 
       {isHolidayModalOpen && (
-        <CreateHolidayModal
+        <HolidayModal
           isOpen={isHolidayModalOpen}
-          onClose={() => setIsHolidayModalOpen(false)}
-          onSubmit={handleCreateHoliday}
-          isSubmitting={isCreatingHoliday}
+          onClose={() => {
+            setIsHolidayModalOpen(false);
+            setEditingHoliday(null);
+          }}
+          onSubmit={editingHoliday ? handleUpdateHoliday : handleCreateHoliday}
+          isSubmitting={isCreatingHoliday || isUpdatingHoliday}
+          holiday={editingHoliday}
+        />
+      )}
+
+      {deletingHolidayId && (
+        <DeleteConfirmationModal
+          isOpen={!!deletingHolidayId}
+          onClose={() => setDeletingHolidayId(null)}
+          onConfirm={handleDeleteConfirm}
+          title="حذف العطلة"
+          description="هل أنت متأكد من حذف هذه العطلة؟ لا يمكن التراجع عن هذا الإجراء."
+          isDeleting={isDeletingHoliday}
+          itemName={holidays.find((h) => h.id === deletingHolidayId)?.name}
         />
       )}
     </div>
   );
 }
 
-interface CreateHolidayModalProps {
+interface HolidayModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CalendarHolidayCreate) => void;
+  onSubmit: (data: { date: string; name: string; is_paid: boolean }) => void;
   isSubmitting: boolean;
+  holiday?: CalendarHoliday | null;
 }
 
-function CreateHolidayModal({
+function HolidayModal({
   isOpen,
   onClose,
   onSubmit,
   isSubmitting,
-}: CreateHolidayModalProps) {
-  const [formData, setFormData] = useState<CalendarHolidayCreate>({
+  holiday,
+}: HolidayModalProps) {
+  const [formData, setFormData] = useState({
     date: "",
     name: "",
     is_paid: true,
   });
+
+  useEffect(() => {
+    if (holiday) {
+      setFormData({
+        date: holiday.date,
+        name: holiday.name,
+        is_paid: holiday.is_paid,
+      });
+    } else {
+      setFormData({
+        date: "",
+        name: "",
+        is_paid: true,
+      });
+    }
+  }, [holiday]);
 
   if (!isOpen) return null;
 
@@ -246,10 +367,10 @@ function CreateHolidayModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
         <h3 className="mb-4 text-lg font-semibold text-gray-800">
-          إضافة عطلة جديدة
+          {holiday ? "تعديل عطلة" : "إضافة عطلة جديدة"}
         </h3>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -263,7 +384,7 @@ function CreateHolidayModal({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               required
             />
           </div>
@@ -278,7 +399,7 @@ function CreateHolidayModal({
               onChange={(e) =>
                 setFormData({ ...formData, date: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               required
             />
           </div>
@@ -291,14 +412,17 @@ function CreateHolidayModal({
               onChange={(e) =>
                 setFormData({ ...formData, is_paid: e.target.checked })
               }
-              className="h-4 w-4 rounded border-gray-300 text-emerald-600"
+              className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
             />
-            <label htmlFor="is_paid" className="text-sm text-gray-700">
+            <label
+              htmlFor="is_paid"
+              className="text-sm font-medium text-gray-700"
+            >
               عطلة مدفوعة
             </label>
           </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
@@ -311,7 +435,7 @@ function CreateHolidayModal({
               disabled={isSubmitting}
               className="btn-primary"
             >
-              {isSubmitting ? "جاري الحفظ..." : "إضافة"}
+              {isSubmitting ? "جاري الحفظ..." : holiday ? "تحديث" : "إضافة"}
             </button>
           </div>
         </form>

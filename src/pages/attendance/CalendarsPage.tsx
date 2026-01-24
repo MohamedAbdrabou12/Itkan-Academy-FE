@@ -194,10 +194,6 @@ export default function CalendarsPage() {
               </div>
 
               <div className="space-y-2 text-sm text-gray-600">
-                <div>
-                  <span className="font-medium">المنطقة الزمنية:</span>{" "}
-                  {calendar.timezone}
-                </div>
                 <div className="flex items-center gap-2">
                   <span className="font-medium">أيام العمل:</span>
                   <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
@@ -278,7 +274,6 @@ function CalendarModal({
   const [formData, setFormData] = useState<SchoolCalendarCreate>({
     branch_id: initialData?.branch_id || branches[0]?.id || 0,
     name: initialData?.name || "",
-    timezone: initialData?.timezone || "UTC",
     is_active: initialData?.is_active ?? true,
   });
 
@@ -330,21 +325,6 @@ function CalendarModal({
               }
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
               required
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              المنطقة الزمنية
-            </label>
-            <input
-              type="text"
-              value={formData.timezone}
-              onChange={(e) =>
-                setFormData({ ...formData, timezone: e.target.value })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
-              placeholder="UTC"
             />
           </div>
 

@@ -14,10 +14,13 @@ export const useCheckIn = () => {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["attendance", "daily"] });
       queryClient.invalidateQueries({ queryKey: ["attendance", "logs"] });
-      if (response.is_late) {
+
+      if (!response.success) {
+        toast.warning(response.message || "لقد قمت بتسجيل الحضور بالفعل اليوم");
+      } else if (response.is_late) {
         toast.warning("تم تسجيل الحضور مع التأخير");
       } else {
-        toast.success("تم تسجيل الحضور بنجاح");
+        toast.success(response.message || "تم تسجيل الحضور بنجاح");
       }
     },
     onError: (error: Error) => {

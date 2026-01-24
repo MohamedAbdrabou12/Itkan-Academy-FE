@@ -11,10 +11,15 @@ export const useCheckOut = () => {
       const response = await apiReq("POST", "/attendance/check-out", data);
       return response;
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["attendance", "daily"] });
       queryClient.invalidateQueries({ queryKey: ["attendance", "logs"] });
-      toast.success("تم تسجيل الخروج بنجاح");
+
+      if (!response.success) {
+        toast.warning(response.message || "لقد قمت بتسجيل الخروج بالفعل اليوم");
+      } else {
+        toast.success(response.message || "تم تسجيل الخروج بنجاح");
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message || "حدث خطأ أثناء تسجيل الخروج");

@@ -38,7 +38,6 @@ export interface SchoolCalendar {
   id: number;
   branch_id: number;
   name: string;
-  timezone: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -126,6 +125,12 @@ export interface CalendarWorkingDayCreate {
   is_working: boolean;
 }
 
+export interface CalendarHolidayUpdate {
+  date?: string;
+  name?: string;
+  is_paid?: boolean;
+}
+
 export interface CalendarHolidayCreate {
   date: string;
   name: string;
@@ -135,7 +140,6 @@ export interface CalendarHolidayCreate {
 export interface SchoolCalendarCreate {
   branch_id: number;
   name: string;
-  timezone?: string;
   is_active?: boolean;
   working_days?: CalendarWorkingDayCreate[];
 }

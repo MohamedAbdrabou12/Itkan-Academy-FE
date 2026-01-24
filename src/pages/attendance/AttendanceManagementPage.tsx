@@ -1,10 +1,9 @@
 import { useGetDailyAttendance } from "@/hooks/attendance/useGetDailyAttendance";
 import { useGetAllStaff } from "@/hooks/staff/useGetStaff";
+import { useAuthStore } from "@/stores/auth";
 import type { AttendanceDaily } from "@/types/attendance";
 import { format } from "date-fns";
 import { useState } from "react";
-import { AttendanceCalendarView } from "@/components/attendance/AttendanceCalendarView";
-import { useAuthStore } from "@/stores/auth";
 
 export default function AttendanceManagementPage() {
   const { activeBranch } = useAuthStore();
@@ -53,8 +52,8 @@ export default function AttendanceManagementPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+      <div className="grid gap-6">
+        <div className="">
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-800">
@@ -132,10 +131,10 @@ export default function AttendanceManagementPage() {
                             {getStatusBadge(record.status)}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-600">
-                            {record.check_in_time || "-"}
+                            {record.check_in_time?.substring(0, 8) || "-"}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-600">
-                            {record.check_out_time || "-"}
+                            {record.check_out_time?.substring(0, 8) || "-"}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-600">
                             {record.worked_minutes
@@ -150,13 +149,6 @@ export default function AttendanceManagementPage() {
               </div>
             )}
           </div>
-        </div>
-
-        <div>
-          <AttendanceCalendarView
-            user_id={selectedUserId}
-            branch_id={activeBranch?.id ? Number(activeBranch.id) : undefined}
-          />
         </div>
       </div>
     </div>
