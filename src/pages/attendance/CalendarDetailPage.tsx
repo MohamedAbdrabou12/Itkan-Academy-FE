@@ -13,7 +13,11 @@ import type {
   Weekday,
 } from "@/types/attendance";
 import { useParams, useNavigate } from "react-router";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm, type Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import HookFormInput from "@/components/forms/HookFormInput";
 import PermissionGate from "@/components/auth/PermissionGate";
 import { PermissionKeys } from "@/constants/permissions";
 import { Edit, Trash2 } from "lucide-react";
@@ -163,7 +167,7 @@ export default function CalendarDetailPage() {
       <div className="flex items-center justify-between">
         <div>
           <button
-            onClick={() => navigate("/itkan-dashboard/attendance/calendars")}
+            onClick={() => navigate("/itkan-dashboard/attendance-calendars")}
             className="mb-2 text-sm text-emerald-600 hover:text-emerald-700"
           >
             ← العودة للتقويمات
@@ -337,33 +341,29 @@ function HolidayModal({
   isSubmitting,
   holiday,
 }: HolidayModalProps) {
-  const [formData, setFormData] = useState({
-    date: "",
-    name: "",
-    is_paid: true,
+  const holidaySchema = z.object({
+    name: z.string().min(1, "اسم العطلة مطلوب"),
+    date: z.string().min(1, "التاريخ مطلوب"),
+    is_paid: z.boolean(),
   });
 
-  useEffect(() => {
-    if (holiday) {
-      setFormData({
-        date: holiday.date,
-        name: holiday.name,
-        is_paid: holiday.is_paid,
-      });
-    } else {
-      setFormData({
-        date: "",
-        name: "",
-        is_paid: true,
-      });
-    }
-  }, [holiday]);
+  type HolidayForm = z.infer<typeof holidaySchema>;
+
+  const form = useForm<HolidayForm>({
+    resolver: zodResolver(holidaySchema) as unknown as Resolver<HolidayForm>,
+    defaultValues: {
+      date: holiday?.date || "",
+      name: holiday?.name || "",
+      is_paid: holiday?.is_paid ?? true,
+    },
+  });
+
+  const { handleSubmit, register } = form;
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
+  const internalSubmit = (data: HolidayForm) => {
+    onSubmit(data);
   };
 
   return (
@@ -373,72 +373,57 @@ function HolidayModal({
           {holiday ? "تعديل عطلة" : "إضافة عطلة جديدة"}
         </h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              اسم العطلة <span className="text-red-500">*</span>
-            </label>
-            <input
+        <FormProvider {...form}>
+          <form onSubmit={handleSubmit(internalSubmit)} className="space-y-4">
+            <HookFormInput
+              label="اسم العطلة"
+              name="name"
+              placeholder="اسم العطلة"
               type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               required
             />
-          </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              التاريخ <span className="text-red-500">*</span>
-            </label>
-            <input
+            <HookFormInput
+              label="التاريخ"
+              name="date"
+              placeholder=""
               type="date"
-              value={formData.date}
-              onChange={(e) =>
-                setFormData({ ...formData, date: e.target.value })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               required
             />
-          </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="is_paid"
-              checked={formData.is_paid}
-              onChange={(e) =>
-                setFormData({ ...formData, is_paid: e.target.checked })
-              }
-              className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-            />
-            <label
-              htmlFor="is_paid"
-              className="text-sm font-medium text-gray-700"
-            >
-              عطلة مدفوعة
-            </label>
-          </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_paid"
+                {...register("is_paid")}
+                className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+              />
+              <label
+                htmlFor="is_paid"
+                className="text-sm font-medium text-gray-700"
+              >
+                عطلة مدفوعة
+              </label>
+            </div>
 
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              إلغاء
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-primary"
-            >
-              {isSubmitting ? "جاري الحفظ..." : holiday ? "تحديث" : "إضافة"}
-            </button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                إلغاء
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-primary"
+              >
+                {isSubmitting ? "جاري الحفظ..." : holiday ? "تحديث" : "إضافة"}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
       </div>
     </div>
   );

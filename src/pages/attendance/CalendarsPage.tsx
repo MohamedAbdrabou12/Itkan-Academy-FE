@@ -1,15 +1,20 @@
 import PermissionGate from "@/components/auth/PermissionGate";
+import HookFormInput from "@/components/forms/HookFormInput";
+import HookFormSelect from "@/components/forms/HookFormSelect";
 import { PermissionKeys } from "@/constants/permissions";
 import { useCreateCalendar } from "@/hooks/attendance/useCreateCalendar";
-import { useUpdateCalendar } from "@/hooks/attendance/useUpdateCalendar";
 import { useDeleteCalendar } from "@/hooks/attendance/useDeleteCalendar";
 import { useGetCalendars } from "@/hooks/attendance/useGetCalendars";
+import { useUpdateCalendar } from "@/hooks/attendance/useUpdateCalendar";
 import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
 import { useAuthStore } from "@/stores/auth";
 import type { SchoolCalendar, SchoolCalendarCreate } from "@/types/attendance";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { FormProvider, useForm, type Resolver } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { z } from "zod";
 
 export default function CalendarsPage() {
   const { activeBranch } = useAuthStore();
@@ -31,6 +36,11 @@ export default function CalendarsPage() {
   const { mutate: createCalendar, isPending: isCreating } = useCreateCalendar();
   const { mutate: updateCalendar, isPending: isUpdating } = useUpdateCalendar();
   const { mutate: deleteCalendar } = useDeleteCalendar();
+
+  const branchesOptions = branches.map((branch) => ({
+    value: `${branch.id}`,
+    label: branch.name,
+  }));
 
   const handleOpenCreateModal = () => {
     setEditingCalendar(null);
@@ -234,7 +244,7 @@ export default function CalendarsPage() {
           }}
           onSubmit={handleSubmitCalendar}
           isSubmitting={isCreating || isUpdating}
-          branches={branches}
+          branches={branchesOptions}
           initialData={editingCalendar || undefined}
         />
       )}
@@ -259,7 +269,7 @@ interface CalendarModalProps {
   onClose: () => void;
   onSubmit: (data: SchoolCalendarCreate) => void;
   isSubmitting: boolean;
-  branches: Array<{ id: number; name: string }>;
+  branches: { value: string; label: string }[];
   initialData?: SchoolCalendar;
 }
 
@@ -271,17 +281,30 @@ function CalendarModal({
   branches,
   initialData,
 }: CalendarModalProps) {
-  const [formData, setFormData] = useState<SchoolCalendarCreate>({
-    branch_id: initialData?.branch_id || branches[0]?.id || 0,
-    name: initialData?.name || "",
-    is_active: initialData?.is_active ?? true,
+  const calendarSchema = z.object({
+    branch_id: z.string().min(1, "الفرع مطلوب"),
+    name: z.string().min(1, "اسم التقويم مطلوب"),
+    is_active: z.boolean(),
   });
+
+  type CalendarForm = z.infer<typeof calendarSchema>;
+
+  const form = useForm<CalendarForm>({
+    resolver: zodResolver(calendarSchema) as unknown as Resolver<CalendarForm>,
+    defaultValues: {
+      branch_id: `${initialData?.branch_id}` || "",
+      name: initialData?.name || "",
+      is_active: initialData?.is_active ?? true,
+    },
+  });
+
+  const { handleSubmit } = form;
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
+  const internalSubmit = (data: CalendarForm) => {
+    // cast to the service payload type expected by parent
+    onSubmit(data as unknown as SchoolCalendarCreate);
   };
 
   return (
@@ -290,80 +313,57 @@ function CalendarModal({
         <h3 className="mb-4 text-lg font-semibold text-gray-800">
           {initialData ? "تعديل التقويم" : "إضافة تقويم جديد"}
         </h3>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              الفرع <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.branch_id}
-              onChange={(e) =>
-                setFormData({ ...formData, branch_id: Number(e.target.value) })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+        <FormProvider {...form}>
+          <form onSubmit={handleSubmit(internalSubmit)} className="space-y-4">
+            <HookFormSelect
+              label={"الفرع"}
+              name="branch_id"
               required
               disabled={!!initialData}
-            >
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name}
-                </option>
-              ))}
-            </select>
-          </div>
+              options={branches}
+            />
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              اسم التقويم <span className="text-red-500">*</span>
-            </label>
-            <input
+            <HookFormInput
+              label="اسم التقويم"
+              name="name"
+              placeholder="اسم التقويم"
               type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
               required
             />
-          </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="is_active"
-              checked={formData.is_active}
-              onChange={(e) =>
-                setFormData({ ...formData, is_active: e.target.checked })
-              }
-              className="h-4 w-4 rounded border-gray-300 text-emerald-600"
-            />
-            <label htmlFor="is_active" className="text-sm text-gray-700">
-              نشط
-            </label>
-          </div>
-
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              إلغاء
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-primary"
-            >
-              {isSubmitting
-                ? "جاري الحفظ..."
-                : initialData
-                  ? "حفظ التغييرات"
-                  : "إنشاء"}
-            </button>
-          </div>
-        </form>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="is_active"
+                {...form.register("is_active")}
+                className="h-4 w-4 rounded border-gray-300 text-emerald-600"
+              />
+              <label htmlFor="is_active" className="text-sm text-gray-700">
+                نشط
+              </label>
+            </div>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                إلغاء
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-primary"
+              >
+                {isSubmitting
+                  ? "جاري الحفظ..."
+                  : initialData
+                    ? "حفظ التغييرات"
+                    : "إنشاء"}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
       </div>
     </div>
   );

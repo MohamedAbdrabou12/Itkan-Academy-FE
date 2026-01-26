@@ -13,7 +13,7 @@ export const useCreateWorkSchedule = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["attendance", "work-schedules"],
+        queryKey: ["attendance", "work-schedules-list"],
       });
       toast.success("تم إنشاء جدول العمل بنجاح");
     },

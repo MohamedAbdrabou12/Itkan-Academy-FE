@@ -1,25 +1,33 @@
-import { useGetBranchStaff } from "@/hooks/branches/useGetBranchStaff";
+import PermissionGate from "@/components/auth/PermissionGate";
+import HookFormInput from "@/components/forms/HookFormInput";
+import HookFormSelect from "@/components/forms/HookFormSelect";
+import { PermissionKeys } from "@/constants/permissions";
+import { useCreateWorkSchedule } from "@/hooks/attendance/useCreateWorkSchedule";
+import { useDeleteWorkSchedule } from "@/hooks/attendance/useDeleteWorkSchedule";
 import { useGetCalendars } from "@/hooks/attendance/useGetCalendars";
 import { useGetWorkSchedules } from "@/hooks/attendance/useGetWorkSchedules";
-import { useCreateWorkSchedule } from "@/hooks/attendance/useCreateWorkSchedule";
 import { useUpdateWorkSchedule } from "@/hooks/attendance/useUpdateWorkSchedule";
-import { useDeleteWorkSchedule } from "@/hooks/attendance/useDeleteWorkSchedule";
+import { useGetBranchStaff } from "@/hooks/branches/useGetBranchStaff";
+import { useAuthStore } from "@/stores/auth";
 import type {
   StaffWorkSchedule,
   StaffWorkScheduleCreate,
 } from "@/types/attendance";
-import { useState } from "react";
-import PermissionGate from "@/components/auth/PermissionGate";
-import { PermissionKeys } from "@/constants/permissions";
-import { useAuthStore } from "@/stores/auth";
+import { getLocalTime, getUTCTime } from "@/utils/formatTime";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { FormProvider, useForm, type Resolver } from "react-hook-form";
+import { z } from "zod";
 
 const formatTime12h = (timeStr: string) => {
   if (!timeStr) return "";
   const [hours, minutes] = timeStr.split(":").map(Number);
-  const period = hours >= 12 ? "م" : "ص";
-  const displayHours = hours % 12 || 12;
-  return `${displayHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+  const date = new Date();
+  date.setUTCHours(hours, minutes);
+  const period = date.getHours() >= 12 ? "م" : "ص";
+  const displayHours = date.getHours() % 12 || 12;
+  return `${displayHours}:${date.getMinutes().toString().padStart(2, "0")} ${period}`;
 };
 
 export default function WorkSchedulesPage() {
@@ -59,6 +67,9 @@ export default function WorkSchedulesPage() {
   };
 
   const handleSubmitSchedule = async (data: StaffWorkScheduleCreate) => {
+    // change all times from local time to UTC time
+    data.start_time = getUTCTime(data.start_time);
+    data.end_time = getUTCTime(data.end_time);
     if (editingSchedule) {
       updateSchedule({ id: editingSchedule.id, data });
     } else {
@@ -287,19 +298,44 @@ function WorkScheduleModal({
   calendars,
   initialData,
 }: WorkScheduleModalProps) {
-  const [formData, setFormData] = useState<StaffWorkScheduleCreate>({
-    user_id: initialData?.user_id || staff[0]?.id || 0,
-    calendar_id: initialData?.calendar_id || calendars[0]?.id || 0,
-    start_time: initialData?.start_time || "09:00",
-    end_time: initialData?.end_time || "17:00",
-    grace_minutes: initialData?.grace_minutes ?? 15,
+  const workScheduleSchema = z.object({
+    user_id: z.string().min(1, "الموظف مطلوب"),
+    calendar_id: z.string().min(1, "التقويم مطلوب"),
+    start_time: z.string().min(1, "وقت غير صالح"),
+    end_time: z.string().min(1, "وقت غير صالح"),
+    grace_minutes: z.coerce
+      .number()
+      .min(0, "يجب أن تكون دقائق السماح >= 0")
+      .max(1440)
+      .optional(),
   });
+
+  type WorkScheduleForm = z.infer<typeof workScheduleSchema>;
+
+  const methods = useForm<WorkScheduleForm>({
+    resolver: zodResolver(
+      workScheduleSchema,
+    ) as unknown as Resolver<WorkScheduleForm>,
+    defaultValues: {
+      user_id: `${initialData?.user_id}` || "",
+      calendar_id: `${initialData?.calendar_id}` || "",
+      start_time: initialData?.start_time
+        ? getLocalTime(initialData?.start_time)
+        : "09:00",
+      end_time: initialData?.end_time
+        ? getLocalTime(initialData?.end_time)
+        : "17:00",
+      grace_minutes: initialData?.grace_minutes ?? 15,
+    },
+  });
+
+  const { handleSubmit } = methods;
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
+  const internalSubmit = (data: WorkScheduleForm) => {
+    // cast to the backend payload type expected by parent
+    onSubmit(data as unknown as StaffWorkScheduleCreate);
   };
 
   return (
@@ -309,117 +345,71 @@ function WorkScheduleModal({
           {initialData ? "تعديل جدول عمل" : "إضافة جدول عمل جديد"}
         </h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              الموظف <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.user_id}
-              onChange={(e) =>
-                setFormData({ ...formData, user_id: Number(e.target.value) })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(internalSubmit)} className="space-y-4">
+            <HookFormSelect
+              label="الموظف"
+              name="user_id"
               required
               disabled={!!initialData}
-            >
-              {staff.map((s: { id: number; full_name: string }) => (
-                <option key={s.id} value={s.id}>
-                  {s.full_name}
-                </option>
-              ))}
-            </select>
-          </div>
+              options={staff.map((s) => ({
+                value: `${s.id}`,
+                label: s.full_name,
+              }))}
+            />
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              التقويم <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.calendar_id}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  calendar_id: Number(e.target.value),
-                })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            <HookFormSelect
+              label="التقويم"
+              name="calendar_id"
               required
-            >
-              {calendars.map((c: { id: number; name: string }) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+              options={calendars.map((c) => ({
+                value: `${c.id}`,
+                label: c.name,
+              }))}
+            />
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              وقت البداية <span className="text-red-500">*</span>
-            </label>
-            <input
+            <HookFormInput
+              label="وقت البداية"
+              name="start_time"
               type="time"
-              value={formData.start_time}
-              onChange={(e) =>
-                setFormData({ ...formData, start_time: e.target.value })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
               required
             />
-          </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              وقت النهاية <span className="text-red-500">*</span>
-            </label>
-            <input
+            <HookFormInput
+              label="وقت النهاية"
+              name="end_time"
               type="time"
-              value={formData.end_time}
-              onChange={(e) =>
-                setFormData({ ...formData, end_time: e.target.value })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
               required
             />
-          </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
-              دقائق السماح
-            </label>
-            <input
+            <HookFormInput
+              label="دقائق السماح"
+              name="grace_minutes"
               type="number"
-              min="0"
-              max="60"
-              value={formData.grace_minutes}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  grace_minutes: Number(e.target.value),
-                })
-              }
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
             />
-          </div>
 
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              إلغاء
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn-primary"
-            >
-              {isSubmitting ? "جاري الحفظ..." : initialData ? "تحديث" : "إنشاء"}
-            </button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                إلغاء
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn-primary"
+              >
+                {isSubmitting
+                  ? "جاري الحفظ..."
+                  : initialData
+                    ? "تحديث"
+                    : "إنشاء"}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
       </div>
     </div>
   );
