@@ -125,7 +125,7 @@ export default function WorkSchedulesPage() {
                 e.target.value ? Number(e.target.value) : undefined,
               )
             }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="select select-success w-full "
           >
             <option value="">جميع الموظفين</option>
             {staff.map((s: { id: number; full_name: string }) => (
@@ -147,7 +147,7 @@ export default function WorkSchedulesPage() {
                 e.target.value ? Number(e.target.value) : undefined,
               )
             }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="select select-success w-full"
           >
             <option value="">جميع التقاويم</option>
             {calendars.map((c: { id: number; name: string }) => (

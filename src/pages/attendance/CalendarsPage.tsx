@@ -25,12 +25,9 @@ export default function CalendarsPage() {
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [calendarToDelete, setCalendarToDelete] = useState<number | null>(null);
-  const [selectedBranchId, setSelectedBranchId] = useState<number | undefined>(
-    activeBranch?.id ? Number(activeBranch.id) : undefined,
-  );
 
   const { calendars, isPending, refetch } = useGetCalendars({
-    branch_id: selectedBranchId || undefined,
+    branch_id: activeBranch?.id ? Number(activeBranch.id) : undefined,
   });
   const { branches } = useGetAllBranches({});
   const { mutate: createCalendar, isPending: isCreating } = useCreateCalendar();
@@ -124,28 +121,6 @@ export default function CalendarsPage() {
             إضافة تقويم جديد
           </button>
         </PermissionGate>
-      </div>
-
-      <div className="mb-4">
-        <label className="mb-1 block text-sm font-medium text-gray-700">
-          الفرع
-        </label>
-        <select
-          value={selectedBranchId || ""}
-          onChange={(e) =>
-            setSelectedBranchId(
-              e.target.value ? Number(e.target.value) : undefined,
-            )
-          }
-          className="w-full max-w-xs rounded-lg border border-gray-300 px-3 py-2 text-sm"
-        >
-          <option value="">جميع الفروع</option>
-          {branches.map((branch) => (
-            <option key={branch.id} value={branch.id}>
-              {branch.name}
-            </option>
-          ))}
-        </select>
       </div>
 
       {isPending ? (

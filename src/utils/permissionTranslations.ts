@@ -64,6 +64,7 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   add: "إضافة",
   edit: "تعديل",
   delete: "حذف",
+  checkin: "تسجيل الحضور",
   "*": "الكل",
 };
 

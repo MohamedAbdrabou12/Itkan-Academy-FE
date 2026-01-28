@@ -1,5 +1,5 @@
 import { useGetDailyAttendance } from "@/hooks/attendance/useGetDailyAttendance";
-import { useGetAllStaff } from "@/hooks/staff/useGetStaff";
+import { useGetBranchStaff } from "@/hooks/branches/useGetBranchStaff";
 import { useAuthStore } from "@/stores/auth";
 import type { AttendanceDaily } from "@/types/attendance";
 import { format } from "date-fns";
@@ -12,7 +12,8 @@ export default function AttendanceManagementPage() {
   );
   const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
 
-  const { staff } = useGetAllStaff({});
+  const { staff } = useGetBranchStaff();
+
   const { attendance, isPending } = useGetDailyAttendance({
     date: selectedDate,
     branch_id: activeBranch?.id ? Number(activeBranch.id) : undefined,
@@ -75,10 +76,10 @@ export default function AttendanceManagementPage() {
                     e.target.value ? Number(e.target.value) : undefined,
                   )
                 }
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                className="select select-success w-full"
               >
                 <option value="">جميع الموظفين</option>
-                {staff.map((s) => (
+                {staff.map((s: { id: number; full_name: string }) => (
                   <option key={s.id} value={s.id}>
                     {s.full_name}
                   </option>
@@ -118,7 +119,10 @@ export default function AttendanceManagementPage() {
                   </thead>
                   <tbody>
                     {attendance.map((record: AttendanceDaily) => {
-                      const user = staff.find((s) => s.id === record.user_id);
+                      const user = staff.find(
+                        (s: { id: number; full_name: string }) =>
+                          s.id === record.user_id,
+                      );
                       return (
                         <tr
                           key={record.id}
