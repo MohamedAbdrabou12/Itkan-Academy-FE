@@ -3,6 +3,10 @@ import { z } from "zod";
 export const classSchema = z.object({
   name: z.string("اسم الفصل مطلوب").min(1, "الاسم مطلوب"),
   branch_id: z.string().min(1, "الفرع مطلوب").default(""),
+  curriculum_id: z
+    .string("المستوى التعليمي مطلوب")
+    .min(1, "المستوى التعليمي مطلوب"),
+  subject_id: z.string("المادة مطلوبة").min(1, "المادة مطلوبة"),
 
   schedule: z
     .array(

@@ -106,8 +106,8 @@ export default function HookFormMultiSelect({
   // Styling helpers
   const baseInputClasses = `
     w-full flex items-center justify-between
-    bg-white  border rounded-xl shadow-sm transition
-    h-auto min-h-12 py-2 px-3
+    bg-gray-50  border border-gray-300 rounded-xl shadow-sm transition
+    h-auto min-h-12 py-2 px-3 transition hover:border-emerald-600
     ${disabled ? "bg-gray-100  cursor-not-allowed opacity-70" : "cursor-pointer"}
     ${finalError ? "border-red-500 ring-2 ring-red-200" : "border-gray-300"}
   `;
@@ -161,7 +161,7 @@ export default function HookFormMultiSelect({
                 </div>
               ))
             ) : (
-              <span className="text-gray-400">{placeholder}</span>
+              <span className="text-gray-800">{placeholder}</span>
             )}
           </div>
 

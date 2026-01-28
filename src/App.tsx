@@ -8,11 +8,14 @@ import RegisterPage from "@/pages/auth/RegisterPage";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import ClassesGridPage from "@/pages/general-manager/ClassesGridPage";
+import CurriculumGridPage from "@/pages/general-manager/CurriculumGridPage";
 import ParentsGridPage from "@/pages/general-manager/ParentsGridPage";
 import ReportsPage from "@/pages/general-manager/ReportsPage";
 import RolesGridPage from "@/pages/general-manager/RolesGridPage";
 import StaffRoleGridPage from "@/pages/general-manager/StaffGridPage";
 import StudentsGridPage from "@/pages/general-manager/StudentsGridPage";
+import SubjectContentPage from "@/pages/general-manager/SubjectContentPage";
+import SubjectsListPage from "@/pages/general-manager/SubjectsListPage";
 import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
@@ -23,21 +26,22 @@ import HomePage from "@/pages/student/HomePage";
 import NewsPage from "@/pages/student/NewsPage";
 import ProgramsPage from "@/pages/student/ProgramsPage";
 import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
+import StudentProgressPage from "@/pages/student/StudentProgressPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import QuestionBankPage from "./pages/staff/QuestionBankPage";
-import ExamPage from "./pages/staff/ExamPage";
-import StudentExamsPage from "./pages/student/StudentExams";
-import TakeExam from "./pages/student/StudentExams/ExamTake";
+import AttendanceManagementPage from "./pages/attendance/AttendanceManagementPage";
+import AttendancePage from "./pages/attendance/AttendancePage";
+import CalendarDetailPage from "./pages/attendance/CalendarDetailPage";
+import CalendarsPage from "./pages/attendance/CalendarsPage";
+import UserAttendancePage from "./pages/attendance/UserAttendancePage";
+import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
 import ExamCorrection from "./pages/staff/ExamCorrection";
 import ExamCorrectionAttempts from "./pages/staff/ExamCorrectionAttempts";
-import AttendancePage from "./pages/attendance/AttendancePage";
-import AttendanceManagementPage from "./pages/attendance/AttendanceManagementPage";
-import UserAttendancePage from "./pages/attendance/UserAttendancePage";
-import CalendarsPage from "./pages/attendance/CalendarsPage";
-import CalendarDetailPage from "./pages/attendance/CalendarDetailPage";
-import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
+import ExamPage from "./pages/staff/ExamPage";
+import QuestionBankPage from "./pages/staff/QuestionBankPage";
+import StudentExamsPage from "./pages/student/StudentExams";
+import TakeExam from "./pages/student/StudentExams/ExamTake";
 // import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
 
 const App = () => {
@@ -46,71 +50,56 @@ const App = () => {
       <Routes>
         {/* GUEST-only routes */}
         {/* <Route element={<GuestOnlyRoute />}> */}
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/register-pending" element={<RegisterPendingPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route
-          path="/password-reset-sent"
-          element={<PasswordResetSentPage />}
-        />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="register-pending" element={<RegisterPendingPage />} />
+        <Route path="reset-password" element={<ResetPasswordPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="password-reset-sent" element={<PasswordResetSentPage />} />
+        <Route path="login" element={<LoginPage />} />
         {/* </Route> */}
 
         {/* STUDENT-only routes */}
         <Route element={<PermissionBasedRoute />}>
           <Route element={<StudentLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/branches" element={<BranchesPage />} />
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="/programs" element={<ProgramsPage />} />
-            <Route path="/studentExam" element={<StudentExamsPage />} />
-            <Route path="/exams/:examId/take" element={<TakeExam />} />
+            <Route index element={<HomePage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="branches" element={<BranchesPage />} />
+            <Route path="news" element={<NewsPage />} />
+            <Route path="programs" element={<ProgramsPage />} />
+            <Route path="student-progress" element={<StudentProgressPage />} />
+            <Route path="studentExam" element={<StudentExamsPage />} />
+            <Route path="exams/:examId/take" element={<TakeExam />} />
           </Route>
 
-          <Route element={<ItkanDashboardLayout />}>
-            <Route path="/itkan-dashboard" element={<>Hello</>} />
-            <Route path="/itkan-dashboard/roles" element={<RolesGridPage />} />
+          <Route path="itkan-dashboard" element={<ItkanDashboardLayout />}>
+            <Route index element={<>Hello</>} />
+            <Route path="roles" element={<RolesGridPage />} />
+            <Route path="branches" element={<BranchesGridPage />} />
+            <Route path="staff" element={<StaffRoleGridPage />} />
             <Route
-              path="/itkan-dashboard/branches"
-              element={<BranchesGridPage />}
-            />
-            <Route
-              path="/itkan-dashboard/staff"
-              element={<StaffRoleGridPage />}
-            />
-            <Route
-              path="/itkan-dashboard/attendance-and-evaluations"
+              path="attendance-and-evaluations"
               element={<AttendanceEvaluationsPage />}
             />
-            <Route path="/itkan-dashboard/reports" element={<ReportsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="students" element={<StudentsGridPage />} />
+            <Route path="teachers" element={<TeachersGridPage />} />
+            <Route path="classes" element={<ClassesGridPage />} />
+            <Route path="parents" element={<ParentsGridPage />} />
+            <Route path="question_bank" element={<QuestionBankPage />} />
+            <Route path="exam_dashboard" element={<ExamPage />} />
+            <Route path="curriculum" element={<CurriculumGridPage />} />
+            <Route path="subjects">
+              <Route index element={<SubjectsListPage />} />
+              <Route path=":id" element={<SubjectContentPage />} />
+            </Route>
             <Route
-              path="/itkan-dashboard/students"
-              element={<StudentsGridPage />}
+              path="exam-correction/:examId"
+              element={<ExamCorrection />}
             />
             <Route
-              path="/itkan-dashboard/teachers"
-              element={<TeachersGridPage />}
-            />
-            <Route
-              path="/itkan-dashboard/classes"
-              element={<ClassesGridPage />}
-            />
-            <Route
-              path="/itkan-dashboard/parents"
-              element={<ParentsGridPage />}
-            />
-
-            <Route
-              path="/itkan-dashboard/question_bank"
-              element={<QuestionBankPage />}
-            />
-
-            <Route
-              path="/itkan-dashboard/exam_dashboard"
-              element={<ExamPage />}
+              path="exam-correction/:examId/attempt/:attemptId"
+              element={<ExamCorrectionAttempts />}
             />
 
             <Route
@@ -149,7 +138,7 @@ const App = () => {
         </Route>
 
         {/* Unauthorized route */}
-        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="unauthorized" element={<UnauthorizedPage />} />
 
         {/* Notfound route */}
         <Route path="*" element={<NotFoundPage />} />

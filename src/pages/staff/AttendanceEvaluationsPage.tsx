@@ -26,12 +26,22 @@ const AttendanceEvaluationsPage = () => {
   );
   const [evaluationEditMode, setEvaluationEditMode] = useState<boolean>(false);
   const [classDate, setClassDate] = useState(new Date());
+  const [unitId, setUnitId] = useState<number | null>(null);
+  const [unitItemId, setUnitItemId] = useState<number | null>(null);
+  const [unitItemTitle, setUnitItemTitle] = useState<string | null>(null);
+
+  const resetData = () => {
+    setSelectedClassId(null);
+    setUnitId(null);
+    setUnitItemId(null);
+    setAttendanceStatus({});
+  };
 
   const { createBulkEvaluation, isPending: isCreatingEvaluation } =
-    useCreateBulkEvaluation(setSelectedClassId);
+    useCreateBulkEvaluation(resetData);
 
   const { editBulkEvaluation, isPending: isEditingEvaluation } =
-    useEditBulkEvaluation(setSelectedClassId);
+    useEditBulkEvaluation(resetData);
 
   const { user, activeBranch } = useAuthStore();
 
@@ -45,10 +55,7 @@ const AttendanceEvaluationsPage = () => {
   const selectedClass = teacherClasses?.find((c) => c.id === selectedClassId);
 
   // Reset everything when active branch changes
-  useEffect(() => {
-    setSelectedClassId(null);
-    setAttendanceStatus({});
-  }, [activeBranch?.id]);
+  useEffect(resetData, [activeBranch?.id]);
 
   useEffect(() => {
     if (!selectedClassId) {
@@ -159,24 +166,23 @@ const AttendanceEvaluationsPage = () => {
   };
 
   const handleSubmit = () => {
+    if (!unitItemId) return;
+
     if (evaluationEditMode) {
       editBulkEvaluation({
         class_id: selectedClassId!,
         date: getLocalDateString(classDate),
         records: attendanceStatus,
+        unit_item_id: unitItemId,
       });
     } else {
       createBulkEvaluation({
         class_id: selectedClassId!,
         date: getLocalDateString(classDate),
         records: attendanceStatus,
+        unit_item_id: unitItemId,
       });
     }
-  };
-
-  const handleBackToClasses = () => {
-    setSelectedClassId(null);
-    setAttendanceStatus({});
   };
 
   const handleEvaluationGroupChange = (
@@ -186,6 +192,8 @@ const AttendanceEvaluationsPage = () => {
   ) => {
     setSelectedClassId(classId);
     handleClassDateChange(date);
+    setUnitItemId(evaluations[0].unit_item_id);
+    setUnitItemTitle(evaluations[0].unit_item_title);
     setEvaluationEditMode(true);
     setAttendanceStatus(() => {
       const map: AttendanceStatusMap = {};
@@ -248,6 +256,7 @@ const AttendanceEvaluationsPage = () => {
         <>
           <StudentEvaluationList
             selectedClassId={selectedClassId}
+            selectedClassSubjectName={selectedClass?.subject.name || ""}
             teacherClasses={teacherClasses}
             classStudents={classStudents}
             classDate={classDate}
@@ -255,10 +264,14 @@ const AttendanceEvaluationsPage = () => {
             attendanceStatus={attendanceStatus}
             evaluationConfig={selectedClass?.evaluation_config || []}
             evaluationEditMode={evaluationEditMode}
+            unitItemTitle={unitItemTitle}
+            unitId={unitId}
+            setUnitId={setUnitId}
+            setUnitItemId={setUnitItemId}
             onAttendanceChange={handleAttendanceChange}
             onNotesChange={handleNotesChange}
             onEvaluationChange={handleEvaluationChange}
-            onBackToClasses={handleBackToClasses}
+            onBackToClasses={resetData}
             onClassDateChange={handleClassDateChange}
           />
 
@@ -266,7 +279,8 @@ const AttendanceEvaluationsPage = () => {
             <EvaluationsActionButtons
               onSubmit={handleSubmit}
               isSubmitting={isCreatingEvaluation || isEditingEvaluation}
-              onCancel={handleBackToClasses}
+              disabled={!unitItemId}
+              onCancel={resetData}
             />
           )}
         </>

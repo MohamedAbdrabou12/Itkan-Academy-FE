@@ -8,11 +8,10 @@ interface CreateBulkEvaluationData {
   // YYYY-MM-DD
   date: string;
   records: AttendanceStatusMap;
+  unit_item_id: number;
 }
 
-export const useCreateBulkEvaluation = (
-  setSelectedClassId: React.Dispatch<React.SetStateAction<number | null>>,
-) => {
+export const useCreateBulkEvaluation = (resetData: () => unknown) => {
   const queryClient = useQueryClient();
 
   const {
@@ -27,7 +26,7 @@ export const useCreateBulkEvaluation = (
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["evaluations"] });
       toast(res.message, { type: "success" });
-      setSelectedClassId(null);
+      resetData();
     },
     onError: (error) => {
       toast(error.message, { type: "error" });

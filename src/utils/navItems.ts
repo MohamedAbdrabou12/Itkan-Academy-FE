@@ -13,6 +13,8 @@ import {
   UserRound,
   Users,
   Warehouse,
+  ChartNoAxesColumnIncreasing,
+  NotebookPen,
 } from "lucide-react";
 
 export const navLinks = [
@@ -71,6 +73,20 @@ export const navLinks = [
     icon: BookmarkCheck,
     url: "/itkan-dashboard/attendance-and-evaluations",
     permissions: [PermissionKeys.EVALUATION_STUDENT_VIEW],
+  },
+  {
+    id: "curriculum",
+    title: "المستويات الدراسية",
+    icon: ChartNoAxesColumnIncreasing,
+    url: "/itkan-dashboard/curriculum",
+    permissions: [PermissionKeys.ACADEMIC_CURRICULUM_VIEW],
+  },
+  {
+    id: "subjects",
+    title: "المنهج التعليمي",
+    icon: NotebookPen,
+    url: "/itkan-dashboard/subjects",
+    permissions: [PermissionKeys.ACADEMIC_EDUCATIONAL_CONTENT_VIEW],
   },
   {
     id: "reports",

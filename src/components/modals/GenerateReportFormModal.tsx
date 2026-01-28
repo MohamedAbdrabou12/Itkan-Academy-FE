@@ -12,6 +12,7 @@ import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
 import HookFormSelect from "../forms/HookFormSelect";
 import { Modal } from "../shared/Modal";
+import { useGetCurrentUserBranches } from "@/hooks/branches/useGetCurrentUserBranches";
 
 export interface GenerateReportFormData {
   type: ReportType;
@@ -52,7 +53,7 @@ const GenerateReportFormModal = ({
     control: form.control,
   });
 
-  const { branches } = useGetAllBranches();
+  const { branches } = useGetCurrentUserBranches();
   const { classes } = useGetClassesByBranches(selectedBranches);
   const { students } = useGetStudentsByClasses(selectedClasses);
 

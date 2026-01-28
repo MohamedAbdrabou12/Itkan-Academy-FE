@@ -5,17 +5,20 @@ import {
   FormProvider,
   useFieldArray,
   useForm,
+  useWatch,
   type Resolver,
 } from "react-hook-form";
 import { Modal } from "../shared/Modal";
 
 import { useCreateClass } from "@/hooks/classes/useCreateClass";
 import { useUpdateClass } from "@/hooks/classes/useUpdateClass";
+import { useGetAllCurriculums } from "@/hooks/curriculums/useGetAllCurriculums";
+import { useGetSubjectsByCurriculum } from "@/hooks/subjects/useGetSubjectsByCurriculum";
 import type { AddClassRequest, Class } from "@/types/classes";
 import { evaluationConfigOptions } from "@/utils/evaluationConfigOptions";
 import { arabicDaysOptions } from "@/utils/getArabicDayName";
 import { classSchema, type ClassFormData } from "@/validation/classSchema";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
 import HookFormSelect from "../forms/HookFormSelect";
@@ -52,11 +55,32 @@ export const ClassFormModal = ({
   });
 
   const { branches } = useGetAllBranches();
+  const { curriculums } = useGetAllCurriculums();
+
+  const selectedCurriculum = useWatch({
+    name: "curriculum_id",
+    control: form.control,
+  }) as string;
+
+  const { subjects } = useGetSubjectsByCurriculum(selectedCurriculum);
 
   const branchesOptions = branches.map((branch) => ({
     value: `${branch.id}`,
     label: branch.name,
   }));
+
+  const curriculumsOptions = curriculums.map((curriculum) => ({
+    value: `${curriculum.id}`,
+    label: curriculum.name,
+  }));
+
+  const subjectsOptions = useMemo(() => {
+    console.log(subjects);
+    return subjects.map((subject) => ({
+      value: `${subject.id}`,
+      label: subject.name,
+    }));
+  }, [subjects]);
 
   function onCloseHandler() {
     onClose();
@@ -96,6 +120,8 @@ export const ClassFormModal = ({
       //  set initial values
       form.setValue("name", initialValues.name);
       form.setValue("branch_id", String(initialValues.branch_id));
+      form.setValue("subject_id", initialValues.subject_id.toString());
+      form.setValue("curriculum_id", initialValues.curriculum_id.toString());
       form.setValue("evaluation_config", initialValues.evaluation_config);
       const schedule = Object.keys(initialValues.schedule).map((key) => ({
         day: key,
@@ -175,12 +201,30 @@ export const ClassFormModal = ({
               placeholder="اختر الفرع"
             />
 
+            <HookFormSelect
+              label="المستوى الدراسي"
+              name="curriculum_id"
+              options={curriculumsOptions}
+              required
+              disabled={initialValues != null}
+              placeholder="اختر المستوى الدراسي"
+            />
+
+            <HookFormSelect
+              label="المادة"
+              name="subject_id"
+              options={subjectsOptions}
+              required
+              disabled={!selectedCurriculum || initialValues != null}
+              placeholder="اختر المادة"
+            />
+
             <HookFormMultiSelect
               label="التقييمات"
               name="evaluation_config"
               required
               options={evaluationConfigOptions}
-              placeholder="اختر الفرع"
+              placeholder="اختر التقييمات"
             />
           </div>
 

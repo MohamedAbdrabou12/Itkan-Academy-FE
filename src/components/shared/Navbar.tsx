@@ -1,20 +1,53 @@
 import { useAuthStore } from "@/stores/auth";
+import { UserRole } from "@/types/Roles";
 import { Bell, BookOpen, LogOut, Menu, User, X } from "lucide-react";
-import { useState } from "react";
-import { Link, useLocation } from "react-router";
+import { useCallback, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { logout } = useAuthStore();
   const location = useLocation();
+  const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
 
+  const isActive = (path: string) => location.pathname === path;
+
   const handleLogout = () => {
-    // logout();
     logout();
+    navigate("/login");
   };
 
-  const isActive = (path: string) => location.pathname === path;
+  const barItems: {
+    to: `/${string}`;
+    label: string;
+    showIf?: () => boolean;
+  }[] = [
+    { to: "/", label: "الرئيسية" },
+    { to: "/about", label: "عن المدرسة" },
+    { to: "/branches", label: "الفروع" },
+    { to: "/programs", label: "البرامج" },
+    { to: "/news", label: "الأخبار" },
+    {
+      to: "/studentExam",
+      label: "الامتحانات",
+      showIf: useCallback(
+        () => user?.role_name === UserRole.STUDENT,
+        [user?.role_name],
+      ),
+    },
+    {
+      to: "/student-progress",
+      label: "متابعة التقدم",
+      showIf: useCallback(
+        () =>
+          user != null &&
+          [UserRole.PARENT, UserRole.STUDENT].includes(user.role_name),
+        [user],
+      ),
+    },
+    { to: "/contact", label: "تواصل معنا" },
+  ];
 
   return (
     <nav className="top-0 z-50 w-full bg-white shadow-lg">
@@ -32,48 +65,18 @@ export default function Navbar() {
 
           {/* Main Links */}
           <div className="hidden items-center space-x-8 md:flex">
-            <Link
-              to="/"
-              className={`${isActive("/") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
-            >
-              الرئيسية
-            </Link>
-            <Link
-              to="/about"
-              className={`${isActive("/about") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
-            >
-              عن المدرسة
-            </Link>
-            <Link
-              to="/branches"
-              className={`${isActive("/branches") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
-            >
-              الفروع
-            </Link>
-            <Link
-              to="/programs"
-              className={`${isActive("/programs") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
-            >
-              البرامج
-            </Link>
-            <Link
-              to="/news"
-              className={`${isActive("/news") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
-            >
-              الأخبار
-            </Link>
-            <Link
-              to="/studentExam"
-              className={`${isActive("/studentExam") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
-            >
-              الامتحانات
-            </Link>
-            <Link
-              to="/contact"
-              className={`${isActive("/contact") ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
-            >
-              تواصل معنا
-            </Link>
+            {barItems.map(
+              (item, index) =>
+                (item.showIf?.() ?? true) && (
+                  <Link
+                    to={item.to}
+                    key={index}
+                    className={`${isActive(item.to) ? "border-b-2 border-emerald-600 font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} pb-1 transition`}
+                  >
+                    {item.label}
+                  </Link>
+                ),
+            )}
 
             {/* Auth Section */}
             {user ? (
@@ -85,8 +88,8 @@ export default function Navbar() {
                   </span>
                 </button>
                 <Link
-                  to="/dashboard"
-                  className={`${isActive("/dashboard") ? "font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} flex items-center space-x-2 space-x-reverse transition`}
+                  to="/itkan-dashboard"
+                  className={`${isActive("/itkan-dashboard") ? "font-semibold text-emerald-600" : "text-gray-700 hover:text-emerald-600"} flex items-center space-x-2 space-x-reverse transition`}
                 >
                   <User className="h-5 w-5" />
                   <span>{user.full_name}</span>
@@ -136,14 +139,7 @@ export default function Navbar() {
       {isOpen && (
         <div className="border-t bg-white md:hidden">
           <div className="space-y-1 px-2 pb-3 pt-2">
-            {[
-              { to: "/", label: "الرئيسية" },
-              { to: "/about", label: "عن المدرسة" },
-              { to: "/branches", label: "الفروع" },
-              { to: "/programs", label: "البرامج" },
-              { to: "/news", label: "الأخبار" },
-              { to: "/contact", label: "تواصل معنا" },
-            ].map((item) => (
+            {barItems.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
@@ -160,9 +156,9 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link
-                  to="/dashboard"
+                  to="/itkan-dashboard"
                   className={`block rounded-md px-3 py-2 ${
-                    isActive("/dashboard")
+                    isActive("/itkan-dashboard")
                       ? "bg-emerald-600 font-semibold text-white"
                       : "text-gray-700 hover:bg-emerald-50 hover:text-emerald-600"
                   }`}
