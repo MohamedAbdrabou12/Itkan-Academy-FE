@@ -34,6 +34,12 @@ export interface ExamQuestion {
   points: number;
 }
 
+export enum ExamAttemptStatus {
+  STARTED = "started",
+  SUBMITTED = "submitted",
+  GRADED = "graded",
+}
+
 export interface ExamWithQuestions extends Exam {
   questions: ExamQuestion[];
 }

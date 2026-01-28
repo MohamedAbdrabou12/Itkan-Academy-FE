@@ -1,36 +1,27 @@
 import clsx from "clsx";
 import { useController, useFormContext } from "react-hook-form";
 
-interface HookFormInputProps {
+interface HookFormTextAreaProps {
   name: string;
   label?: string;
-  type?:
-    | "text"
-    | "email"
-    | "password"
-    | "date"
-    | "time"
-    | "number"
-    | "datetime-local";
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
   icon?: React.ReactNode;
-  customInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  customTextAreaProps?: React.TextareaHTMLAttributes<HTMLTextAreaElement>;
   containerClassName?: string;
 }
 
-export default function HookFormInput({
+export default function HookFormTextArea({
   name,
   label,
-  type = "text",
   required = false,
   placeholder,
   disabled = false,
   icon,
-  customInputProps,
+  customTextAreaProps,
   containerClassName,
-}: HookFormInputProps) {
+}: HookFormTextAreaProps) {
   const { control } = useFormContext();
   const { field, fieldState } = useController({
     name,
@@ -56,14 +47,13 @@ export default function HookFormInput({
       >
         {icon && <span className="text-indigo-600">{icon}</span>}
 
-        <input
+        <textarea
           {...field}
-          {...customInputProps}
-          type={type}
+          {...customTextAreaProps}
           id={name}
           placeholder={placeholder}
           disabled={disabled}
-          className="w-full bg-transparent text-gray-800 outline-none placeholder:text-gray-800 disabled:opacity-60"
+          className="w-full bg-transparent text-gray-800 outline-none disabled:opacity-60"
         />
       </div>
 

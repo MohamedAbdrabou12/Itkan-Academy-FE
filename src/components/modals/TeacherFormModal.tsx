@@ -43,8 +43,6 @@ export const TeacherFormModal = ({
     },
   });
 
-  console.log("rerebded");
-
   const selectedBranches = useWatch({
     name: "branch_ids",
     control: form.control,

@@ -75,11 +75,13 @@ export default function HookFormSelect({
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
-      <div className={`relative`}>
+      <div className="relative">
         <div
-          className={`flex w-full cursor-pointer items-center rounded-xl border bg-gray-50 px-3 py-2
-        ${finalError ? "border-red-400" : "border-gray-300"}
-        transition hover:border-emerald-600`}
+          className={clsx(
+            "flex w-full items-center rounded-xl border border-gray-300 bg-gray-50 px-3 py-2 text-gray-700 transition hover:border-emerald-600",
+            { "border-red-400": finalError },
+            { "cursor-not-allowed bg-gray-100 opacity-70": disabled },
+          )}
           onClick={() => !disabled && setOpen((prev) => !prev)}
         >
           <span className="w-full select-none text-gray-800">
