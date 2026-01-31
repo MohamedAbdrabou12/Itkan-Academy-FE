@@ -224,4 +224,9 @@ export const PermissionKeys = {
   ACTIVITIES_PARTIES_EDIT: "activities.parties.edit",
   ACTIVITIES_PARTIES_DELETE: "activities.parties.delete",
 
+  // Attendance Management
+  STAFF_ATTENDANCE_CHECKIN: "staff_attendance.staff.checkin",
+  STAFF_ATTENDANCE_VIEW: "staff_attendance.staff.view",
+  STAFF_ATTENDANCE_EDIT: "staff_attendance.staff.edit",
+  STAFF_ATTENDANCE_CALENDAR_MANAGE: "staff_attendance.calendar.management",
 } as const;

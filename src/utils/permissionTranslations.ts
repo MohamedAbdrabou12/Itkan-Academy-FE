@@ -16,6 +16,8 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   student: "طلاب",
   training: "تدريب",
   parent: "أولياء الأمور",
+  calendar: "التقويم",
+  staff_attendance: "حضور الموظفين",
 
   // Modules
   curriculum: "المناهج",
@@ -64,6 +66,7 @@ export const ARABIC_TRANSLATIONS: Record<string, string> = {
   add: "إضافة",
   edit: "تعديل",
   delete: "حذف",
+  checkin: "تسجيل الحضور",
   "*": "الكل",
 };
 
