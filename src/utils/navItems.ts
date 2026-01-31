@@ -143,4 +143,25 @@ export const navLinks = [
     url: "/itkan-dashboard/attendance/work-schedules",
     permissions: [PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE],
   },
+  {
+    id: "evaluation-cycle",
+    title: "التقييم",
+    icon: Table,
+    url: "/itkan-dashboard/evaluation-cycles",
+    permissions: [PermissionKeys.STAFF_EVALUATION_CREATE],
+  },
+  {
+    id: "kpi-templates",
+    title: "معايير التقييم",
+    icon: Table,
+    url: "/itkan-dashboard/kpi-templates",
+    permissions: [PermissionKeys.STAFF_EVALUATION_CREATE],
+  },
+  {
+    id: "evaluations",
+    title: "التقييم النهائى",
+    icon: Table,
+    url: "/itkan-dashboard/evaluations",
+    permissions: [PermissionKeys.STAFF_EVALUATION_CREATE],
+  },
 ];

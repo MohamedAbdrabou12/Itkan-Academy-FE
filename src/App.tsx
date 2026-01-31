@@ -19,6 +19,10 @@ import SubjectsListPage from "@/pages/general-manager/SubjectsListPage";
 import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
+import EmployeeEvaluationsPage from "@/pages/staffEvaluation/EmployeeEvaluationsPage";
+import EvaluationCyclesPage from "@/pages/staffEvaluation/EvaluationCyclesPage";
+import EvaluationFormPage from "@/pages/staffEvaluation/EvaluationFormPage";
+import KPITemplatesPage from "@/pages/staffEvaluation/KPITemplatesPage";
 import AboutPage from "@/pages/student/AboutPage";
 import BranchesPage from "@/pages/student/BranchesPage";
 import ContactPage from "@/pages/student/ContactPage";
@@ -133,6 +137,23 @@ const App = () => {
             <Route
               path="/itkan-dashboard/attendance/user/:userId"
               element={<UserAttendancePage />}
+            />
+            {/* Staff Evaluations Routes */}
+            <Route
+              path="/itkan-dashboard/evaluation-cycles"
+              element={<EvaluationCyclesPage />}
+            />
+            <Route
+              path="/itkan-dashboard/kpi-templates"
+              element={<KPITemplatesPage />}
+            />
+            <Route
+              path="/itkan-dashboard/evaluations/:evaluationId"
+              element={<EvaluationFormPage />}
+            />
+            <Route
+              path="/itkan-dashboard/evaluations"
+              element={<EmployeeEvaluationsPage />}
             />
           </Route>
         </Route>
