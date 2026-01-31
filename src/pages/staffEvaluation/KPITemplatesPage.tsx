@@ -1,31 +1,44 @@
-import { useState } from "react";
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { useState, useMemo } from "react";
+import { PlusIcon, TrashIcon, PencilIcon } from "lucide-react";
 import { useGetKPITemplates } from "@/hooks/staffEvaluation/useGetKPITemplates";
 import { useCreateKPITemplate } from "@/hooks/staffEvaluation/useCreateKPITemplate";
+import { useUpdateKPITemplate } from "@/hooks/staffEvaluation/useUpdateKPITemplate";
 import { useGetTemplateKPIs } from "@/hooks/staffEvaluation/useGetTemplateKPIs";
-import { useCreateKPI } from "@/hooks/staffEvaluation/useCreateKPI";
-import { useDeleteKPI } from "@/hooks/staffEvaluation/useDeleteKPI";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import type { KPITemplateCreate } from "@/types/staffEvaluation";
 
-// Schema for creating template
-const templateSchema = z.object({
-  name: z.string().min(1, "اسم القالب مطلوب"),
-  is_global: z.boolean().optional(),
-});
-
-type TemplateFormValues = z.infer<typeof templateSchema>;
-
-// Schema for adding KPI
+// Shared KPI Schema
 const kpiSchema = z.object({
+  id: z.number().optional(), // Added ID for updates
   name: z.string().min(1, "اسم المؤشر مطلوب"),
   description: z.string().optional(),
   weight: z.number().min(1, "الوزن يجب أن يكون أكبر من 0").max(100),
-  max_score: z.number().min(1).max(10).default(5),
+  max_score: z.number().min(1).max(10).optional(),
 });
 
-type KPIFormValues = z.infer<typeof kpiSchema>;
+// Schema for creating template with KPIs
+const templateSchema = z
+  .object({
+    name: z.string().min(1, "اسم القالب مطلوب"),
+    kpis: z.array(kpiSchema).min(1, "يجب إضافة مؤشر واحد على الأقل"),
+  })
+  .refine(
+    (data) => {
+      const totalWeight = data.kpis.reduce(
+        (sum, kpi) => sum + (kpi.weight || 0),
+        0,
+      );
+      return totalWeight === 100;
+    },
+    {
+      message: "مجموع أوزان المؤشرات يجب أن يساوى 100%",
+      path: ["kpis"], // Associate error with the kpis field
+    },
+  );
+
+type TemplateFormValues = z.infer<typeof templateSchema>;
 
 export default function KPITemplatesPage() {
   const { data: templates } = useGetKPITemplates();
@@ -35,61 +48,90 @@ export default function KPITemplatesPage() {
     null,
   );
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
-  const [isKPIModalOpen, setIsKPIModalOpen] = useState(false);
+
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const updateTemplateMutation = useUpdateKPITemplate(editingId || 0);
 
   // Template Form
   const {
     register: registerTemplate,
+    control: controlTemplate,
     handleSubmit: handleSubmitTemplate,
     reset: resetTemplate,
     formState: { errors: templateErrors },
   } = useForm<TemplateFormValues>({
     resolver: zodResolver(templateSchema),
     defaultValues: {
-      is_global: false,
+      kpis: [],
     },
   });
 
-  // KPI Form
-  const {
-    register: registerKPI,
-    handleSubmit: handleSubmitKPI,
-    reset: resetKPI,
-    formState: { errors: kpiErrors },
-  } = useForm<KPIFormValues>({
-    resolver: zodResolver(kpiSchema),
-    defaultValues: { max_score: 5 },
+  const { fields, append, remove } = useFieldArray({
+    control: controlTemplate,
+    name: "kpis",
   });
 
-  const onTemplateSubmit = (data: TemplateFormValues) => {
-    createTemplateMutation.mutate(
-      {
-        ...data,
-        is_global: data.is_global ?? false,
-      },
-      {
-        onSuccess: () => {
-          setIsTemplateModalOpen(false);
-          resetTemplate();
-        },
-      },
+  // Watch KPIs to calculate total weight dynamically
+  const watchedKPIs = useWatch({
+    control: controlTemplate,
+    name: "kpis",
+  });
+
+  const currentTotalWeight = useMemo(() => {
+    return (
+      watchedKPIs?.reduce((sum, kpi) => sum + (Number(kpi?.weight) || 0), 0) ||
+      0
     );
+  }, [watchedKPIs]);
+
+  const onTemplateSubmit = (data: TemplateFormValues) => {
+    if (editingId) {
+      updateTemplateMutation.mutate(
+        {
+          ...data,
+        },
+        {
+          onSuccess: () => {
+            setIsTemplateModalOpen(false);
+            resetTemplate();
+            setEditingId(null);
+          },
+        },
+      );
+    } else {
+      createTemplateMutation.mutate(
+        {
+          ...data,
+        } as KPITemplateCreate,
+        {
+          onSuccess: () => {
+            setIsTemplateModalOpen(false);
+            resetTemplate();
+          },
+        },
+      );
+    }
   };
 
-  const TemplateDetails = ({ templateId }: { templateId: number }) => {
+  const TemplateDetails = ({
+    templateId,
+    onEdit,
+  }: {
+    templateId: number;
+    onEdit: (kpis: any[]) => void;
+  }) => {
     const { data: kpis, isLoading: isLoadingKPIs } =
       useGetTemplateKPIs(templateId);
-    const createKPIMutation = useCreateKPI(templateId);
-    const deleteKPIMutation = useDeleteKPI(templateId);
+    // createKPIMutation removed
 
-    const onKPISubmit = (data: KPIFormValues) => {
-      createKPIMutation.mutate(data, {
-        onSuccess: () => {
-          setIsKPIModalOpen(false);
-          resetKPI();
-        },
-      });
-    };
+    // We keep creation of individual KPIs for now if needed, but UI hides it in favor of edit modal?
+    // The requirement implies we should edit via modal.
+    // I left the existing "Add KPI" logic via modal below in the code but removed the button from UI in previous steps
+    // to encourage using the new Edit flow.
+    // However, the `isKPIModalOpen` logic is still there.
+    // Let's keep it clean.
+
+    // onKPISubmit removed
 
     const totalWeight =
       kpis?.reduce((sum, kpi) => sum + Number(kpi.weight), 0) || 0;
@@ -99,16 +141,16 @@ export default function KPITemplatesPage() {
         <div className="mb-4 flex items-center justify-between">
           <h3 className="font-semibold text-gray-700">مؤشرات الأداء</h3>
           <button
-            onClick={() => setIsKPIModalOpen(true)}
-            className="btn-primary "
-            disabled={totalWeight >= 100}
+            onClick={() => onEdit(kpis || [])}
+            className="btn btn-sm btn-outline btn-primary"
+            disabled={isLoadingKPIs}
           >
-            <PlusIcon className="h-4 w-4" />
-            إضافة مؤشر
+            <PencilIcon className="ml-2 h-4 w-4" />
+            تعديل القالب والمؤشرات
           </button>
         </div>
 
-        {totalWeight < 100 && (
+        {totalWeight !== 100 && (
           <div className="alert alert-warning mb-4 py-2 text-sm">
             تنبيه: مجموع الأوزان الحالي {totalWeight}% (يجب أن يكون 100%)
           </div>
@@ -128,7 +170,7 @@ export default function KPITemplatesPage() {
                   <th>المؤشر</th>
                   <th>الوزن</th>
                   <th>أقصى درجة</th>
-                  <th></th>
+                  {/* Removed Actions Column */}
                 </tr>
               </thead>
               <tbody>
@@ -144,15 +186,7 @@ export default function KPITemplatesPage() {
                     </td>
                     <td>{kpi.weight}%</td>
                     <td>{kpi.max_score}</td>
-                    <td>
-                      <button
-                        onClick={() => deleteKPIMutation.mutate(kpi.id)}
-                        className="btn btn-ghost btn-xs text-error"
-                        disabled={deleteKPIMutation.isPending}
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
-                    </td>
+                    {/* Removed Delete Button */}
                   </tr>
                 ))}
               </tbody>
@@ -164,103 +198,38 @@ export default function KPITemplatesPage() {
                   >
                     {totalWeight}%
                   </td>
-                  <td colSpan={2}></td>
+                  <td></td>
                 </tr>
               </tfoot>
             </table>
           </div>
         )}
-
-        {/* KPI Modal */}
-        {isKPIModalOpen && (
-          <div className="modal modal-open">
-            <div className="modal-box">
-              <h3 className="mb-4 text-lg font-bold">إضافة مؤشر أداء</h3>
-              <form
-                onSubmit={handleSubmitKPI(onKPISubmit)}
-                className="space-y-4"
-              >
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">اسم المؤشر</span>
-                  </label>
-                  <input
-                    type="text"
-                    {...registerKPI("name")}
-                    className="input input-bordered w-full"
-                  />
-                  {kpiErrors.name && (
-                    <span className="text-error text-sm">
-                      {kpiErrors.name.message}
-                    </span>
-                  )}
-                </div>
-
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">الوصف (اختياري)</span>
-                  </label>
-                  <textarea
-                    {...registerKPI("description")}
-                    className="textarea textarea-bordered w-full"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text">الوزن (%)</span>
-                    </label>
-                    <input
-                      type="number"
-                      {...registerKPI("weight", { valueAsNumber: true })}
-                      className="input input-bordered w-full"
-                    />
-                    {kpiErrors.weight && (
-                      <span className="text-error text-sm">
-                        {kpiErrors.weight.message}
-                      </span>
-                    )}
-                  </div>
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text">أقصى درجة</span>
-                    </label>
-                    <select
-                      {...registerKPI("max_score", { valueAsNumber: true })}
-                      className="select select-bordered w-full"
-                    >
-                      {[1, 2, 3, 4, 5, 10].map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="modal-action">
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={() => setIsKPIModalOpen(false)}
-                  >
-                    إلغاء
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={createKPIMutation.isPending}
-                  >
-                    إضافة
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </div>
     );
+  };
+
+  const openEditModal = (template: any, kpis: any[]) => {
+    setEditingId(template.id);
+    resetTemplate({
+      name: template.name,
+      kpis: kpis.map((k) => ({
+        id: k.id,
+        name: k.name,
+        description: k.description,
+        weight: Number(k.weight),
+        max_score: k.max_score,
+      })),
+    });
+    setIsTemplateModalOpen(true);
+  };
+
+  const openCreateModal = () => {
+    setEditingId(null);
+    resetTemplate({
+      name: "",
+      kpis: [],
+    });
+    setIsTemplateModalOpen(true);
   };
 
   return (
@@ -270,10 +239,7 @@ export default function KPITemplatesPage() {
           <h1 className="text-2xl font-bold text-gray-800">قوالب التقييم</h1>
           <p className="mt-1 text-gray-600">إعداد قوالب ومؤشرات الأداء</p>
         </div>
-        <button
-          onClick={() => setIsTemplateModalOpen(true)}
-          className="btn-primary"
-        >
+        <button onClick={openCreateModal} className="btn-primary">
           <PlusIcon className="h-5 w-5" />
           قالب جديد
         </button>
@@ -305,18 +271,23 @@ export default function KPITemplatesPage() {
               </div>
 
               {selectedTemplateId === template.id && (
-                <TemplateDetails templateId={template.id} />
+                <TemplateDetails
+                  templateId={template.id}
+                  onEdit={(kpis) => openEditModal(template, kpis)}
+                />
               )}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Template Modal */}
+      {/* Create/Edit Template Modal */}
       {isTemplateModalOpen && (
         <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="mb-4 text-lg font-bold">إضافة قالب جديد</h3>
+          <div className="modal-box max-w-2xl">
+            <h3 className="mb-4 text-lg font-bold">
+              {editingId ? "تعديل القالب" : "إضافة قالب جديد"}
+            </h3>
             <form
               onSubmit={handleSubmitTemplate(onTemplateSubmit)}
               className="space-y-4"
@@ -338,32 +309,155 @@ export default function KPITemplatesPage() {
                 )}
               </div>
 
-              <div className="form-control">
-                <label className="label cursor-pointer justify-start gap-4">
-                  <span className="label-text">قالب عام</span>
-                  <input
-                    type="checkbox"
-                    {...registerTemplate("is_global")}
-                    className="checkbox checkbox-primary"
-                  />
-                </label>
-                <span className="px-1 text-xs text-gray-500">
-                  القوالب العامة يمكن استخدامها من قبل جميع المدراء
-                </span>
+              {/* Dynamic KPIs Section */}
+              <div className="mt-6 border-t pt-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <h4 className="font-semibold">المؤشرات</h4>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-xs text-primary"
+                    onClick={() =>
+                      append({
+                        name: "",
+                        description: "",
+                        weight: 0,
+                        max_score: 5,
+                      })
+                    }
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    إضافة مؤشر
+                  </button>
+                </div>
+
+                {templateErrors.kpis && (
+                  <div className="alert alert-error mb-4 py-2 text-sm">
+                    {templateErrors.kpis.message ||
+                      templateErrors.kpis.root?.message}
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  {fields.map((field, index) => (
+                    <div
+                      key={field.id}
+                      className="bg-base-200 relative rounded-lg p-4"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => remove(index)}
+                        className="btn btn-circle btn-ghost btn-xs text-error absolute left-2 top-2"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </button>
+
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div className="form-control">
+                          <label className="label pb-1">
+                            <span className="label-text text-xs">
+                              اسم المؤشر
+                            </span>
+                          </label>
+                          <input
+                            {...registerTemplate(`kpis.${index}.name`)}
+                            className="input input-bordered input-sm w-full"
+                          />
+                          {templateErrors.kpis?.[index]?.name && (
+                            <span className="text-error text-xs">
+                              {templateErrors.kpis[index]?.name?.message}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="form-control">
+                          <label className="label pb-1">
+                            <span className="label-text text-xs">الوصف</span>
+                          </label>
+                          <input
+                            {...registerTemplate(`kpis.${index}.description`)}
+                            className="input input-bordered input-sm w-full"
+                          />
+                        </div>
+
+                        <div className="form-control">
+                          <label className="label pb-1">
+                            <span className="label-text text-xs">
+                              الوزن (%)
+                            </span>
+                          </label>
+                          <input
+                            type="number"
+                            {...registerTemplate(`kpis.${index}.weight`, {
+                              valueAsNumber: true,
+                            })}
+                            className="input input-bordered input-sm w-full"
+                          />
+                          {templateErrors.kpis?.[index]?.weight && (
+                            <span className="text-error text-xs">
+                              {templateErrors.kpis[index]?.weight?.message}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="form-control">
+                          <label className="label pb-1">
+                            <span className="label-text text-xs">
+                              أقصى درجة
+                            </span>
+                          </label>
+                          <select
+                            {...registerTemplate(`kpis.${index}.max_score`, {
+                              valueAsNumber: true,
+                            })}
+                            className="select select-bordered select-sm w-full"
+                          >
+                            {[1, 2, 3, 4, 5, 10].map((n) => (
+                              <option key={n} value={n}>
+                                {n}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {fields.length > 0 && (
+                  <div className="mt-4 flex items-center justify-between border-t border-gray-300 pt-2">
+                    <span className="font-bold">المجموع الكلي:</span>
+                    <span
+                      className={`font-bold ${
+                        currentTotalWeight === 100
+                          ? "text-success"
+                          : "text-error"
+                      }`}
+                    >
+                      {currentTotalWeight}%
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="modal-action">
                 <button
                   type="button"
                   className="btn"
-                  onClick={() => setIsTemplateModalOpen(false)}
+                  onClick={() => {
+                    setIsTemplateModalOpen(false);
+                    resetTemplate();
+                    setEditingId(null);
+                  }}
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={createTemplateMutation.isPending}
+                  disabled={
+                    createTemplateMutation.isPending ||
+                    updateTemplateMutation.isPending
+                  }
                 >
                   حفظ
                 </button>

@@ -56,7 +56,6 @@ export interface KPITemplate {
   id: number;
   name: string;
   created_by_user_id?: number;
-  is_global: boolean;
   created_at: string;
   updated_at: string;
   kpis?: KPI[];
@@ -68,13 +67,11 @@ export interface KPITemplate {
 
 export interface KPITemplateCreate {
   name: string;
-  is_global?: boolean;
   kpis?: KPICreate[];
 }
 
 export interface KPITemplateUpdate {
   name?: string;
-  is_global?: boolean;
 }
 
 // Evaluation Types
