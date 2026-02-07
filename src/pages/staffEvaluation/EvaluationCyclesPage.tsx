@@ -4,9 +4,10 @@ import { useGetEvaluationCycles } from "@/hooks/staffEvaluation/useGetEvaluation
 import { useCreateEvaluationCycle } from "@/hooks/staffEvaluation/useCreateEvaluationCycle";
 import { useUpdateEvaluationCycle } from "@/hooks/staffEvaluation/useUpdateEvaluationCycle";
 import type { EvaluationCycle } from "@/types/staffEvaluation";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import HookFormInput from "@/components/forms/HookFormInput";
 
 const cycleSchema = z.object({
   name: z.string().min(1, "اسم الدورة مطلوب"),
@@ -26,17 +27,14 @@ export default function EvaluationCyclesPage() {
     null,
   );
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<CycleFormValues>({
+  const form = useForm<CycleFormValues>({
     resolver: zodResolver(cycleSchema),
     defaultValues: {
       is_active: true,
     },
   });
+
+  const { register, handleSubmit, reset } = form;
 
   const onSubmit = (data: CycleFormValues) => {
     // Ensure is_active is boolean
@@ -95,7 +93,7 @@ export default function EvaluationCyclesPage() {
           <h1 className="text-2xl font-bold text-gray-800">دورات التقييم</h1>
           <p className="mt-1 text-gray-600">إدارة فترات تقييم الأداء</p>
         </div>
-        <button onClick={openCreateModal} className="btn btn-primary gap-2">
+        <button onClick={openCreateModal} className="btn-primary gap-2">
           <PlusIcon className="h-5 w-5" />
           إضافة دورة
         </button>
@@ -149,89 +147,64 @@ export default function EvaluationCyclesPage() {
             <h3 className="mb-4 text-lg font-bold">
               {editingCycle ? "تعديل دورة تقييم" : "إضافة دورة تقييم"}
             </h3>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">اسم الدورة</span>
-                </label>
-                <input
+            <FormProvider {...form}>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <HookFormInput
+                  name="name"
+                  label="اسم الدورة"
                   type="text"
-                  {...register("name")}
-                  className="input input-bordered w-full"
                   placeholder="مثال: الربع الأول 2026"
+                  required
                 />
-                {errors.name && (
-                  <span className="text-error mt-1 text-sm">
-                    {errors.name.message}
-                  </span>
-                )}
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">تاريخ البداية</span>
-                  </label>
-                  <input
+                <div className="grid grid-cols-2 gap-4">
+                  <HookFormInput
+                    name="start_date"
+                    label="تاريخ البداية"
                     type="date"
-                    {...register("start_date")}
-                    className="input input-bordered w-full"
+                    required
                   />
-                  {errors.start_date && (
-                    <span className="text-error mt-1 text-sm">
-                      {errors.start_date.message}
-                    </span>
-                  )}
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">تاريخ النهاية</span>
-                  </label>
-                  <input
+                  <HookFormInput
+                    name="end_date"
+                    label="تاريخ النهاية"
                     type="date"
-                    {...register("end_date")}
-                    className="input input-bordered w-full"
+                    required
                   />
-                  {errors.end_date && (
-                    <span className="text-error mt-1 text-sm">
-                      {errors.end_date.message}
-                    </span>
-                  )}
                 </div>
-              </div>
 
-              <div className="form-control">
-                <label className="label cursor-pointer justify-start gap-4">
-                  <span className="label-text">نشط</span>
-                  <input
-                    type="checkbox"
-                    {...register("is_active")}
-                    className="checkbox checkbox-primary"
-                  />
-                </label>
-              </div>
+                <div className="form-control">
+                  <label className="label cursor-pointer justify-start gap-4">
+                    <span className="label-text">نشط</span>
+                    <input
+                      type="checkbox"
+                      {...register("is_active")}
+                      className="checkbox checkbox-success"
+                    />
+                  </label>
+                </div>
 
-              <div className="modal-action">
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={
-                    createMutation.isPending || updateMutation.isPending
-                  }
-                >
-                  {createMutation.isPending || updateMutation.isPending
-                    ? "جاري الحفظ..."
-                    : "حفظ"}
-                </button>
-              </div>
-            </form>
+                <div className="modal-action">
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    إلغاء
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={
+                      createMutation.isPending || updateMutation.isPending
+                    }
+                  >
+                    {createMutation.isPending || updateMutation.isPending
+                      ? "جاري الحفظ..."
+                      : "حفظ"}
+                  </button>
+                </div>
+              </form>
+            </FormProvider>
           </div>
         </div>
       )}
