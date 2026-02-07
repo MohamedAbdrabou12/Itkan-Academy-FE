@@ -99,13 +99,13 @@ export const CheckInOutButton = () => {
         </div>
       )}
 
-      {todayAttendance?.worked_minutes && (
+      {todayAttendance?.worked_minutes ? (
         <div className="mb-4 text-sm text-gray-600">
           <span className="font-medium">ساعات العمل:</span>{" "}
           {Math.floor(todayAttendance.worked_minutes / 60)} ساعة{" "}
           {todayAttendance.worked_minutes % 60} دقيقة
         </div>
-      )}
+      ) : null}
 
       <div className="flex gap-3">
         {!hasCheckedIn && (

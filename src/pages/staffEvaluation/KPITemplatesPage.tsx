@@ -1,20 +1,31 @@
-import { useState, useMemo } from "react";
-import { PlusIcon, TrashIcon, PencilIcon } from "lucide-react";
-import { useGetKPITemplates } from "@/hooks/staffEvaluation/useGetKPITemplates";
+import HookFormInput from "@/components/forms/HookFormInput";
 import { useCreateKPITemplate } from "@/hooks/staffEvaluation/useCreateKPITemplate";
-import { useUpdateKPITemplate } from "@/hooks/staffEvaluation/useUpdateKPITemplate";
+import { useGetKPITemplates } from "@/hooks/staffEvaluation/useGetKPITemplates";
 import { useGetTemplateKPIs } from "@/hooks/staffEvaluation/useGetTemplateKPIs";
-import { useForm, useFieldArray, useWatch } from "react-hook-form";
+import { useUpdateKPITemplate } from "@/hooks/staffEvaluation/useUpdateKPITemplate";
+import type {
+  KPI,
+  KPITemplate,
+  KPITemplateCreate,
+} from "@/types/staffEvaluation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useWatch,
+  type Resolver,
+} from "react-hook-form";
 import { z } from "zod";
-import type { KPITemplateCreate } from "@/types/staffEvaluation";
 
 // Shared KPI Schema
 const kpiSchema = z.object({
   id: z.number().optional(), // Added ID for updates
   name: z.string().min(1, "اسم المؤشر مطلوب"),
   description: z.string().optional(),
-  weight: z.number().min(1, "الوزن يجب أن يكون أكبر من 0").max(100),
+  weight: z.coerce.number().min(1, "الوزن يجب أن يكون أكبر من 0").max(100),
   max_score: z.number().min(1).max(10).optional(),
 });
 
@@ -53,18 +64,19 @@ export default function KPITemplatesPage() {
   const updateTemplateMutation = useUpdateKPITemplate(editingId || 0);
 
   // Template Form
-  const {
-    register: registerTemplate,
-    control: controlTemplate,
-    handleSubmit: handleSubmitTemplate,
-    reset: resetTemplate,
-    formState: { errors: templateErrors },
-  } = useForm<TemplateFormValues>({
-    resolver: zodResolver(templateSchema),
+  const form = useForm<TemplateFormValues>({
+    resolver: zodResolver(templateSchema) as Resolver<TemplateFormValues>,
     defaultValues: {
       kpis: [],
     },
   });
+
+  const {
+    control: controlTemplate,
+    handleSubmit: handleSubmitTemplate,
+    reset: resetTemplate,
+    formState: { errors: templateErrors },
+  } = form;
 
   const { fields, append, remove } = useFieldArray({
     control: controlTemplate,
@@ -118,20 +130,11 @@ export default function KPITemplatesPage() {
     onEdit,
   }: {
     templateId: number;
-    onEdit: (kpis: any[]) => void;
+    onEdit: (kpis: KPI[]) => void;
   }) => {
     const { data: kpis, isLoading: isLoadingKPIs } =
       useGetTemplateKPIs(templateId);
     // createKPIMutation removed
-
-    // We keep creation of individual KPIs for now if needed, but UI hides it in favor of edit modal?
-    // The requirement implies we should edit via modal.
-    // I left the existing "Add KPI" logic via modal below in the code but removed the button from UI in previous steps
-    // to encourage using the new Edit flow.
-    // However, the `isKPIModalOpen` logic is still there.
-    // Let's keep it clean.
-
-    // onKPISubmit removed
 
     const totalWeight =
       kpis?.reduce((sum, kpi) => sum + Number(kpi.weight), 0) || 0;
@@ -142,19 +145,13 @@ export default function KPITemplatesPage() {
           <h3 className="font-semibold text-gray-700">مؤشرات الأداء</h3>
           <button
             onClick={() => onEdit(kpis || [])}
-            className="btn btn-sm btn-outline btn-primary"
+            className="btn-sm btn-outline btn-primary"
             disabled={isLoadingKPIs}
           >
             <PencilIcon className="ml-2 h-4 w-4" />
             تعديل القالب والمؤشرات
           </button>
         </div>
-
-        {totalWeight !== 100 && (
-          <div className="alert alert-warning mb-4 py-2 text-sm">
-            تنبيه: مجموع الأوزان الحالي {totalWeight}% (يجب أن يكون 100%)
-          </div>
-        )}
 
         {isLoadingKPIs ? (
           <p className="text-center text-gray-500">جاري التحميل...</p>
@@ -198,7 +195,12 @@ export default function KPITemplatesPage() {
                   >
                     {totalWeight}%
                   </td>
-                  <td></td>
+                  <td>
+                    {kpis?.reduce(
+                      (sum, kpi) => sum + Number(kpi.max_score),
+                      0,
+                    ) || 0}
+                  </td>
                 </tr>
               </tfoot>
             </table>
@@ -208,7 +210,7 @@ export default function KPITemplatesPage() {
     );
   };
 
-  const openEditModal = (template: any, kpis: any[]) => {
+  const openEditModal = (template: KPITemplate, kpis: KPI[]) => {
     setEditingId(template.id);
     resetTemplate({
       name: template.name,
@@ -288,71 +290,63 @@ export default function KPITemplatesPage() {
             <h3 className="mb-4 text-lg font-bold">
               {editingId ? "تعديل القالب" : "إضافة قالب جديد"}
             </h3>
-            <form
-              onSubmit={handleSubmitTemplate(onTemplateSubmit)}
-              className="space-y-4"
-            >
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">اسم القالب</span>
-                </label>
-                <input
+            <FormProvider {...form}>
+              <form
+                onSubmit={handleSubmitTemplate(onTemplateSubmit)}
+                className="space-y-4"
+              >
+                <HookFormInput
+                  name="name"
+                  label="اسم القالب"
                   type="text"
-                  {...registerTemplate("name")}
-                  className="input input-bordered w-full"
+                  required
                   placeholder="مثال: تقييم المعلمين الربع سنوي"
                 />
-                {templateErrors.name && (
-                  <span className="text-error text-sm">
-                    {templateErrors.name.message}
-                  </span>
-                )}
-              </div>
 
-              {/* Dynamic KPIs Section */}
-              <div className="mt-6 border-t pt-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <h4 className="font-semibold">المؤشرات</h4>
-                  <button
-                    type="button"
-                    className="btn btn-ghost btn-xs text-primary"
-                    onClick={() =>
-                      append({
-                        name: "",
-                        description: "",
-                        weight: 0,
-                        max_score: 5,
-                      })
-                    }
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    إضافة مؤشر
-                  </button>
-                </div>
-
-                {templateErrors.kpis && (
-                  <div className="alert alert-error mb-4 py-2 text-sm">
-                    {templateErrors.kpis.message ||
-                      templateErrors.kpis.root?.message}
-                  </div>
-                )}
-
-                <div className="space-y-4">
-                  {fields.map((field, index) => (
-                    <div
-                      key={field.id}
-                      className="bg-base-200 relative rounded-lg p-4"
+                {/* Dynamic KPIs Section */}
+                <div className="mt-6 border-t pt-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <h4 className="font-semibold">المؤشرات</h4>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-xs text-[#009966]"
+                      onClick={() =>
+                        append({
+                          name: "",
+                          description: "",
+                          weight: 0,
+                          max_score: 5,
+                        })
+                      }
                     >
-                      <button
-                        type="button"
-                        onClick={() => remove(index)}
-                        className="btn btn-circle btn-ghost btn-xs text-error absolute left-2 top-2"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                      <PlusIcon className="h-4 w-4" />
+                      إضافة مؤشر
+                    </button>
+                  </div>
 
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="form-control">
+                  {templateErrors.kpis && (
+                    <div className="mb-4 py-2 text-sm text-red-500">
+                      {templateErrors.kpis.message ||
+                        templateErrors.kpis.root?.message}
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    {fields.map((field, index) => (
+                      <div
+                        key={field.id}
+                        className="bg-base-200 relative rounded-lg p-4"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => remove(index)}
+                          className="btn btn-circle btn-ghost btn-xs text-error absolute left-2 top-2"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
+
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          {/* <div className="form-control">
                           <label className="label pb-1">
                             <span className="label-text text-xs">
                               اسم المؤشر
@@ -367,102 +361,83 @@ export default function KPITemplatesPage() {
                               {templateErrors.kpis[index]?.name?.message}
                             </span>
                           )}
-                        </div>
-
-                        <div className="form-control">
-                          <label className="label pb-1">
-                            <span className="label-text text-xs">الوصف</span>
-                          </label>
-                          <input
-                            {...registerTemplate(`kpis.${index}.description`)}
-                            className="input input-bordered input-sm w-full"
+                        </div> */}
+                          <HookFormInput
+                            label="اسم المؤشر"
+                            name={`kpis.${index}.name`}
+                            placeholder="ادخل اسم المؤشر"
+                            type="text"
+                            required
                           />
-                        </div>
 
-                        <div className="form-control">
-                          <label className="label pb-1">
-                            <span className="label-text text-xs">
-                              الوزن (%)
-                            </span>
-                          </label>
-                          <input
+                          <HookFormInput
+                            label="الوصف"
+                            name={`kpis.${index}.description`}
+                            placeholder="ادخل الوصف"
+                            type="text"
+                          />
+
+                          <HookFormInput
+                            label="الوزن (%)"
+                            name={`kpis.${index}.weight`}
+                            placeholder="ادخل الوزن"
                             type="number"
-                            {...registerTemplate(`kpis.${index}.weight`, {
-                              valueAsNumber: true,
-                            })}
-                            className="input input-bordered input-sm w-full"
+                            required
                           />
-                          {templateErrors.kpis?.[index]?.weight && (
-                            <span className="text-error text-xs">
-                              {templateErrors.kpis[index]?.weight?.message}
-                            </span>
-                          )}
-                        </div>
 
-                        <div className="form-control">
-                          <label className="label pb-1">
-                            <span className="label-text text-xs">
-                              أقصى درجة
-                            </span>
-                          </label>
-                          <select
-                            {...registerTemplate(`kpis.${index}.max_score`, {
-                              valueAsNumber: true,
-                            })}
-                            className="select select-bordered select-sm w-full"
-                          >
-                            {[1, 2, 3, 4, 5, 10].map((n) => (
-                              <option key={n} value={n}>
-                                {n}
-                              </option>
-                            ))}
-                          </select>
+                          <HookFormInput
+                            label="أقصى درجة"
+                            name={`kpis.${index}.max_score`}
+                            placeholder="ادخل أقصى درجة"
+                            type="number"
+                            required
+                          />
                         </div>
                       </div>
+                    ))}
+                  </div>
+
+                  {fields.length > 0 && (
+                    <div className="mt-4 flex items-center justify-between border-t border-gray-300 pt-2">
+                      <span className="font-bold">المجموع الكلي:</span>
+                      <span
+                        className={`font-bold ${
+                          currentTotalWeight === 100
+                            ? "text-success"
+                            : "text-error"
+                        }`}
+                      >
+                        {currentTotalWeight}%
+                      </span>
                     </div>
-                  ))}
+                  )}
                 </div>
 
-                {fields.length > 0 && (
-                  <div className="mt-4 flex items-center justify-between border-t border-gray-300 pt-2">
-                    <span className="font-bold">المجموع الكلي:</span>
-                    <span
-                      className={`font-bold ${
-                        currentTotalWeight === 100
-                          ? "text-success"
-                          : "text-error"
-                      }`}
-                    >
-                      {currentTotalWeight}%
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="modal-action">
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => {
-                    setIsTemplateModalOpen(false);
-                    resetTemplate();
-                    setEditingId(null);
-                  }}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={
-                    createTemplateMutation.isPending ||
-                    updateTemplateMutation.isPending
-                  }
-                >
-                  حفظ
-                </button>
-              </div>
-            </form>
+                <div className="modal-action">
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      setIsTemplateModalOpen(false);
+                      resetTemplate();
+                      setEditingId(null);
+                    }}
+                  >
+                    إلغاء
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={
+                      createTemplateMutation.isPending ||
+                      updateTemplateMutation.isPending
+                    }
+                  >
+                    حفظ
+                  </button>
+                </div>
+              </form>
+            </FormProvider>
           </div>
         </div>
       )}

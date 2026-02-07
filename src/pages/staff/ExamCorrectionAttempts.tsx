@@ -142,7 +142,9 @@ const StudentAnswersPage = () => {
     0,
   );
   const percentage =
-    totalPossible > 0 ? ((totalObtained / totalPossible) * 100).toFixed(1) : 0;
+    +totalPossible > 0
+      ? ((+totalObtained / +totalPossible) * 100).toFixed(1)
+      : 0;
 
   return (
     <div className="bg-base-100 min-h-screen p-4 md:p-6">
@@ -332,7 +334,7 @@ const StudentAnswersPage = () => {
                                     type="number"
                                     min="0"
                                     max={question.marks}
-                                    className="input input-bordered join-item w-28 text-center"
+                                    className="input input-success join-item w-28 text-center"
                                     // disabled={submitting}
                                     value={field.value || 0}
                                     onChange={(e) =>
@@ -451,14 +453,14 @@ const StudentAnswersPage = () => {
         </div>
 
         {/* Summary Card */}
-        <div className="card bg-base-100 border-primary mb-6 border-2 shadow-lg">
+        <div className="card bg-base-100 border-success mb-6 border-2 shadow-lg">
           <div className="card-body">
             <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
               <div className="text-center">
                 <div className="mb-1 text-sm text-gray-600">
                   الدرجة الإجمالية
                 </div>
-                <div className="text-primary text-4xl font-bold">
+                <div className="text-success text-4xl font-bold">
                   {totalObtained?.toFixed(1)}
                   <span className="text-2xl text-gray-500">
                     {" "}
@@ -469,7 +471,7 @@ const StudentAnswersPage = () => {
 
               <div className="text-center">
                 <div className="mb-1 text-sm text-gray-600">النسبة المئوية</div>
-                <div className="text-secondary text-3xl font-bold">
+                <div className="text-success text-3xl font-bold">
                   {percentage}%
                 </div>
                 <div className="mt-1 text-sm text-gray-500">
@@ -487,7 +489,7 @@ const StudentAnswersPage = () => {
 
               <div className="flex flex-col items-center">
                 <div
-                  className="radial-progress text-primary"
+                  className="radial-progress text-success"
                   style={
                     {
                       "--value": percentage,
@@ -499,7 +501,7 @@ const StudentAnswersPage = () => {
                   }
                   role="progressbar"
                 >
-                  {percentage}%
+                  <span className="text-black">{percentage}%</span>
                 </div>
                 <div className="mt-2 text-sm text-gray-600">مستوى الإنجاز</div>
               </div>
