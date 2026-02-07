@@ -145,7 +145,7 @@ export const navLinks = [
   },
   {
     id: "evaluation-cycle",
-    title: "التقييم",
+    title: "دورات التقييم",
     icon: Table,
     url: "/itkan-dashboard/evaluation-cycles",
     permissions: [PermissionKeys.STAFF_EVALUATION_CREATE],

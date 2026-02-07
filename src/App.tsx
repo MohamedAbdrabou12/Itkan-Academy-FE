@@ -140,20 +140,20 @@ const App = () => {
             />
             {/* Staff Evaluations Routes */}
             <Route
-              path="/itkan-dashboard/evaluation-cycles"
-              element={<EvaluationCyclesPage />}
-            />
-            <Route
               path="/itkan-dashboard/kpi-templates"
               element={<KPITemplatesPage />}
             />
             <Route
-              path="/itkan-dashboard/evaluations/:evaluationId"
-              element={<EvaluationFormPage />}
+              path="/itkan-dashboard/evaluation-cycles"
+              element={<EvaluationCyclesPage />}
             />
             <Route
               path="/itkan-dashboard/evaluations"
               element={<EmployeeEvaluationsPage />}
+            />
+            <Route
+              path="/itkan-dashboard/staff-evaluations/evaluate/:evaluationId"
+              element={<EvaluationFormPage />}
             />
           </Route>
         </Route>

@@ -1,4 +1,4 @@
-export type EvaluationStatus = "draft" | "submitted" | "approved";
+export type EvaluationStatus = "draft" | "approved";
 
 // Evaluation Cycle Types
 export interface EvaluationCycle {

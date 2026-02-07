@@ -1,8 +1,5 @@
 import apiReq from "@/services/apiReq";
-import type {
-  EvaluationCycle,
-  EvaluationCycleUpdate,
-} from "@/types/staffEvaluation";
+import type { EvaluationCycleUpdate } from "@/types/staffEvaluation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
@@ -17,11 +14,7 @@ export const useUpdateEvaluationCycle = () => {
       id: number;
       data: EvaluationCycleUpdate;
     }) => {
-      return await apiReq<EvaluationCycle>(
-        "PUT",
-        `/staff-evaluations/cycles/${id}`,
-        data,
-      );
+      return await apiReq("PUT", `/staff-evaluations/cycles/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -29,8 +22,8 @@ export const useUpdateEvaluationCycle = () => {
       });
       toast.success("تم تحديث دورة التقييم بنجاح");
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "حدث خطأ أثناء تحديث الدورة");
+    onError: (error: Error) => {
+      toast.error(error.message || "حدث خطأ أثناء تحديث الدورة");
     },
   });
 };

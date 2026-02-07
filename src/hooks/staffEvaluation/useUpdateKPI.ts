@@ -1,5 +1,5 @@
 import apiReq from "@/services/apiReq";
-import type { KPI, KPIUpdate } from "@/types/staffEvaluation";
+import type { KPIUpdate } from "@/types/staffEvaluation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
@@ -8,7 +8,7 @@ export const useUpdateKPI = (templateId: number) => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: KPIUpdate }) => {
-      return await apiReq<KPI>(
+      return await apiReq(
         "PUT",
         `/staff-evaluations/kpi-templates/${templateId}/kpis/${id}`,
         data,
@@ -20,8 +20,8 @@ export const useUpdateKPI = (templateId: number) => {
       });
       toast.success("تم تحديث المؤشر بنجاح");
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || "حدث خطأ أثناء تحديث المؤشر");
+    onError: (error: Error) => {
+      toast.error(error.message || "حدث خطأ أثناء تحديث المؤشر");
     },
   });
 };
