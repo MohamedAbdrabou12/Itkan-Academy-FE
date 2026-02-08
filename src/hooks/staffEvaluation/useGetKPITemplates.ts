@@ -1,4 +1,5 @@
 import apiReq from "@/services/apiReq";
+import { useAuthStore } from "@/stores/auth";
 import type { KPITemplate } from "@/types/staffEvaluation";
 import { useQuery } from "@tanstack/react-query";
 
@@ -6,8 +7,16 @@ export const useGetKPITemplates = (
   isGlobal?: boolean,
   createdByUserId?: number,
 ) => {
-  return useQuery<KPITemplate[]>({
-    queryKey: ["staff-evaluations", "templates", isGlobal, createdByUserId],
+  const activeBranch = useAuthStore((state) => state.activeBranch);
+
+  const { data, isPending, error, refetch } = useQuery<KPITemplate[]>({
+    queryKey: [
+      "staff-evaluations",
+      "templates",
+      isGlobal,
+      createdByUserId,
+      activeBranch,
+    ],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (isGlobal !== undefined) {
@@ -23,4 +32,6 @@ export const useGetKPITemplates = (
       return await apiReq("GET", url);
     },
   });
+
+  return { templates: data || [], isPending, error, refetch };
 };

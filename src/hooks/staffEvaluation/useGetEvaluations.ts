@@ -1,4 +1,5 @@
 import apiReq from "@/services/apiReq";
+import { useAuthStore } from "@/stores/auth";
 import type {
   EmployeeEvaluationWithDetails,
   EvaluationStatus,
@@ -12,8 +13,10 @@ interface UseGetEvaluationsParams {
 }
 
 export const useGetEvaluations = (params?: UseGetEvaluationsParams) => {
+  const activeBranch = useAuthStore((state) => state.activeBranch);
+
   return useQuery<EmployeeEvaluationWithDetails[]>({
-    queryKey: ["staff-evaluations", "evaluations", params],
+    queryKey: ["staff-evaluations", "evaluations", params, activeBranch],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (params?.cycle_id) {

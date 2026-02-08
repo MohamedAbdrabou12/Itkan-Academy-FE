@@ -8,14 +8,15 @@ import { useGetBranchStaff } from "@/hooks/branches/useGetBranchStaff";
 import { EvaluationStatusBadge } from "@/components/staffEvaluation/EvaluationStatusBadge";
 import { WeightedScoreDisplay } from "@/components/staffEvaluation/WeightedScoreDisplay";
 import { PlusIcon, EyeIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import HookFormSelect from "@/components/forms/HookFormSelect";
 
 const startEvaluationSchema = z.object({
-  employee_user_id: z.coerce.number().min(1, "اختر الموظف"),
-  cycle_id: z.coerce.number().min(1, "اختر الدورة"),
-  template_id: z.coerce.number().min(1, "اختر القالب"),
+  employee_user_id: z.coerce.number("اختر الموظف").min(1, "اختر الموظف"),
+  cycle_id: z.coerce.number("اختر الدورة").min(1, "اختر الدورة"),
+  template_id: z.coerce.number("اختر القالب").min(1, "اختر القالب"),
 });
 
 type StartFormValues = z.infer<typeof startEvaluationSchema>;
@@ -24,20 +25,17 @@ export default function EmployeeEvaluationsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: evaluations, isLoading } = useGetEvaluations();
-  const { data: cycles } = useGetEvaluationCycles(true);
-  const { data: templates } = useGetKPITemplates();
+  const { cycles } = useGetEvaluationCycles(true);
+  const { templates } = useGetKPITemplates();
   const { staff } = useGetBranchStaff(); // Using existing hook
 
   const startMutation = useStartEvaluation();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<StartFormValues>({
-    resolver: zodResolver(startEvaluationSchema),
+  const form = useForm<StartFormValues>({
+    resolver: zodResolver(startEvaluationSchema) as Resolver<StartFormValues>,
   });
+
+  const { handleSubmit, reset } = form;
 
   const onSubmit = (data: StartFormValues) => {
     startMutation.mutate(data, {
@@ -57,7 +55,7 @@ export default function EmployeeEvaluationsPage() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="btn btn-primary gap-2"
+          className="btn-primary gap-2"
         >
           <PlusIcon className="h-5 w-5" />
           بدء تقييم جديد
@@ -108,7 +106,7 @@ export default function EmployeeEvaluationsPage() {
                       <EvaluationStatusBadge status={evaluation.status} />
                     </td>
                     <td>
-                      {evaluation.final_score ? (
+                      {evaluation.status === "approved" ? (
                         <WeightedScoreDisplay
                           score={Number(evaluation.final_score)}
                           className="text-sm"
@@ -144,90 +142,59 @@ export default function EmployeeEvaluationsPage() {
         <div className="modal modal-open">
           <div className="modal-box">
             <h3 className="mb-4 text-lg font-bold">بدء تقييم جديد</h3>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">الموظف</span>
-                </label>
-                <select
-                  {...register("employee_user_id")}
-                  className="select select-bordered w-full"
-                >
-                  <option value="">اختر الموظف...</option>
-                  {staff?.map((s: any) => (
-                    <option key={s.id} value={s.id}>
-                      {s.full_name}
-                    </option>
-                  ))}
-                </select>
-                {errors.employee_user_id && (
-                  <span className="text-error text-sm">
-                    {errors.employee_user_id.message}
-                  </span>
-                )}
-              </div>
+            <FormProvider {...form}>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <HookFormSelect
+                  name="employee_user_id"
+                  options={staff?.map((s) => ({
+                    value: `${s.id}`,
+                    label: s.full_name,
+                  }))}
+                  placeholder="اختر الموظف..."
+                  label="الموظف"
+                />
 
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">دورة التقييم</span>
-                </label>
-                <select
-                  {...register("cycle_id")}
-                  className="select select-bordered w-full"
-                >
-                  <option value="">اختر الدورة...</option>
-                  {cycles?.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.cycle_id && (
-                  <span className="text-error text-sm">
-                    {errors.cycle_id.message}
-                  </span>
-                )}
-              </div>
+                <HookFormSelect
+                  name="cycle_id"
+                  options={cycles?.map((c) => ({
+                    value: `${c.id}`,
+                    label: c.name,
+                  }))}
+                  placeholder="اختر الدورة..."
+                  label="دورة التقييم"
+                />
 
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">قالب التقييم</span>
-                </label>
-                <select
-                  {...register("template_id")}
-                  className="select select-bordered w-full"
-                >
-                  <option value="">اختر القالب...</option>
-                  {templates?.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.template_id && (
-                  <span className="text-error text-sm">
-                    {errors.template_id.message}
-                  </span>
-                )}
-              </div>
+                <HookFormSelect
+                  name="template_id"
+                  options={templates?.map((t) => ({
+                    value: `${t.id}`,
+                    label: t.name,
+                  }))}
+                  placeholder="اختر القالب..."
+                  label="قالب التقييم"
+                />
 
-              <div className="modal-action">
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={startMutation.isPending}
-                >
-                  بدء
-                </button>
-              </div>
-            </form>
+                <div className="modal-action">
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      reset();
+                    }}
+                  >
+                    إلغاء
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={startMutation.isPending}
+                  >
+                    بدء
+                  </button>
+                </div>
+              </form>
+            </FormProvider>
           </div>
         </div>
       )}

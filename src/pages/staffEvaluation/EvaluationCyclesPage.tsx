@@ -19,7 +19,7 @@ const cycleSchema = z.object({
 type CycleFormValues = z.infer<typeof cycleSchema>;
 
 export default function EvaluationCyclesPage() {
-  const { data: cycles, isLoading } = useGetEvaluationCycles();
+  const { cycles, isPending } = useGetEvaluationCycles();
   const createMutation = useCreateEvaluationCycle();
   const updateMutation = useUpdateEvaluationCycle();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,7 +99,7 @@ export default function EvaluationCyclesPage() {
         </button>
       </div>
 
-      {isLoading ? (
+      {isPending ? (
         <div className="flex justify-center p-12">
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>

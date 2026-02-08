@@ -34,16 +34,18 @@ export const KPIScoreInput = ({
               onChange(Math.min(Math.max(0, val), maxScore));
             }}
             disabled={readOnly}
-            className={`input input-bordered w-20 text-center text-lg font-semibold ${
+            className={`placeholder:text-gray-400! w-full rounded-lg border border-emerald-600 bg-transparent px-2 py-1 text-gray-800 outline-none placeholder:text-sm disabled:opacity-60 ${
               error ? "input-error" : ""
             } ${readOnly ? "bg-gray-50" : ""}`}
           />
         </div>
         <span className="text-gray-500">/</span>
         <span className="text-lg font-medium text-gray-700">{maxScore}</span>
-        <div className="bg-primary/10 mr-4 flex items-center gap-2 rounded-lg px-3 py-1">
+        <div className="mr-4 flex items-center gap-2 rounded-lg bg-emerald-600/10 px-3 py-1">
           <span className="text-sm text-gray-600">المساهمة:</span>
-          <span className="text-primary text-sm font-bold">{percentage}%</span>
+          <span className="text-sm font-bold text-emerald-600">
+            {percentage}%
+          </span>
           <span className="text-xs text-gray-400">من {weight}%</span>
         </div>
       </div>

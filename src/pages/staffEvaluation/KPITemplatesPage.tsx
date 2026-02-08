@@ -26,7 +26,7 @@ const kpiSchema = z.object({
   name: z.string().min(1, "اسم المؤشر مطلوب"),
   description: z.string().optional(),
   weight: z.coerce.number().min(1, "الوزن يجب أن يكون أكبر من 0").max(100),
-  max_score: z.number().min(1).max(10).optional(),
+  max_score: z.coerce.number().min(1).optional(),
 });
 
 // Schema for creating template with KPIs
@@ -49,10 +49,10 @@ const templateSchema = z
     },
   );
 
-type TemplateFormValues = z.infer<typeof templateSchema>;
+export type TemplateFormValues = z.infer<typeof templateSchema>;
 
 export default function KPITemplatesPage() {
-  const { data: templates } = useGetKPITemplates();
+  const { templates } = useGetKPITemplates();
   const createTemplateMutation = useCreateKPITemplate();
 
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(

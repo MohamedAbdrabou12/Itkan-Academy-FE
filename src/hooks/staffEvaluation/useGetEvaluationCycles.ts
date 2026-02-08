@@ -1,10 +1,13 @@
 import apiReq from "@/services/apiReq";
+import { useAuthStore } from "@/stores/auth";
 import type { EvaluationCycle } from "@/types/staffEvaluation";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetEvaluationCycles = (isActive?: boolean) => {
-  return useQuery<EvaluationCycle[]>({
-    queryKey: ["staff-evaluations", "cycles", isActive],
+  const activeBranch = useAuthStore((state) => state.activeBranch);
+
+  const { data, isPending, error, refetch } = useQuery<EvaluationCycle[]>({
+    queryKey: ["staff-evaluations", "cycles", isActive, activeBranch],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (isActive !== undefined) {
@@ -17,4 +20,6 @@ export const useGetEvaluationCycles = (isActive?: boolean) => {
       return await apiReq("GET", url);
     },
   });
+
+  return { cycles: data || [], isPending, error, refetch };
 };
