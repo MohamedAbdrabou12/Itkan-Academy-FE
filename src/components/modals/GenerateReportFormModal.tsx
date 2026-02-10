@@ -1,6 +1,6 @@
 import { PermissionKeys } from "@/constants/permissions";
 import { usePermissionsGate } from "@/hooks/auth/usePermissionGate";
-import { useGetAllBranches } from "@/hooks/branches/useGetAllBranches";
+import { useGetCurrentUserBranches } from "@/hooks/branches/useGetCurrentUserBranches";
 import { useGetClassesByBranches } from "@/hooks/classes/useGetClassesByBranches";
 import type { ReportType } from "@/hooks/reports/useGenerateReport";
 import { useGetStudentsByClasses } from "@/hooks/students/useGetStudentsByClasses";
@@ -12,7 +12,6 @@ import HookFormInput from "../forms/HookFormInput";
 import HookFormMultiSelect from "../forms/HookFormMultiSelect";
 import HookFormSelect from "../forms/HookFormSelect";
 import { Modal } from "../shared/Modal";
-import { useGetCurrentUserBranches } from "@/hooks/branches/useGetCurrentUserBranches";
 
 export interface GenerateReportFormData {
   type: ReportType;

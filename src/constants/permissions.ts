@@ -6,7 +6,6 @@ export const PermissionKeys = {
   ACADEMIC_CURRICULUM_EDIT: "academic.curriculum.edit",
   ACADEMIC_CURRICULUM_DELETE: "academic.curriculum.delete",
 
-  
   // Academic Educational Content
   ACADEMIC_EDUCATIONAL_CONTENT_ALL: "academic.educational_content.*",
   ACADEMIC_EDUCATIONAL_CONTENT_VIEW: "academic.educational_content.view",
@@ -229,4 +228,18 @@ export const PermissionKeys = {
   STAFF_ATTENDANCE_VIEW: "staff_attendance.staff.view",
   STAFF_ATTENDANCE_EDIT: "staff_attendance.staff.edit",
   STAFF_ATTENDANCE_CALENDAR_MANAGE: "staff_attendance.calendar.management",
+
+  // Staff Evaluation KPIs
+  STAFF_EVALUATION_KPI_ADD: "staff_evaluation.kpi.add",
+  STAFF_EVALUATION_KPI_EDIT: "staff_evaluation.kpi.edit",
+  STAFF_EVALUATION_KPI_VIEW: "staff_evaluation.kpi.view",
+  STAFF_EVALUATION_KPI_DELETE: "staff_evaluation.kpi.delete",
+
+  // Staff Evaluation Cycles
+  STAFF_EVALUATION_CYCLE_MANAGE: "staff_evaluation.cycle.manage",
+
+  // Staff Evaluations
+  STAFF_EVALUATION_ADD: "staff_evaluation.evaluation.add",
+  STAFF_EVALUATION_VIEW: "staff_evaluation.evaluation.view",
+  STAFF_EVALUATION_APPROVE: "staff_evaluation.evaluation.approve",
 } as const;

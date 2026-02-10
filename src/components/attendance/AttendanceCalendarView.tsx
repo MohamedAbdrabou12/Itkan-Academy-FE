@@ -4,6 +4,8 @@ import {
   format,
   startOfMonth,
   endOfMonth,
+  startOfWeek,
+  endOfWeek,
   eachDayOfInterval,
   isSameMonth,
   isToday,
@@ -25,7 +27,9 @@ export const AttendanceCalendarView = ({
   const [currentDate, setCurrentDate] = useState(new Date());
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const startDate = startOfWeek(monthStart);
+  const endDate = endOfWeek(monthEnd);
+  const daysInMonth = eachDayOfInterval({ start: startDate, end: endDate });
 
   const { calendars } = useGetCalendars({
     branch_id,
