@@ -6,6 +6,7 @@ export interface CircularProgressBarProps {
   children?: ReactNode;
   failedColor?: boolean;
   className?: string;
+  innerClassName?: string;
 }
 
 // WARNING: do not remove this comment.
@@ -30,7 +31,7 @@ const RingProgressBar = (props: CircularProgressBarProps) => {
         className={clsx(
           "flex h-full w-full items-center justify-center rounded-full bg-white/70",
           props.failedColor ? "text-red-700" : "text-green-700",
-          props.className,
+          props.innerClassName,
         )}
       >
         {props.children}

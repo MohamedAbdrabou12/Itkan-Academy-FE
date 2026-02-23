@@ -1,13 +1,13 @@
-import clsx from "clsx";
+import { AttendanceStatus } from "@/types/classes";
 import {
   StudentProgressStatus,
   type StudentProgressEntry,
   type StudentProgressUnitItemInfo,
 } from "@/types/studentProgress";
-import { CircleAlert, CircleCheck, CircleX } from "lucide-react";
-import { formatArabicDate } from "@/utils/formatDate";
 import { attendanceStatusDisplayNames } from "@/utils/attendanceStatusDisplayNames";
-import { AttendanceStatus } from "@/types/classes";
+import { formatArabicDate } from "@/utils/formatDate";
+import clsx from "clsx";
+import { CircleAlert, CircleCheck, CircleX } from "lucide-react";
 import RingProgressBar from "./RingProgressBar";
 
 type StudentProgressItemProps = { className: string } & (

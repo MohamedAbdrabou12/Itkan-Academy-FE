@@ -1,12 +1,12 @@
-import clsx from "clsx";
 import {
   type StudentProgressEntry,
   type StudentProgressUnitItemInfo,
 } from "@/types/studentProgress";
-import { useMemo, useState } from "react";
+import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
-import StudentProgressItem from "./StudentProgressItem";
+import { useMemo, useState } from "react";
 import RingProgressBar from "./RingProgressBar";
+import StudentProgressItem from "./StudentProgressItem";
 
 export interface StudentProgressClassGroupProps {
   className: string;
@@ -79,9 +79,12 @@ const StudentProgressClassGroup = ({
 
         <div className="flex items-center gap-2">
           <div className="text-xl">تقدم</div>
-          <RingProgressBar className="flex flex-col" value={progressPercentage}>
+          <RingProgressBar
+            innerClassName="flex flex-col"
+            value={progressPercentage}
+          >
             {progressItems.length}
-            <hr className="w-6 h-1" />
+            <hr className="h-1 w-6" />
             {unitItemsInfo.length}
           </RingProgressBar>
 
