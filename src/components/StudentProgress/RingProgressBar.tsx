@@ -21,15 +21,18 @@ const RingProgressBar = (props: CircularProgressBarProps) => {
 
   return (
     <div
-      className={clsx(
-        "flex aspect-square h-16 w-16 items-center justify-center rounded-full p-1",
-        props.className,
-      )}
+      className="flex aspect-square h-16 w-16 items-center justify-center rounded-full p-1"
       style={{
         backgroundImage: `conic-gradient(${progressBackgroundColor}, ${progressBackgroundColor} ${finishedContentAngle}deg, ${trailColor} ${finishedContentAngle}deg, ${trailColor})`,
       }}
     >
-      <div className={clsx("flex h-full w-full items-center justify-center rounded-full bg-white/70", props.failedColor ? "text-red-700" : "text-green-700")}>
+      <div
+        className={clsx(
+          "flex h-full w-full items-center justify-center rounded-full bg-white/70",
+          props.failedColor ? "text-red-700" : "text-green-700",
+          props.className,
+        )}
+      >
         {props.children}
       </div>
     </div>

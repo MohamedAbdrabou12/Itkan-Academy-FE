@@ -50,11 +50,6 @@ const StudentProgressClassGroup = ({
     [progressItems],
   );
 
-  const progressPercentageDisplay = useMemo(
-    () => (progressPercentage * 100).toFixed(2),
-    [progressPercentage],
-  );
-
   return (
     <div className="flex flex-col">
       <div
@@ -84,8 +79,10 @@ const StudentProgressClassGroup = ({
 
         <div className="flex items-center gap-2">
           <div className="text-xl">تقدم</div>
-          <RingProgressBar value={progressPercentage}>
-            {progressPercentageDisplay}%
+          <RingProgressBar className="flex flex-col" value={progressPercentage}>
+            {progressItems.length}
+            <hr className="w-6 h-1" />
+            {unitItemsInfo.length}
           </RingProgressBar>
 
           <div className="text-xl">درجات</div>
