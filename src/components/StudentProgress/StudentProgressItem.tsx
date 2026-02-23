@@ -8,6 +8,7 @@ import { CircleAlert, CircleCheck, CircleX } from "lucide-react";
 import { formatArabicDate } from "@/utils/formatDate";
 import { attendanceStatusDisplayNames } from "@/utils/attendanceStatusDisplayNames";
 import { AttendanceStatus } from "@/types/classes";
+import RingProgressBar from "./RingProgressBar";
 
 type StudentProgressItemProps = { className: string } & (
   | {
@@ -28,7 +29,7 @@ const StudentProgressItem = (props: StudentProgressItemProps) => {
         props.className,
       )}
     >
-      <div className="flex flex-col">
+      <div className="flex w-full flex-col">
         <div className="flex items-center gap-2">
           <div className="text-lg">
             {props.type === "started"
@@ -68,36 +69,63 @@ const StudentProgressItem = (props: StudentProgressItemProps) => {
               </>
             )}
           </div>
+          {props.type === "started" && (
+            <RingProgressBar
+              value={props.progressItem.score / props.progressItem.max_score}
+              failedColor={
+                props.progressItem.score < props.progressItem.max_score / 2
+              }
+              className="mr-4"
+            >
+              {(
+                (props.progressItem.score / props.progressItem.max_score) *
+                100
+              ).toFixed(2)}
+              %
+            </RingProgressBar>
+          )}
         </div>
         {props.type === "started" && (
-          <div className="flex gap-4 text-sm">
-            {props.progressItem.evaluation_info && (
-              <>
-                <div>
-                  {
-                    attendanceStatusDisplayNames[
-                      props.progressItem.evaluation_info.attendance_status
-                    ]
-                  }
+          <div className="text-lg">
+            <div className="flex justify-between">
+              {props.progressItem.evaluation_info && (
+                <div className="flex gap-4">
+                  <div className="font-semibold">
+                    {
+                      attendanceStatusDisplayNames[
+                        props.progressItem.evaluation_info.attendance_status
+                      ]
+                    }
+                  </div>
+                  {(props.progressItem.evaluation_info.attendance_status ===
+                    AttendanceStatus.PRESENT ||
+                    props.progressItem.evaluation_info.attendance_status ===
+                      AttendanceStatus.LATE) &&
+                    props.progressItem.evaluation_info.evaluation_grades.map(
+                      ({ name, grade }) => (
+                        <div key={name}>
+                          {name}: {grade}
+                        </div>
+                      ),
+                    )}
                 </div>
-                {(props.progressItem.evaluation_info.attendance_status ===
-                  AttendanceStatus.PRESENT ||
-                  props.progressItem.evaluation_info.attendance_status ===
-                    AttendanceStatus.LATE) &&
-                  props.progressItem.evaluation_info.evaluation_grades.map(
-                    ({ name, grade }) => (
-                      <div key={name}>
-                        {name}: {grade}
-                      </div>
-                    ),
-                  )}
-              </>
-            )}
-            <div>
-              اكتمل: {formatArabicDate(new Date(props.progressItem.created_at))}
+              )}
+              <div>
+                اكتمل:{" "}
+                {formatArabicDate(new Date(props.progressItem.created_at))}
+              </div>
             </div>
+            {props.progressItem.evaluation_info?.notes && (
+              <div>ملاحظات: {props.progressItem.evaluation_info.notes}</div>
+            )}
           </div>
         )}
+        <div className="mt-2 text-sm">
+          محتوى الدرس:{" "}
+          {props.type === "started"
+            ? props.progressItem.unit_item_info.content
+            : props.unitItem.content}
+        </div>
       </div>
     </div>
   );

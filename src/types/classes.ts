@@ -57,6 +57,7 @@ export interface Evaluation {
   date: string;
   unit_item_id: number;
   unit_item_title: string;
+  unit_item_content: string;
   attendance_status: AttendanceStatus;
   evaluation_grades: EvaluationGrade[];
   notes?: string;

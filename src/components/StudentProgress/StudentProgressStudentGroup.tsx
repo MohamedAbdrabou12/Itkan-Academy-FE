@@ -36,10 +36,11 @@ const StudentProgressStudentGroup = ({
         </div>
       </div>
       {isDropdownOpen &&
-        groups.map(({ subject_id, subject_name, curriculum_name, unit_items_info, items }) => (
+        groups.map(({ subject_id, subject_name, class_name, curriculum_name, unit_items_info, items }) => (
           <StudentProgressSubjectGroup
             key={subject_id}
             subjectName={subject_name}
+            className={class_name}
             curriculumName={curriculum_name}
             unitItemsInfo={unit_items_info}
             progressItems={items}

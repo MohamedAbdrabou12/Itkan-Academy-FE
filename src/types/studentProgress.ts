@@ -11,6 +11,7 @@ export interface StudentProgressUnitItemInfo {
   id: number;
   title: string;
   type: UnitItemType;
+  content: string;
   unit_info: StudentProgressUnitInfo;
 }
 
@@ -19,6 +20,7 @@ export interface StudentProgressEvaluationInfo {
   attendance_status: AttendanceStatus;
   evaluation_grades: Record<string, number>[];
   date: string;
+  notes?: string;
 }
 
 export interface StudentProgressExamInfo {
@@ -48,6 +50,8 @@ export interface StudentProgressEntry {
   id: number;
   student_id: number;
   status: StudentProgressStatus;
+  score: number;
+  max_score: number;
   unit_item_info: StudentProgressUnitItemInfo;
   evaluation_info?: StudentProgressEvaluationInfo;
   exam_attempt_info?: StudentProgressExamAttemptInfo;
@@ -55,7 +59,9 @@ export interface StudentProgressEntry {
 }
 
 export type StudentProgressBySubjectList = {
+  class_id: number;
   subject_id: number;
+  class_name: string;
   subject_name: string;
   curriculum_name: string;
   unit_items_info: StudentProgressUnitItemInfo[];

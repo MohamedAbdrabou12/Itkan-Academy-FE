@@ -29,6 +29,7 @@ const AttendanceEvaluationsPage = () => {
   const [unitId, setUnitId] = useState<number | null>(null);
   const [unitItemId, setUnitItemId] = useState<number | null>(null);
   const [unitItemTitle, setUnitItemTitle] = useState<string | null>(null);
+  const [unitItemContent, setUnitItemContent] = useState<string | null>(null);
 
   const { createBulkEvaluation, isPending: isCreatingEvaluation } =
     useCreateBulkEvaluation(setSelectedClassId);
@@ -195,6 +196,7 @@ const AttendanceEvaluationsPage = () => {
     handleClassDateChange(date);
     setUnitId(evaluations[0].unit_item_id);
     setUnitItemTitle(evaluations[0].unit_item_title);
+    setUnitItemContent(evaluations[0].unit_item_content);
     setEvaluationEditMode(true);
     setAttendanceStatus(() => {
       const map: AttendanceStatusMap = {};
@@ -268,6 +270,8 @@ const AttendanceEvaluationsPage = () => {
             unitItemTitle={unitItemTitle}
             unitId={unitId}
             setUnitId={setUnitId}
+            unitItemId={unitItemId}
+            unitItemContent={unitItemContent}
             setUnitItemId={setUnitItemId}
             onAttendanceChange={handleAttendanceChange}
             onNotesChange={handleNotesChange}
