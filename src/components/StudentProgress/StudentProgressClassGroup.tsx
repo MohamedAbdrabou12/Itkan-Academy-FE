@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 import StudentProgressItem from "./StudentProgressItem";
 import RingProgressBar from "./RingProgressBar";
 
-export interface StudentProgressSubjectGroupProps {
+export interface StudentProgressClassGroupProps {
   className: string;
   subjectName: string;
   curriculumName: string;
@@ -17,14 +17,14 @@ export interface StudentProgressSubjectGroupProps {
   forceRectangularShape?: boolean;
 }
 
-const StudentProgressSubjectGroup = ({
+const StudentProgressClassGroup = ({
   className,
   subjectName,
   curriculumName,
   unitItemsInfo,
   progressItems,
   forceRectangularShape,
-}: StudentProgressSubjectGroupProps) => {
+}: StudentProgressClassGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const incompleteUnitItems = useMemo(() => {
@@ -121,4 +121,4 @@ const StudentProgressSubjectGroup = ({
   );
 };
 
-export default StudentProgressSubjectGroup;
+export default StudentProgressClassGroup;

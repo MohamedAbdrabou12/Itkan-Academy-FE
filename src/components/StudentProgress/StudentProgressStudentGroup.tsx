@@ -1,22 +1,22 @@
-import type { StudentProgressBySubjectList } from "@/types/studentProgress";
+import type { StudentProgressClassGroup } from "@/types/studentProgress";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import StudentProgressSubjectGroup from "./StudentProgressSubjectGroup";
+import StudentProgressClassGroupComponent from "./StudentProgressClassGroup";
 
 export interface StudentProgressItemStudentGroupProps {
   studentName: string;
-  groups: StudentProgressBySubjectList;
+  classGroups: StudentProgressClassGroup[];
 }
 
 const StudentProgressStudentGroup = ({
   studentName,
-  groups,
+  classGroups,
 }: StudentProgressItemStudentGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
-    <div className="group flex flex-col border-gray-200 not-last:border-b-4">
+    <div className="not-last:border-b-4 group flex flex-col border-gray-200">
       <div
         className={clsx(
           "flex cursor-pointer flex-col gap-2 px-6 py-4 transition-colors duration-150 group-first:rounded-t-lg",
@@ -36,17 +36,26 @@ const StudentProgressStudentGroup = ({
         </div>
       </div>
       {isDropdownOpen &&
-        groups.map(({ subject_id, subject_name, class_name, curriculum_name, unit_items_info, items }) => (
-          <StudentProgressSubjectGroup
-            key={subject_id}
-            subjectName={subject_name}
-            className={class_name}
-            curriculumName={curriculum_name}
-            unitItemsInfo={unit_items_info}
-            progressItems={items}
-            forceRectangularShape={true}
-          />
-        ))}
+        classGroups.map(
+          ({
+            class_id,
+            class_name,
+            subject_name,
+            curriculum_name,
+            unit_items_info,
+            items,
+          }) => (
+            <StudentProgressClassGroupComponent
+              key={class_id}
+              className={class_name}
+              subjectName={subject_name}
+              curriculumName={curriculum_name}
+              unitItemsInfo={unit_items_info}
+              progressItems={items}
+              forceRectangularShape={true}
+            />
+          ),
+        )}
     </div>
   );
 };

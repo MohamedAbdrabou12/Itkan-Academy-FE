@@ -1,0 +1,203 @@
+import { useGetUserAttendance } from "@/hooks/attendance/useGetUserAttendance";
+import { useGetAllStaff } from "@/hooks/staff/useGetStaff";
+import type { AttendanceDaily } from "@/types/attendance";
+import { format, subDays } from "date-fns";
+import { useState } from "react";
+import { useParams } from "react-router";
+import { AttendanceCalendarView } from "@/components/attendance/AttendanceCalendarView";
+import { useAuthStore } from "@/stores/auth";
+
+export default function UserAttendancePage() {
+  const { userId } = useParams<{ userId: string }>();
+  const { activeBranch } = useAuthStore();
+  const [fromDate, setFromDate] = useState(
+    format(subDays(new Date(), 30), "yyyy-MM-dd"),
+  );
+  const [toDate, setToDate] = useState(format(new Date(), "yyyy-MM-dd"));
+
+  const { staff } = useGetAllStaff({});
+  const user = staff.find((s) => s.id === Number(userId));
+
+  const { attendance, isPending } = useGetUserAttendance({
+    user_id: Number(userId) || 0,
+    from_date: fromDate,
+    to_date: toDate,
+    branch_id: activeBranch?.id ? Number(activeBranch.id) : undefined,
+  });
+
+  const getStatusBadge = (status: string) => {
+    const statusMap: Record<string, { text: string; color: string }> = {
+      present: { text: "حاضر", color: "bg-green-100 text-green-700" },
+      late: { text: "متأخر", color: "bg-yellow-100 text-yellow-700" },
+      absent: { text: "غائب", color: "bg-red-100 text-red-700" },
+      half_day: { text: "نصف يوم", color: "bg-orange-100 text-orange-700" },
+      on_leave: { text: "إجازة", color: "bg-blue-100 text-blue-700" },
+    };
+
+    const statusInfo = statusMap[status] || {
+      text: status,
+      color: "bg-gray-100 text-gray-700",
+    };
+    return (
+      <span
+        className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusInfo.color}`}
+      >
+        {statusInfo.text}
+      </span>
+    );
+  };
+
+  const stats = {
+    present: attendance.filter((a) => a.status === "present").length,
+    late: attendance.filter((a) => a.status === "late").length,
+    absent: attendance.filter((a) => a.status === "absent").length,
+    half_day: attendance.filter((a) => a.status === "half_day").length,
+    on_leave: attendance.filter((a) => a.status === "on_leave").length,
+  };
+
+  if (!userId) {
+    return (
+      <div className="p-6">
+        <div className="text-center text-red-600">معرف المستخدم غير موجود</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 p-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">
+          سجل حضور {user?.full_name || `User #${userId}`}
+        </h1>
+        <p className="mt-1 text-sm text-gray-600">عرض سجل الحضور والانصراف</p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-5">
+        <div className="rounded-lg bg-green-50 p-4">
+          <div className="text-2xl font-bold text-green-700">
+            {stats.present}
+          </div>
+          <div className="text-sm text-green-600">حاضر</div>
+        </div>
+        <div className="rounded-lg bg-yellow-50 p-4">
+          <div className="text-2xl font-bold text-yellow-700">{stats.late}</div>
+          <div className="text-sm text-yellow-600">متأخر</div>
+        </div>
+        <div className="rounded-lg bg-red-50 p-4">
+          <div className="text-2xl font-bold text-red-700">{stats.absent}</div>
+          <div className="text-sm text-red-600">غائب</div>
+        </div>
+        <div className="rounded-lg bg-orange-50 p-4">
+          <div className="text-2xl font-bold text-orange-700">
+            {stats.half_day}
+          </div>
+          <div className="text-sm text-orange-600">نصف يوم</div>
+        </div>
+        <div className="rounded-lg bg-blue-50 p-4">
+          <div className="text-2xl font-bold text-blue-700">
+            {stats.on_leave}
+          </div>
+          <div className="text-sm text-blue-600">إجازة</div>
+        </div>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex flex-wrap items-center gap-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  من تاريخ
+                </label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  إلى تاريخ
+                </label>
+                <input
+                  type="date"
+                  value={toDate}
+                  onChange={(e) => setToDate(e.target.value)}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                />
+              </div>
+            </div>
+
+            {isPending ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent"></div>
+              </div>
+            ) : attendance.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                لا توجد سجلات حضور لهذه الفترة
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">
+                        التاريخ
+                      </th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">
+                        الحالة
+                      </th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">
+                        وقت الحضور
+                      </th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">
+                        وقت الخروج
+                      </th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">
+                        ساعات العمل
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {attendance.map((record: AttendanceDaily) => (
+                      <tr
+                        key={record.id}
+                        className="border-b border-gray-100 hover:bg-gray-50"
+                      >
+                        <td className="px-4 py-3 text-sm text-gray-700">
+                          {format(new Date(record.date), "yyyy-MM-dd")}
+                        </td>
+                        <td className="px-4 py-3">
+                          {getStatusBadge(record.status)}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">
+                          {record.check_in_time || "-"}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">
+                          {record.check_out_time || "-"}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">
+                          {record.worked_minutes
+                            ? `${Math.floor(record.worked_minutes / 60)} ساعة ${record.worked_minutes % 60} دقيقة`
+                            : "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <AttendanceCalendarView
+            user_id={Number(userId)}
+            branch_id={activeBranch?.id ? Number(activeBranch.id) : undefined}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

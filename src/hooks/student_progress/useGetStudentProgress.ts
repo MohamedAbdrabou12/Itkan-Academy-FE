@@ -1,8 +1,8 @@
 import apiReq from "@/services/apiReq";
 import { useAuthStore } from "@/stores/auth";
 import type {
-  StudentProgressByStudentList,
-  StudentProgressBySubjectList,
+  StudentProgressStudentGroup,
+  StudentProgressClassGroup,
 } from "@/types/studentProgress";
 import { useQuery } from "@tanstack/react-query";
 
@@ -10,7 +10,7 @@ export const useGetStudentProgressAsStudent = () => {
   const userId = useAuthStore((store) => store.user?.id);
 
   const { data, isPending, error, refetch } =
-    useQuery<StudentProgressBySubjectList>({
+    useQuery<StudentProgressClassGroup[]>({
       queryKey: ["student-progress", userId],
       queryFn: async () => {
         const pathname = "/student-progress/as-student";
@@ -30,7 +30,7 @@ export const useGetStudentProgressAsParent = () => {
   const userId = useAuthStore((store) => store.user?.id);
 
   const { data, isPending, error, refetch } =
-    useQuery<StudentProgressByStudentList>({
+    useQuery<StudentProgressStudentGroup[]>({
       queryKey: ["student-progress", userId],
       queryFn: async () => {
         const pathname = "/student-progress/as-parent";

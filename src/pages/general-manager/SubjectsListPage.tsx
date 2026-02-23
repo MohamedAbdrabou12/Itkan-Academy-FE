@@ -18,6 +18,7 @@ const SubjectsListPage = () => {
   );
 
   const onAddNew = () => {
+    setSubjectBeingEdited(null);
     setIsFormModalOpen(true);
   };
 

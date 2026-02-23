@@ -38,5 +38,20 @@ export const dashboardRouting = [
     route: "/itkan-dashboard/teachers",
     permission: PermissionKeys.SYSTEM_TEACHERS_VIEW,
   },
+  {
+    route: "/itkan-dashboard/attendance",
+    permission: PermissionKeys.STAFF_ATTENDANCE_CHECKIN,
+  },
+  {
+    route: "/itkan-dashboard/attendance-management",
+    permission: PermissionKeys.STAFF_ATTENDANCE_VIEW,
+  },
+  {
+    route: "/itkan-dashboard/attendance/calendars",
+    permission: PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE,
+  },
+  {
+    route: "/itkan-dashboard/attendance/work-schedules",
+    permission: PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE,
+  },
 ];
-

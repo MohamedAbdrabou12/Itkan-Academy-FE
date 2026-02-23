@@ -31,11 +31,18 @@ const AttendanceEvaluationsPage = () => {
   const [unitItemTitle, setUnitItemTitle] = useState<string | null>(null);
   const [unitItemContent, setUnitItemContent] = useState<string | null>(null);
 
+  const resetData = () => {
+    setSelectedClassId(null);
+    setUnitId(null);
+    setUnitItemId(null);
+    setAttendanceStatus({});
+  };
+
   const { createBulkEvaluation, isPending: isCreatingEvaluation } =
-    useCreateBulkEvaluation(setSelectedClassId);
+    useCreateBulkEvaluation(resetData);
 
   const { editBulkEvaluation, isPending: isEditingEvaluation } =
-    useEditBulkEvaluation(setSelectedClassId);
+    useEditBulkEvaluation(resetData);
 
   const { user, activeBranch } = useAuthStore();
 
@@ -49,10 +56,7 @@ const AttendanceEvaluationsPage = () => {
   const selectedClass = teacherClasses?.find((c) => c.id === selectedClassId);
 
   // Reset everything when active branch changes
-  useEffect(() => {
-    setSelectedClassId(null);
-    setAttendanceStatus({});
-  }, [activeBranch?.id]);
+  useEffect(resetData, [activeBranch?.id]);
 
   useEffect(() => {
     if (!selectedClassId) {
@@ -182,11 +186,6 @@ const AttendanceEvaluationsPage = () => {
     }
   };
 
-  const handleBackToClasses = () => {
-    setSelectedClassId(null);
-    setAttendanceStatus({});
-  };
-
   const handleEvaluationGroupChange = (
     classId: number,
     date: Date,
@@ -194,7 +193,7 @@ const AttendanceEvaluationsPage = () => {
   ) => {
     setSelectedClassId(classId);
     handleClassDateChange(date);
-    setUnitId(evaluations[0].unit_item_id);
+    setUnitItemId(evaluations[0].unit_item_id);
     setUnitItemTitle(evaluations[0].unit_item_title);
     setUnitItemContent(evaluations[0].unit_item_content);
     setEvaluationEditMode(true);
@@ -276,7 +275,7 @@ const AttendanceEvaluationsPage = () => {
             onAttendanceChange={handleAttendanceChange}
             onNotesChange={handleNotesChange}
             onEvaluationChange={handleEvaluationChange}
-            onBackToClasses={handleBackToClasses}
+            onBackToClasses={resetData}
             onClassDateChange={handleClassDateChange}
           />
 
@@ -285,7 +284,7 @@ const AttendanceEvaluationsPage = () => {
               onSubmit={handleSubmit}
               isSubmitting={isCreatingEvaluation || isEditingEvaluation}
               disabled={!unitItemId}
-              onCancel={handleBackToClasses}
+              onCancel={resetData}
             />
           )}
         </>

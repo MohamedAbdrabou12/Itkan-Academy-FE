@@ -8,7 +8,7 @@ import { UserRole } from "@/types/Roles";
 import Spinner from "@/components/shared/Spinner";
 import GridError from "@/components/dataGrid/GridError";
 import EmptyState from "@/components/dataGrid/EmptyState";
-import StudentProgressSubjectGroup from "@/components/StudentProgress/StudentProgressSubjectGroup";
+import StudentProgressClassGroup from "@/components/StudentProgress/StudentProgressClassGroup";
 import StudentProgressStudentGroup from "@/components/StudentProgress/StudentProgressStudentGroup";
 import clsx from "clsx";
 
@@ -21,11 +21,18 @@ const StudentRoleStudentProgressPage = () => {
     return <EmptyState hasFilters={false} entityName="تقدم" />;
 
   return progressGroups.map(
-    ({ class_id, subject_id, subject_name, class_name, curriculum_name, unit_items_info, items }) => (
-      <StudentProgressSubjectGroup
-        key={`${class_id}-${subject_id}`}
-        subjectName={subject_name}
+    ({
+      class_id,
+      class_name,
+      subject_name,
+      curriculum_name,
+      unit_items_info,
+      items,
+    }) => (
+      <StudentProgressClassGroup
+        key={class_id}
         className={class_name}
+        subjectName={subject_name}
         curriculumName={curriculum_name}
         unitItemsInfo={unit_items_info}
         progressItems={items}
@@ -46,7 +53,7 @@ const ParentRoleStudentProgressPage = () => {
     <StudentProgressStudentGroup
       key={student_id}
       studentName={student_name}
-      groups={groups}
+      classGroups={groups}
     />
   ));
 };

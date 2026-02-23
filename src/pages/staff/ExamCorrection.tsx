@@ -217,7 +217,7 @@ const StudentsListPage = () => {
       </div>
 
       {/* Summary */}
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="mx-auto mt-6 grid w-full grid-cols-1 gap-6 md:w-3/4 md:grid-cols-2">
         <div className="card bg-info text-info-content shadow">
           <div className="card-body">
             <h2 className="card-title">تم التقديم</h2>
@@ -232,15 +232,6 @@ const StudentsListPage = () => {
             <h2 className="card-title">تم التصحيح</h2>
             <p className="text-3xl font-bold">
               {examAttempts.filter((s) => s.status === "graded").length}
-            </p>
-          </div>
-        </div>
-
-        <div className="card bg-warning text-warning-content shadow">
-          <div className="card-body">
-            <h2 className="card-title">قيد الإجابة</h2>
-            <p className="text-3xl font-bold">
-              {examAttempts.filter((s) => s.status === "started").length}
             </p>
           </div>
         </div>

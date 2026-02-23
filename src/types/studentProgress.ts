@@ -58,18 +58,17 @@ export interface StudentProgressEntry {
   created_at: string;
 }
 
-export type StudentProgressBySubjectList = {
+export type StudentProgressClassGroup = {
   class_id: number;
-  subject_id: number;
   class_name: string;
   subject_name: string;
   curriculum_name: string;
   unit_items_info: StudentProgressUnitItemInfo[];
   items: StudentProgressEntry[];
-}[];
+};
 
-export type StudentProgressByStudentList = {
+export type StudentProgressStudentGroup = {
   student_id: number;
   student_name: string;
-  groups: StudentProgressBySubjectList;
-}[];
+  groups: StudentProgressClassGroup[];
+};
