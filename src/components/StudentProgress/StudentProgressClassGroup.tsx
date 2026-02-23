@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import {
-  StudentProgressStatus,
   type StudentProgressEntry,
   type StudentProgressUnitItemInfo,
 } from "@/types/studentProgress";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import StudentProgressItem from "./StudentProgressItem";
+import RingProgressBar from "./RingProgressBar";
 
 export interface StudentProgressClassGroupProps {
   className: string;
@@ -36,67 +36,69 @@ const StudentProgressClassGroup = ({
     );
   }, [progressItems, unitItemsInfo]);
 
-  const progressPercentage = useMemo(() => {
-    return (
-      progressItems.filter(
-        (item) => item.status !== StudentProgressStatus.FAILED,
-      ).length / unitItemsInfo.length
-    );
-  }, [progressItems, unitItemsInfo.length]);
+  const progressPercentage = progressItems.length / unitItemsInfo.length;
 
-  const progressPercentageDisplay = useMemo(
-    () => Math.ceil(progressPercentage * 100),
-    [progressPercentage],
+  const { score: gradesScore, maxScore: gradesMaxScore } = useMemo(
+    () =>
+      progressItems.reduce(
+        (prev, curr) => ({
+          score: prev.score + curr.score,
+          maxScore: prev.maxScore + curr.max_score,
+        }),
+        { score: 0, maxScore: 0 },
+      ),
+    [progressItems],
   );
-
-  const progressBarDiv = useRef<HTMLDivElement>(null);
 
   return (
     <div className="flex flex-col">
       <div
         className={clsx(
-          "flex cursor-pointer flex-col gap-2 border-gray-200 px-6 py-2 transition-colors duration-150",
+          "flex cursor-pointer items-center gap-2 border-gray-200 px-6 py-2 transition-colors duration-150",
           isDropdownOpen ? "bg-emerald-400/15" : "hover:bg-emerald-300/15",
           (forceRectangularShape ?? false) ? "" : "first:rounded-t-lg",
         )}
         onClick={() => setIsDropdownOpen((open) => !open)}
       >
-        <div className="flex items-center gap-2">
-          <ChevronDown
-            className={clsx(
-              "transition-transform",
-              isDropdownOpen ? "rotate-0" : "rotate-90",
-            )}
-          />
+        <ChevronDown
+          className={clsx(
+            "transition-transform",
+            isDropdownOpen ? "rotate-0" : "rotate-90",
+          )}
+        />
 
-          <div className="text-xl">{className}</div>
-          <div className="flex flex-1 gap-2">
-            <div className="rounded-3xl bg-emerald-300/50 p-2 text-sm text-green-700">
-              المادة: {subjectName}
-            </div>
-            <div className="rounded-3xl bg-emerald-300/50 p-2 text-sm text-green-700">
-              المستوى: {curriculumName}
-            </div>
+        <div className="text-xl">{className}</div>
+        <div className="flex flex-1 gap-2">
+          <div className="rounded-3xl bg-emerald-300/50 p-2 text-sm text-green-700">
+            المادة: {subjectName}
           </div>
-          <div className="text-lg">متقدم {progressPercentageDisplay}%</div>
+          <div className="rounded-3xl bg-emerald-300/50 p-2 text-sm text-green-700">
+            المستوى: {curriculumName}
+          </div>
         </div>
-        <div
-          ref={progressBarDiv}
-          className="flex h-4 overflow-hidden rounded-3xl border-2 border-gray-400"
-        >
-          <div
-            className="h-full bg-emerald-300"
-            style={{
-              flex: progressPercentage,
-            }}
-          />
+
+        <div className="flex items-center gap-2">
+          <div className="text-xl">تقدم</div>
+          <RingProgressBar className="flex flex-col" value={progressPercentage}>
+            {progressItems.length}
+            <hr className="w-6 h-1" />
+            {unitItemsInfo.length}
+          </RingProgressBar>
+
+          <div className="text-xl">درجات</div>
+          <RingProgressBar
+            value={gradesScore / gradesMaxScore}
+            failedColor={gradesScore < gradesMaxScore / 2}
+          >
+            {((gradesScore / gradesMaxScore) * 100).toFixed(2)}%
+          </RingProgressBar>
         </div>
       </div>
       {isDropdownOpen && (
         <div>
           {progressItems.map((item) => (
             <StudentProgressItem
-              key={`progress-${item.id}`}
+              key={item.id}
               className="not-last:border-b-2"
               type="started"
               progressItem={item}
@@ -104,7 +106,7 @@ const StudentProgressClassGroup = ({
           ))}
           {incompleteUnitItems.map((item) => (
             <StudentProgressItem
-              key={`unit-item-${item.id}`}
+              key={item.id}
               className="not-last:border-b-2"
               type="incomplete"
               unitItem={item}

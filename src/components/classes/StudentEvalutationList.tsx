@@ -28,7 +28,9 @@ interface StudentEvaluationListProps {
   unitItemTitle: string | null;
   unitId: number | null;
   setUnitId: (id: number | null) => void;
+  unitItemId: number | null;
   setUnitItemId: (id: number | null) => void;
+  unitItemContent: string | null;
   onAttendanceChange: (studentId: number, status: AttendanceStatus) => void;
   onNotesChange: (studentId: number, notes: string) => void;
   onEvaluationChange: (
@@ -52,7 +54,9 @@ const StudentEvaluationList = ({
   evaluationEditMode,
   unitItemTitle,
   unitId,
+  unitItemId,
   setUnitId,
+  unitItemContent: propsUnitItemContent,
   setUnitItemId,
   onAttendanceChange,
   onNotesChange,
@@ -66,6 +70,13 @@ const StudentEvaluationList = ({
 
   const selectedClass = teacherClasses?.find((c) => c.id === selectedClassId);
   const datePickerRef = useRef(null);
+
+  const unitItemContent = useMemo(
+    () =>
+      propsUnitItemContent ??
+      unitItems?.find((item) => item.id === unitItemId)?.content,
+    [propsUnitItemContent, unitItemId, unitItems],
+  );
 
   useClickOutsideModal(datePickerRef, () => {
     setShowDatePicker(false);
@@ -299,49 +310,52 @@ const StudentEvaluationList = ({
               {selectedClassSubjectName}
             </span>
           </div>
-          <div className="flex gap-6">
-            {evaluationEditMode ? (
-              <p>الدرس: {unitItemTitle}</p>
-            ) : (
-              <>
-                <select
-                  className="rounded-md border border-gray-300 px-2 focus:outline-none focus:ring-0"
-                  name="unit_id"
-                  id="unit_id"
-                  onChange={(e) => {
-                    setUnitId(parseInt(e.target.value));
-                    setUnitItemId(null);
-                  }}
-                >
-                  <option disabled selected value="">
-                    اختر الوحدة
-                  </option>
-                  {units &&
-                    units.map((unit) => (
-                      <option key={unit.id} value={unit.id}>
-                        {unit.title}
-                      </option>
-                    ))}
-                </select>
-                <select
-                  className="rounded-md border border-gray-300 px-2 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
-                  disabled={!unitId}
-                  name="unit_item_id"
-                  id="unit_item_id"
-                  onChange={(e) => setUnitItemId(parseInt(e.target.value))}
-                >
-                  <option disabled value="" selected>
-                    اختر الدرس
-                  </option>
-                  {unitItems &&
-                    unitItems.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.title}
-                      </option>
-                    ))}
-                </select>
-              </>
-            )}
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-6">
+              {evaluationEditMode ? (
+                <p>الدرس: {unitItemTitle}</p>
+              ) : (
+                <>
+                  <select
+                    className="rounded-md border border-gray-300 px-2 focus:outline-none focus:ring-0"
+                    name="unit_id"
+                    id="unit_id"
+                    onChange={(e) => {
+                      setUnitId(parseInt(e.target.value));
+                      setUnitItemId(null);
+                    }}
+                  >
+                    <option disabled selected value="">
+                      اختر الوحدة
+                    </option>
+                    {units &&
+                      units.map((unit) => (
+                        <option key={unit.id} value={unit.id}>
+                          {unit.title}
+                        </option>
+                      ))}
+                  </select>
+                  <select
+                    className="rounded-md border border-gray-300 px-2 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={!unitId}
+                    name="unit_item_id"
+                    id="unit_item_id"
+                    onChange={(e) => setUnitItemId(parseInt(e.target.value))}
+                  >
+                    <option disabled value="" selected>
+                      اختر الدرس
+                    </option>
+                    {unitItems &&
+                      unitItems.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.title}
+                        </option>
+                      ))}
+                  </select>
+                </>
+              )}
+            </div>
+            {unitItemContent && <p className="text-lg">{unitItemContent}</p>}
           </div>
         </div>
 
