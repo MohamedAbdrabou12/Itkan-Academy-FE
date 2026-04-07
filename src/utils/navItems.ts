@@ -1,20 +1,22 @@
 import { PermissionKeys } from "@/constants/permissions";
 import {
   BookA,
+  BookCheck,
   BookmarkCheck,
   BookOpenCheck,
   BriefcaseBusiness,
   CalendarClock,
+  ChartNoAxesColumnIncreasing,
+  CirclePoundSterling,
   ListTodo,
   LucideGraduationCap,
   Megaphone,
   Newspaper,
+  NotebookPen,
   Table,
   UserRound,
   Users,
   Warehouse,
-  ChartNoAxesColumnIncreasing,
-  NotebookPen,
 } from "lucide-react";
 
 export const navLinks = [
@@ -38,6 +40,20 @@ export const navLinks = [
     icon: BriefcaseBusiness,
     url: "/itkan-dashboard/staff",
     permissions: [PermissionKeys.SYSTEM_STAFF_VIEW],
+  },
+  {
+    id: "contracts",
+    title: "عقودات الموظفين",
+    icon: BookCheck,
+    url: "/itkan-dashboard/contracts",
+    permissions: [PermissionKeys.STAFF_CONTRACTS_VIEW],
+  },
+  {
+    id: "payroll-cycles",
+    title: "دورات المرتب",
+    icon: CirclePoundSterling,
+    url: "/itkan-dashboard/payroll-cycles",
+    permissions: [PermissionKeys.PAYROLL_CYCLES_VIEW],
   },
   {
     id: "students",

@@ -11,6 +11,7 @@ import SearchFilterBar from "./SearchFilterBar";
 
 const DataGrid = <T extends Record<string, unknown>>({
   title = "Manage Data",
+  extraInfo: infoText,
   columns,
   data = [],
   loading = false,
@@ -26,6 +27,7 @@ const DataGrid = <T extends Record<string, unknown>>({
   onDelete,
   onView,
   searchPlaceholder,
+  addButtonIcon,
   viewPermission,
   addPermission,
   editPermission,
@@ -50,8 +52,10 @@ const DataGrid = <T extends Record<string, unknown>>({
     <div className="relative rounded-xl border border-gray-200 bg-white shadow-sm">
       <GridHeader
         title={title}
+        extraInfo={infoText}
         onAddNew={onAddNew}
         addButtonText={addButtonText}
+        addButtonIcon={addButtonIcon}
         addPermission={addPermission}
       />
 

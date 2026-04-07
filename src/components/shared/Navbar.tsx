@@ -47,7 +47,16 @@ export default function Navbar() {
       ),
     },
     { to: "/contact", label: "تواصل معنا" },
-    { to: "/itkan-dashboard", label: "dashboard" },
+    {
+      to: "/itkan-dashboard",
+      label: "لوحة التحكم",
+      showIf: useCallback(
+        () =>
+          user != null &&
+          ![UserRole.PARENT, UserRole.STUDENT].includes(user.role_name),
+        [user],
+      ),
+    },
   ];
 
   return (

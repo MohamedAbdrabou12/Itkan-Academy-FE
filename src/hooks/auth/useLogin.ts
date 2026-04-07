@@ -48,7 +48,7 @@ export function useLogin() {
       if (res.user.role_name === "Student") {
         navigate("/", { replace: true });
       } else {
-        navigate(getDashboardRoute(res.user.permissions.map((p) => p.code)), {
+        navigate(getDashboardRoute(res.user.permissions), {
           replace: true,
         });
       }
