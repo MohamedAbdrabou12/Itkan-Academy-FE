@@ -47,6 +47,7 @@ export default function Navbar() {
       ),
     },
     { to: "/contact", label: "تواصل معنا" },
+    { to: "/itkan-dashboard", label: "dashboard" },
   ];
 
   return (

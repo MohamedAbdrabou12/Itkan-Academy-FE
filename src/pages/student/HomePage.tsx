@@ -7,7 +7,6 @@ import {
   TrendingUp,
   Calendar,
 } from "lucide-react";
-import { useGetMe } from "@/hooks/auth/useGetMe";
 
 export default function Home() {
   const stats = [
