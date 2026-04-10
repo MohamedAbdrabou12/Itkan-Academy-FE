@@ -2,10 +2,17 @@ import PermissionBasedRoute from "@/components/auth/PermissionBasedRoute";
 import ItkanDashboardLayout from "@/components/layouts/ItkanDashboardLayout";
 import StudentLayout from "@/components/layouts/StudentLayout";
 import PasswordResetSentPage from "@/hooks/auth/PasswordResetSentPage";
+import AttendanceManagementPage from "@/pages/attendance/AttendanceManagementPage";
+import AttendancePage from "@/pages/attendance/AttendancePage";
+import CalendarDetailPage from "@/pages/attendance/CalendarDetailPage";
+import CalendarsPage from "@/pages/attendance/CalendarsPage";
+import UserAttendancePage from "@/pages/attendance/UserAttendancePage";
+import WorkSchedulesPage from "@/pages/attendance/WorkSchedulesPage";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
+import ContractsGridPage from "@/pages/contracts/ContractsGridPage";
 import BranchesGridPage from "@/pages/general-manager/BranchesGridPage";
 import ClassesGridPage from "@/pages/general-manager/ClassesGridPage";
 import CurriculumGridPage from "@/pages/general-manager/CurriculumGridPage";
@@ -18,7 +25,13 @@ import SubjectContentPage from "@/pages/general-manager/SubjectContentPage";
 import SubjectsListPage from "@/pages/general-manager/SubjectsListPage";
 import TeachersGridPage from "@/pages/general-manager/TeachersGridPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import PayrollCyclesGridPage from "@/pages/payroll/PayrollCyclesGridPage";
+import PayrollRecordsGridPage from "@/pages/payroll/PayrollRecordsGridPage";
 import AttendanceEvaluationsPage from "@/pages/staff/AttendanceEvaluationsPage";
+import ExamCorrection from "@/pages/staff/ExamCorrection";
+import ExamCorrectionAttempts from "@/pages/staff/ExamCorrectionAttempts";
+import ExamPage from "@/pages/staff/ExamPage";
+import QuestionBankPage from "@/pages/staff/QuestionBankPage";
 import EmployeeEvaluationsPage from "@/pages/staffEvaluation/EmployeeEvaluationsPage";
 import EvaluationCyclesPage from "@/pages/staffEvaluation/EvaluationCyclesPage";
 import EvaluationFormPage from "@/pages/staffEvaluation/EvaluationFormPage";
@@ -30,22 +43,12 @@ import HomePage from "@/pages/student/HomePage";
 import NewsPage from "@/pages/student/NewsPage";
 import ProgramsPage from "@/pages/student/ProgramsPage";
 import RegisterPendingPage from "@/pages/student/RegisterPendingPage";
+import StudentExamsPage from "@/pages/student/StudentExams";
+import TakeExam from "@/pages/student/StudentExams/ExamTake";
 import StudentProgressPage from "@/pages/student/StudentProgressPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
-import AttendanceManagementPage from "./pages/attendance/AttendanceManagementPage";
-import AttendancePage from "./pages/attendance/AttendancePage";
-import CalendarDetailPage from "./pages/attendance/CalendarDetailPage";
-import CalendarsPage from "./pages/attendance/CalendarsPage";
-import UserAttendancePage from "./pages/attendance/UserAttendancePage";
-import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
-import ExamCorrection from "./pages/staff/ExamCorrection";
-import ExamCorrectionAttempts from "./pages/staff/ExamCorrectionAttempts";
-import ExamPage from "./pages/staff/ExamPage";
-import QuestionBankPage from "./pages/staff/QuestionBankPage";
-import StudentExamsPage from "./pages/student/StudentExams";
-import TakeExam from "./pages/student/StudentExams/ExamTake";
 // import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
 
 const App = () => {
@@ -97,6 +100,11 @@ const App = () => {
               <Route index element={<SubjectsListPage />} />
               <Route path=":id" element={<SubjectContentPage />} />
             </Route>
+            <Route path="contracts" element={<ContractsGridPage />} />
+            <Route path="payroll-cycles">
+              <Route index element={<PayrollCyclesGridPage />} />
+              <Route path=":id" element={<PayrollRecordsGridPage />} />
+            </Route>
             <Route
               path="exam-correction/:examId"
               element={<ExamCorrection />}
@@ -105,54 +113,41 @@ const App = () => {
               path="exam-correction/:examId/attempt/:attemptId"
               element={<ExamCorrectionAttempts />}
             />
-
             <Route
-              path="/itkan-dashboard/exam-correction/:examId"
+              path="exam-correction/:examId"
               element={<ExamCorrection />}
             />
             <Route
-              path="/itkan-dashboard/exam-correction/:examId/attempt/:attemptId"
+              path="exam-correction/:examId/attempt/:attemptId"
               element={<ExamCorrectionAttempts />}
             />
+            <Route path="attendance-calendars" element={<CalendarsPage />} />
             <Route
-              path="/itkan-dashboard/attendance-calendars"
-              element={<CalendarsPage />}
-            />
-            <Route
-              path="/itkan-dashboard/attendance/calendars/:calendarId"
+              path="attendance/calendars/:calendarId"
               element={<CalendarDetailPage />}
             />
             <Route
-              path="/itkan-dashboard/attendance/work-schedules"
+              path="attendance/work-schedules"
               element={<WorkSchedulesPage />}
             />
+            <Route path="daily-attendance" element={<AttendancePage />} />
             <Route
-              path="/itkan-dashboard/daily-attendance"
-              element={<AttendancePage />}
-            />
-            <Route
-              path="/itkan-dashboard/attendance-management"
+              path="attendance-management"
               element={<AttendanceManagementPage />}
             />
             <Route
-              path="/itkan-dashboard/attendance/user/:userId"
+              path="attendance/user/:userId"
               element={<UserAttendancePage />}
             />
             {/* Staff Evaluations Routes */}
+            <Route path="kpi-templates" element={<KPITemplatesPage />} />
             <Route
-              path="/itkan-dashboard/kpi-templates"
-              element={<KPITemplatesPage />}
-            />
-            <Route
-              path="/itkan-dashboard/evaluation-cycles"
+              path="evaluation-cycles"
               element={<EvaluationCyclesPage />}
             />
+            <Route path="evaluations" element={<EmployeeEvaluationsPage />} />
             <Route
-              path="/itkan-dashboard/evaluations"
-              element={<EmployeeEvaluationsPage />}
-            />
-            <Route
-              path="/itkan-dashboard/staff-evaluations/evaluate/:evaluationId"
+              path="staff-evaluations/evaluate/:evaluationId"
               element={<EvaluationFormPage />}
             />
           </Route>

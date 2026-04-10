@@ -1,57 +1,105 @@
+import type { PERMISSION_VALUE } from "@/types/permissions";
+import { UserRole } from "@/types/Roles";
 import { PermissionKeys } from "./permissions";
 
-export const dashboardRouting = [
+export const dashboardRouting: {
+  route: string;
+  requiredPermissions?: PERMISSION_VALUE[];
+  allowedRoles?: UserRole[];
+  disallowedRoles?: UserRole[];
+}[] = [
+  {
+    route: "/itkan-dashboard",
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
+  },
   // student permissions
 
   // teacher permissions
   {
     route: "/itkan-dashboard/question_bank",
-    permission: PermissionKeys.ACADEMIC_QUESTION_BANK_VIEW,
+    requiredPermissions: [PermissionKeys.ACADEMIC_QUESTION_BANK_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/exam_dashboard",
-    permission: PermissionKeys.ACADEMIC_EXAMS_VIEW,
+    requiredPermissions: [PermissionKeys.ACADEMIC_EXAMS_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
 
   // staff permissions
   {
     route: "/itkan-dashboard/branches",
-    permission: PermissionKeys.SYSTEM_BRANCHES_VIEW,
+    requiredPermissions: [PermissionKeys.SYSTEM_BRANCHES_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
+  },
+  {
+    route: "/itkan-dashboard/staff",
+    requiredPermissions: [PermissionKeys.SYSTEM_STAFF_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/students",
-    permission: PermissionKeys.SYSTEM_STUDENTS_VIEW,
+    requiredPermissions: [PermissionKeys.SYSTEM_STUDENTS_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/parents",
-    permission: PermissionKeys.SYSTEM_PARENTS_VIEW,
+    requiredPermissions: [PermissionKeys.SYSTEM_PARENTS_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/roles",
-    permission: PermissionKeys.SYSTEM_ROLES_VIEW,
+    requiredPermissions: [PermissionKeys.SYSTEM_ROLES_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/classes",
-    permission: PermissionKeys.ACADEMIC_CLASSES_VIEW,
+    requiredPermissions: [PermissionKeys.ACADEMIC_CLASSES_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/teachers",
-    permission: PermissionKeys.SYSTEM_TEACHERS_VIEW,
+    requiredPermissions: [PermissionKeys.SYSTEM_TEACHERS_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/attendance",
-    permission: PermissionKeys.STAFF_ATTENDANCE_CHECKIN,
+    requiredPermissions: [PermissionKeys.STAFF_ATTENDANCE_CHECKIN],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/attendance-management",
-    permission: PermissionKeys.STAFF_ATTENDANCE_VIEW,
+    requiredPermissions: [PermissionKeys.STAFF_ATTENDANCE_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/attendance/calendars",
-    permission: PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE,
+    requiredPermissions: [PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
   {
     route: "/itkan-dashboard/attendance/work-schedules",
-    permission: PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE,
+    requiredPermissions: [PermissionKeys.STAFF_ATTENDANCE_CALENDAR_MANAGE],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
+  },
+  {
+    route: "/itkan-dashboard/curriculum",
+    requiredPermissions: [PermissionKeys.ACADEMIC_CURRICULUM_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
+  },
+  {
+    route: "/itkan-dashboard/subjects",
+    requiredPermissions: [PermissionKeys.ACADEMIC_EDUCATIONAL_CONTENT_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
+  },
+  {
+    route: "/itkan-dashboard/contracts",
+    requiredPermissions: [PermissionKeys.STAFF_CONTRACTS_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
+  },
+  {
+    route: "/itkan-dashboard/payroll-cycles",
+    requiredPermissions: [PermissionKeys.PAYROLL_CYCLES_VIEW],
+    disallowedRoles: [UserRole.PARENT, UserRole.STUDENT],
   },
 ];

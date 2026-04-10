@@ -54,8 +54,10 @@ export interface DataGridProps<T> {
 
   // Configuration
   title?: string;
+  extraInfo?: ReactNode;
   searchPlaceholder: string;
   addButtonText?: string;
+  addButtonIcon?: ReactNode;
   entityName?: string;
   pageSizeOptions?: number[];
   enableSearch?: boolean;
