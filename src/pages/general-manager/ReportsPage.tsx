@@ -28,6 +28,8 @@ const ReportsPage = () => {
         branch_ids: formData.branch_ids,
         class_ids: formData.class_ids,
         student_ids: formData.student_ids,
+        teacher_ids: formData.teacher_ids,
+        staff_ids: formData.staff_ids,
         attendance_status: formData.attendance_status,
       },
     };
