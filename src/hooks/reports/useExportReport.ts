@@ -3,7 +3,15 @@ import type { AttendanceStatus } from "@/types/classes";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
-export type ReportType = "students/attendance" | "students/evaluations";
+export type ReportType =
+  | "students/attendance"
+  | "students/evaluations"
+  | "teachers"
+  | "staff"
+  | "finance/revenue-by-branch"
+  | "finance/outstanding-tuition"
+  | "finance/teacher-payroll"
+  | "finance/student-payments";
 
 export interface ReportExportRequest {
   type: ReportType;
@@ -13,6 +21,8 @@ export interface ReportExportRequest {
     branch_ids?: string[];
     class_ids?: string[];
     student_ids?: string[];
+    teacher_ids?: string[];
+    staff_ids?: string[];
     attendance_status?: AttendanceStatus[];
   };
   export_type: "csv" | "excel" | "pdf";
@@ -33,6 +43,12 @@ export const useExportReport = () => {
 
       for (const student_id of params.filters.student_ids ?? [])
         filterQuery.append("student_ids", student_id);
+
+      for (const teacher_id of params.filters.teacher_ids ?? [])
+        filterQuery.append("teacher_ids", teacher_id);
+
+      for (const staff_id of params.filters.staff_ids ?? [])
+        filterQuery.append("staff_ids", staff_id);
 
       for (const status of params.filters.attendance_status ?? [])
         filterQuery.append("attendance_status", status);
