@@ -46,6 +46,14 @@ export default function Navbar() {
         [user],
       ),
     },
+    {
+      to: "/enrolments",
+      label: "الالتحاق",
+      showIf: useCallback(
+        () => user != null && user.role_name == UserRole.PARENT,
+        [user],
+      ),
+    },
     { to: "/contact", label: "تواصل معنا" },
     {
       to: "/itkan-dashboard",
