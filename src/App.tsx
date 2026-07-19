@@ -49,8 +49,13 @@ import StudentProgressPage from "@/pages/student/StudentProgressPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import { Route, Routes } from "react-router";
 import { ToastContainer } from "react-toastify";
+import { EnrolmentListPage } from "./pages/student/EnrolmentListPage";
+import EnrolmentPricingPlansGridPage from "./pages/general-manager/EnrolmentPricingPlansGridPage";
+import EnrolmentsGridPage from "./pages/general-manager/EnrolmentsGridPage";
 // import WorkSchedulesPage from "./pages/attendance/WorkSchedulesPage";
 
+// so, two pages for staff to update, create, and edit pricing plans and enrolments
+// flow for browsing pricing plans and checkout
 const App = () => {
   return (
     <>
@@ -75,6 +80,7 @@ const App = () => {
             <Route path="news" element={<NewsPage />} />
             <Route path="programs" element={<ProgramsPage />} />
             <Route path="student-progress" element={<StudentProgressPage />} />
+            <Route path="enrolments" element={<EnrolmentListPage />} />
             <Route path="studentExam" element={<StudentExamsPage />} />
             <Route path="exams/:examId/take" element={<TakeExam />} />
           </Route>
@@ -149,6 +155,11 @@ const App = () => {
             <Route
               path="staff-evaluations/evaluate/:evaluationId"
               element={<EvaluationFormPage />}
+            />
+            <Route path="enrolments" element={<EnrolmentsGridPage />} />
+            <Route
+              path="enrolment-pricing-plans"
+              element={<EnrolmentPricingPlansGridPage />}
             />
           </Route>
         </Route>
